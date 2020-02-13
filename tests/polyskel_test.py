@@ -43,7 +43,7 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
         tst_edges = lb_polyskel.skeletonize(polygon, holes)
     else:
         skel = orig_polyskel.skeletonize(polygon, holes)
-        tst_edges = lb_polyskel.subtree_to_edge_mtx(skel)
+        tst_edges = lb_polyskel._subtree_to_edge_mtx(skel)
 
     # Tests
     # Check types

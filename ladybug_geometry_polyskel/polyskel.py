@@ -224,9 +224,11 @@ class _LAVertex:
                         continue
 
                     log.debug('\t\tFound valid candidate %s', b)
-                    _dist_line_to_b = _pt_to_line_distance(
-                        b,
-                        LineSegment2D(edge.edge.p, edge.edge.v), self.tol)
+                    _dist_line_to_b = LineSegment2D(
+                        edge.edge.p, 
+                        edge.edge.v).distance_to_point(b)
+                    if _dist_line_to_b < self.tol:
+                        _dist_line_to_b = 0.0
                     _new_split_event = _SplitEvent(_dist_line_to_b, b, self, edge.edge)
                     events.append(_new_split_event)
 
@@ -238,19 +240,19 @@ class _LAVertex:
 
         # Make EdgeEvent and append to events
         if i_prev is not None:
-            dist_to_i_prev = _pt_to_line_distance(
-                i_prev,
-                LineSegment2D(self.edge_left.p.duplicate(),
-                              self.edge_left.v.duplicate()), self.tol)
-
+            dist_to_i_prev = LineSegment2D(
+                self.edge_left.p.duplicate(),
+                self.edge_left.v.duplicate()).distance_to_point(i_prev)
+            if dist_to_i_prev < self.tol:
+                dist_to_i_prev = 0.0
             events.append(_EdgeEvent(dist_to_i_prev, i_prev, self.prev, self))
 
         if i_next is not None:
-            dist_to_i_next = _pt_to_line_distance(
-                i_next,
-                LineSegment2D(self.edge_right.p.duplicate(),
-                              self.edge_right.v.duplicate()), self.tol)
-
+            dist_to_i_next = LineSegment2D(
+                self.edge_right.p.duplicate(),
+                self.edge_right.v.duplicate()).distance_to_point(i_next)
+            if dist_to_i_next < self.tol:
+                dist_to_i_next = 0.0
             events.append(_EdgeEvent(dist_to_i_next, i_next, self, self.next))
 
         if not events:
@@ -258,8 +260,7 @@ class _LAVertex:
 
         ev = min(
             events,
-            key=lambda event: self.point.distance_to_point(event.intersection_point)
-            )
+            key=lambda event: self.point.distance_to_point(event.intersection_point))
 
         log.info('Generated new event for %s: %s', self, ev)
         return ev
@@ -662,26 +663,6 @@ class _EventQueue:
 
 
 # Skeleton Code
-def _pt_to_line_distance(pt, line, tol):
-    """Helper to computes closest point on line to given pt, and returns
-    distance between them.
-
-    Args:
-        pt: Point2D
-        line: Line2D from which closest point is computed.
-        tol: point equality tolerance.
-    Return:
-        float of distance.
-    """
-    pt2 = intersection2d.closest_point2d_on_line2d(pt, line)
-    if not pt.is_equivalent(pt2, tol):
-        dist = LineSegment2D.from_end_points(pt, pt2).length
-    else:
-        dist = 0.0
-
-    return dist
-
-
 def _window(lst):
     """
     Consumes a list of items, and returns a zipped list of the
@@ -718,7 +699,7 @@ def _normalize_contour(contour):
     return normed_contour
 
 
-def subtree_to_edge_mtx(skeleton):
+def _subtree_to_edge_mtx(skeleton):
     """
     Consumes list of polyskeleton subtrees.
     Skeleton edges are the segments defined by source point and each sink points.
@@ -800,6 +781,6 @@ def skeletonize(polygon, holes=None, tol=1e-10):
             _debug.show()
 
     # Convert subtrees to collection of edges (list of list of point coordinates)
-    output = subtree_to_edge_mtx(output)
+    output = _subtree_to_edge_mtx(output)
 
     return output
