@@ -6,7 +6,7 @@ from pprint import pprint as pp
 
 # Import two versions of polyskel
 from ladybug_geometry_polyskel import polyskel as lb_polyskel
-from tests.test_data import polyskel as orig_polyskel
+# from tests.test_data import polyskel as orig_polyskel
 
 
 def helper_check_lavertex(v1, v2):
@@ -38,12 +38,14 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
     if holes is None:
         holes = []
 
+    #FIXME Remove orig code for now
+    tst_edges = lb_polyskel.skeletonize(polygon, holes)
     # Run function
-    if lb:
-        tst_edges = lb_polyskel.skeletonize(polygon, holes)
-    else:
-        skel = orig_polyskel.skeletonize(polygon, holes)
-        tst_edges = lb_polyskel._subtree_to_edge_mtx(skel)
+    # if lb:
+    #    tst_edges = lb_polyskel.skeletonize(polygon, holes)
+    # else:
+    #     skel = orig_polyskel.skeletonize(polygon, holes)
+    #     tst_edges = lb_polyskel._subtree_to_edge_mtx(skel)
 
     # Tests
     # Check types
@@ -98,22 +100,23 @@ def test_polygon_init():
     contour = lb_polyskel._normalize_contour(polygon)
     lb_lav = lb_polyskel._LAV.from_polygon(contour, SLAV)
 
-    # With orig
-    SLAV = orig_polyskel._SLAV(polygon, [])
-    contour = orig_polyskel._normalize_contour(polygon)
-    orig_lav = orig_polyskel._LAV.from_polygon(contour, SLAV)
+    # FIXME Removing original code dependency for now
+    # # With orig
+    # SLAV = orig_polyskel._SLAV(polygon, [])
+    # contour = orig_polyskel._normalize_contour(polygon)
+    # orig_lav = orig_polyskel._LAV.from_polygon(contour, SLAV)
 
-    # iterate through LAV
-    for i in range(4):
-        if i == 0:
-            vertex1 = lb_lav.head
-            vertex2 = orig_lav.head
-        else:
-            vertex1 = vertex1.next
-            vertex2 = vertex2.next
+    # # iterate through LAV
+    # for i in range(4):
+    #     if i == 0:
+    #         vertex1 = lb_lav.head
+    #         vertex2 = orig_lav.head
+    #     else:
+    #         vertex1 = vertex1.next
+    #         vertex2 = vertex2.next
 
-        # Compare
-        helper_check_lavertex(vertex1, vertex2)
+    #     # Compare
+    #     helper_check_lavertex(vertex1, vertex2)
 
 
 def test_polyskel_triangle():
