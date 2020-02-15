@@ -662,6 +662,14 @@ class _EventQueue:
             print(item)
 
 
+class Polygon2dDAG(object):
+    """A directed acyclical graph for nested 2d polygons. Points are graph nodes and edges are
+    ccw direction vector."""
+    
+    def __init__(self):
+        pass
+
+
 # Skeleton Code
 def _window(lst):
     """

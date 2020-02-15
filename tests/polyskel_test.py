@@ -316,16 +316,33 @@ def test_polyskel_concave_two_holes():
     holes = [hole1, hole2]
     assert helper_assert_polygon_equality(poly, chk_edges, holes, lb=True)
 
+def test_polygon2d_dag_init():
+    """Test the DAG."""
+    
+    # Make the polygon
+    p = Polygon2D.from_array(
+        [[0, 0], [5, 0], [6, 5], [2, 7], [0, 5]])
 
+    # Skeletonize and retrieve DAG from polyskeleton
+    skeletonize(p.to_array(), 1e-10)
+
+    
 if __name__ == "__main__":
-    # Base
-    test_polygon_init()
-    # Convex
-    test_polyskel_triangle()
-    test_polyskel_square()
-    test_polyskel_pentagon()
-    test_polyskel_complex_convex()
-    # Concave
-    test_polyskel_simple_concave()
-    test_polyskel_concave()
-    test_polyskel_concave_two_holes()
+    
+    # # Base
+    # test_polygon_init()
+    
+    # # Convex
+    # test_polyskel_triangle()
+    # test_polyskel_square()
+    # test_polyskel_pentagon()
+    # test_polyskel_complex_convex()
+    
+    # # Concave
+    # test_polyskel_simple_concave()
+    # test_polyskel_concave()
+    # test_polyskel_concave_two_holes()
+
+    # DAG
+    test_polygon2d_dag_init()
+    
