@@ -285,32 +285,3 @@ def test_polyskel_concave_two_holes():
 
     holes = [hole1, hole2]
     assert helper_assert_polygon_equality(poly, chk_edges, holes, lb=True)
-
-
-def test_polygon_offset():
-    """Test the offset method"""
-
-    # Construct a simple rectangle
-    poly = [[0, 0], [4, 0], [4, 6], [0, 6]]
-    poly = Polygon2D.from_array(poly)
-
-    # Make solution polygon (list of polygons)
-    chk_off = Polygon2D.from_array([[1, 1], [3, 1], [3, 5], [1, 5]])
-
-    # Run method
-    offset = polyskel.offset(poly, 1)
-
-    assert offset[0].is_equivalent(chk_off, 1e-2)
-
-if __name__ == "__main__":
-
-    # Convex
-    test_polyskel_triangle()
-    test_polyskel_square()
-    test_polyskel_pentagon()
-    test_polyskel_complex_convex()
-
-    # Concave
-    test_polyskel_simple_concave()
-    test_polyskel_concave()
-    test_polyskel_concave_two_holes()
