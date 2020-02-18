@@ -14,11 +14,20 @@ from itertools import tee, islice, cycle, chain
 from collections import namedtuple
 import operator
 
+# FIXME: temp while prototyping. Do not PR
+import sys
+lbgeom_path = "/app/ladybug-geometry/"
+if lbgeom_path not in sys.path:
+    sys.path.insert(0, lbgeom_path)
+
 # Geometry classes
 from ladybug_geometry.geometry2d.pointvector import Point2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
+
+# Polygon sorting classes
+from .polygon_dag import PolygonDAG
 
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
 Subtree = namedtuple('Subtree', 'source, height, sinks')
@@ -27,6 +36,7 @@ _SplitEventSubClass = namedtuple('_SplitEvent',
 _EdgeEventSubClass = namedtuple('_EdgeEvent',
                                 'distance intersection_point vertex_a vertex_b')
 log = logging.getLogger("__name__")
+# logging.basicConfig(filename='dag.log',level=logging.DEBUG)
 
 
 class _Debug:
@@ -52,7 +62,6 @@ class _Debug:
     def show(self):
         if self.do:
             self.im.show()
-
 
 _debug = _Debug(None)
 
@@ -225,7 +234,7 @@ class _LAVertex:
 
                     log.debug('\t\tFound valid candidate %s', b)
                     _dist_line_to_b = LineSegment2D(
-                        edge.edge.p, 
+                        edge.edge.p,
                         edge.edge.v).distance_to_point(b)
                     if _dist_line_to_b < self.tol:
                         _dist_line_to_b = 0.0
@@ -237,7 +246,6 @@ class _LAVertex:
             self.prev.bisector, self.bisector)
         i_next = intersection2d.intersect_line2d_infinite(
             self.next.bisector, self.bisector)
-
         # Make EdgeEvent and append to events
         if i_prev is not None:
             dist_to_i_prev = LineSegment2D(
@@ -258,9 +266,9 @@ class _LAVertex:
         if not events:
             return None
 
-        ev = min(
-            events,
-            key=lambda event: self.point.distance_to_point(event.intersection_point))
+        ev = min(events,
+                 key=lambda event:
+                 self.point.distance_to_point(event.intersection_point))
 
         log.info('Generated new event for %s: %s', self, ev)
         return ev
@@ -291,8 +299,7 @@ class _LAVertex:
             self.point.y,
             self.bisector,
             self.edge_left,
-            self.edge_right
-            )
+            self.edge_right)
 
 
 class _SLAV:
@@ -339,41 +346,49 @@ class _SLAV:
         events = []
 
         lav = event.vertex_a.lav
-        if event.vertex_a.prev == event.vertex_b.next:
-            log.info(
-                '%.2f Peak event at intersection %s from <%s,%s,%s> in %s',
-                event.distance,
-                event.intersection_point,
-                event.vertex_a,
-                event.vertex_b,
-                event.vertex_a.prev,
-                lav
-                )
+        # Triangle, one sink point
+        #print(event.intersection_point, event.vertex_a, event.vertex_b)
+
+        if event.vertex_a.prev.point.is_equivalent(event.vertex_b.next.point, self.tol):
+            print('sink')
+            log.info('%.2f Peak event at intersection %s from <%s,%s,%s> in %s',
+                     event.distance, event.intersection_point, event.vertex_a,
+                     event.vertex_b, event.vertex_a.prev, lav)
             self._lavs.remove(lav)
-            for vertex in list(lav):
+            lst_lav = list(lav)
+            print('int', event.intersection_point)
+            for vi, vertex in enumerate(lst_lav):
+                #print(event.intersection_point)
+                #if vi != len(lst_lav)-1:
+                #    print(lst_lav[vi+1].point)
+                #else:
+                #    print('end')
+                #print('-')
                 sinks.append(vertex.point)
                 vertex.invalidate()
+            print('--')
         else:
-            log.info(
-                '%.2f Edge event at intersection %s from <%s,%s> in %s',
-                event.distance,
-                event.intersection_point,
-                event.vertex_a,
-                event.vertex_b,
-                lav
-                )
-            new_vertex = lav.unify(
-                event.vertex_a,
-                event.vertex_b,
-                event.intersection_point
-                )
+            print('edge')
+            log.info('%.2f Edge event at intersection %s from <%s,%s> in %s',
+                     event.distance, event.intersection_point, event.vertex_a,
+                     event.vertex_b, lav)
+            new_vertex = lav.unify(event.vertex_a,
+                                   event.vertex_b, event.intersection_point)
             if lav.head in (event.vertex_a, event.vertex_b):
                 lav.head = new_vertex
+
             sinks.extend((event.vertex_a.point, event.vertex_b.point))
+
+            print(event.vertex_a.point)
+            print(event.intersection_point)
+            print(event.vertex_b.point)
+
             next_event = new_vertex.next_event()
             if next_event is not None:
                 events.append(next_event)
 
+        print(len(sinks))
+        print('--')
         return (Subtree(event.intersection_point, event.distance, sinks), events)
 
     def handle_split_event(self, event):
@@ -401,8 +416,10 @@ class _SLAV:
         norm = event.opposite_edge.v.normalize()
         for v in chain.from_iterable(self._lavs):
             log.debug('%s in %s', v, v.lav)
-            equal_to_edge_left_p = event.opposite_edge.p == v.edge_left.p
-            equal_to_edge_right_p = event.opposite_edge.p == v.edge_right.p
+            equal_to_edge_left_p = event.opposite_edge.p.is_equivalent(v.edge_left.p,
+                                                                       self.tol)
+            equal_to_edge_right_p = event.opposite_edge.p.is_equivalent(v.edge_right.p,
+                                                                        self.tol)
             if norm == v.edge_left.v.normalize() and equal_to_edge_left_p:
                 x = v
                 y = x.prev
@@ -662,14 +679,6 @@ class _EventQueue:
             print(item)
 
 
-class Polygon2dDAG(object):
-    """A directed acyclical graph for nested 2d polygons. Points are graph nodes and edges are
-    ccw direction vector."""
-    
-    def __init__(self):
-        pass
-
-
 # Skeleton Code
 def _window(lst):
     """
@@ -722,6 +731,7 @@ def _subtree_to_edge_mtx(skeleton):
     edge_lst = []
     for subtree in skeleton:
         source_pt = subtree.source
+        print('src', source_pt)
         for sink_pt in subtree.sinks:
             edge_arr = ((source_pt.x, source_pt.y), (sink_pt.x, sink_pt.y))
             edge_lst.append(edge_arr)
@@ -764,24 +774,26 @@ def skeletonize(polygon, holes=None, tol=1e-10):
 
     while not (prioque.empty() or slav.empty()):
         log.debug('SLAV is %s', [repr(lav) for lav in slav])
-        i = prioque.get()
+        i = prioque.get()  # vertex a, b is self or next vertex
+        # Handle edge or split events.
+        # arc: subtree(event.intersection_point, event.distance, sinks)
+        # events: updated events with new vertex
         if isinstance(i, _EdgeEvent):
             if not i.vertex_a.is_valid or not i.vertex_b.is_valid:
                 log.info('%.2f Discarded outdated edge event %s', i.distance, i)
                 continue
-
             (arc, events) = slav.handle_edge_event(i)
         elif isinstance(i, _SplitEvent):
             if not i.vertex.is_valid:
                 log.info('%.2f Discarded outdated split event %s', i.distance, i)
                 continue
             (arc, events) = slav.handle_split_event(i)
-
         prioque.put_all(events)
 
         # As we traverse priorque, output list of "subtrees", which are in the form
         # of (source, height, sinks) where source is the highest points, height is
         # its distance to an edge, and sinks are the point connected to the source.
+        # TODO: Swap this for adj matrix
         if arc is not None:
             output.append(arc)
             for sink in arc.sinks:
@@ -790,5 +802,4 @@ def skeletonize(polygon, holes=None, tol=1e-10):
 
     # Convert subtrees to collection of edges (list of list of point coordinates)
     output = _subtree_to_edge_mtx(output)
-
     return output
