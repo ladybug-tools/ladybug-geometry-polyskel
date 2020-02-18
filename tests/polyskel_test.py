@@ -1,16 +1,9 @@
 # coding=utf-8
-"""Classes for computing straight skeleton for 2D concave polygons."""
+"""Tests for polyskel classes."""
 from __future__ import division
 
 from pprint import pprint as pp
-
 from ladybug_geometry_polyskel import polyskel
-from ladybug_geometry.geometry2d.polygon import Polygon2D
-from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-from ladybug_geometry.geometry3d.pointvector import Vector3D
-from ladybug_geometry_polyskel.polygon_directed_graph import \
-    PolygonDirectedGraph, _vector2hash
-
 
 def helper_check_lavertex(v1, v2):
     """ Checking equality of different LAVertex properties
@@ -285,3 +278,4 @@ def test_polyskel_concave_two_holes():
 
     holes = [hole1, hole2]
     assert helper_assert_polygon_equality(poly, chk_edges, holes, lb=True)
+
