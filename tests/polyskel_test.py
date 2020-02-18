@@ -4,10 +4,16 @@ from __future__ import division
 
 from pprint import pprint as pp
 
-# Import two versions of polyskel
 from ladybug_geometry_polyskel import polyskel as lb_polyskel
-# from tests.test_data import polyskel as orig_polyskel
 
+# FIXME: temp while prototyping. Do not PR
+import sys
+lbgeom_path = "/app/ladybug-geometry/"
+if lbgeom_path not in sys.path:
+    sys.path.insert(0, lbgeom_path)
+
+from ladybug_geometry.geometry2d.polygon import Polygon2D
+from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 
 def helper_check_lavertex(v1, v2):
     """ Checking equality of different LAVertex properties
@@ -318,31 +324,31 @@ def test_polyskel_concave_two_holes():
 
 def test_polygon2d_dag_init():
     """Test the DAG."""
-    
+    from pprint import pprint as pp
+
     # Make the polygon
     p = Polygon2D.from_array(
         [[0, 0], [5, 0], [6, 5], [2, 7], [0, 5]])
 
     # Skeletonize and retrieve DAG from polyskeleton
-    skeletonize(p.to_array(), 1e-10)
+    dag = lb_polyskel.skeletonize(p.to_array(), [], 1e-10)
 
-    
+
 if __name__ == "__main__":
-    
+
     # # Base
     # test_polygon_init()
-    
+
     # # Convex
     # test_polyskel_triangle()
     # test_polyskel_square()
     # test_polyskel_pentagon()
     # test_polyskel_complex_convex()
-    
+
     # # Concave
-    # test_polyskel_simple_concave()
-    # test_polyskel_concave()
-    # test_polyskel_concave_two_holes()
+    test_polyskel_simple_concave()
+    test_polyskel_concave()
+    test_polyskel_concave_two_holes()
 
     # DAG
     test_polygon2d_dag_init()
-    
