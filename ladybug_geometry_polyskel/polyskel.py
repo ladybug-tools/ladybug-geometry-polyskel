@@ -19,6 +19,8 @@ from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
 
+COUNT = 0
+
 # Polygon sorting classes
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
 Subtree = namedtuple('Subtree', 'source, height, sinks')
@@ -29,7 +31,6 @@ _EdgeEventSubClass = namedtuple('_EdgeEvent',
 
 log = logging.getLogger("__name__")
 # logging.basicConfig(filename='dg.log',level=logging.DEBUG)
-
 
 class _Debug:
     """The _Debug class stores the bisectors for each edge event."""
@@ -53,6 +54,7 @@ class _Debug:
     def show(self):
         if self.do:
             self.im.show()
+
 
 _debug = _Debug(None)
 
@@ -355,7 +357,7 @@ class _SLAV:
             for vi, vertex in enumerate(lst_lav):
                 sinks.append(vertex.point)
                 vertex.invalidate()
-            print('--')
+            print('-')
         else:
             log.info('%.2f Edge event at intersection %s from <%s,%s> in %s',
                      event.distance, event.intersection_point, event.vertex_a,
@@ -367,15 +369,15 @@ class _SLAV:
 
             sinks.extend((event.vertex_a.point, event.vertex_b.point))
 
-            print(event.vertex_a.point)
-            print(event.intersection_point)
-            print(event.vertex_b.point)
+            print(event.vertex_a.id, event.vertex_a.point)
+            print(new_vertex.id, 'int',  event.intersection_point)
+            print(event.vertex_b.id, event.vertex_b.point)
 
             next_event = new_vertex.next_event()
             if next_event is not None:
                 events.append(next_event)
-
-        print(len(sinks))
+            print('-')
+        #print(len(sinks))
         print('--')
         return (Subtree(event.intersection_point, event.distance, sinks), events)
 
@@ -759,7 +761,6 @@ def _skeletonize(slav):
         # As we traverse priorque, output list of "subtrees", which are in the form
         # of (source, height, sinks) where source is the highest points, height is
         # its distance to an edge, and sinks are the point connected to the source.
-        # TODO: Swap this for adj matrix
         if arc is not None:
             output.append(arc)
             for sink in arc.sinks:
