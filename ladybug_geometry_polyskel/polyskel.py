@@ -26,6 +26,8 @@ from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
 
+COUNT = 0
+
 # Polygon sorting classes
 from .polygon_dag import PolygonDAG
 
@@ -37,7 +39,6 @@ _EdgeEventSubClass = namedtuple('_EdgeEvent',
                                 'distance intersection_point vertex_a vertex_b')
 log = logging.getLogger("__name__")
 # logging.basicConfig(filename='dag.log',level=logging.DEBUG)
-
 
 class _Debug:
     """The _Debug class stores the bisectors for each edge event during the algorithm
@@ -62,6 +63,7 @@ class _Debug:
     def show(self):
         if self.do:
             self.im.show()
+
 
 _debug = _Debug(None)
 
@@ -116,6 +118,9 @@ class _LAVertex:
         self.next = None
         self.lav = None
         self.tol = tol
+        global COUNT
+        COUNT += 1
+        self.id = COUNT
         # this should be handled better. Maybe membership in lav implies validity?
         self._valid = True
         creator_vectors = (edge_left.v.normalize() * -1, edge_right.v.normalize())
@@ -363,10 +368,11 @@ class _SLAV:
                 #    print(lst_lav[vi+1].point)
                 #else:
                 #    print('end')
-                #print('-')
+                print(vertex.id, vertex.point)
+                print('-')
                 sinks.append(vertex.point)
                 vertex.invalidate()
-            print('--')
+            print('-')
         else:
             print('edge')
             log.info('%.2f Edge event at intersection %s from <%s,%s> in %s',
@@ -379,15 +385,15 @@ class _SLAV:
 
             sinks.extend((event.vertex_a.point, event.vertex_b.point))
 
-            print(event.vertex_a.point)
-            print(event.intersection_point)
-            print(event.vertex_b.point)
+            print(event.vertex_a.id, event.vertex_a.point)
+            print(new_vertex.id, 'int',  event.intersection_point)
+            print(event.vertex_b.id, event.vertex_b.point)
 
             next_event = new_vertex.next_event()
             if next_event is not None:
                 events.append(next_event)
-
-        print(len(sinks))
+            print('-')
+        #print(len(sinks))
         print('--')
         return (Subtree(event.intersection_point, event.distance, sinks), events)
 
@@ -716,30 +722,22 @@ def _normalize_contour(contour):
     return normed_contour
 
 
-def _subtree_to_edge_mtx(skeleton):
+def _slav_from_polygon(polygon, holes, tol):
+    #TODO: add docstring
+    # Code works on cw and ccw order for polygons and holes,
+    # respectively. So reverse vertex order for both inputs
+    polygon = polygon[::-1]
+    if holes is not None:
+        holes = [hole[::-1] for hole in holes]
+    else:
+        holes = []
+    slav = _SLAV(polygon, holes, tol)
+
+    return slav
+
+def _skeletonize(slav):
     """
-    Consumes list of polyskeleton subtrees.
-    Skeleton edges are the segments defined by source point and each sink points.
-
-    Args:
-        skeleton: list of polyskel.Subtree, which are namedTuples of consisting of
-        a source point, and list of sink points.
-
-    Returns:
-        list of LineSegment2Ds
-    """
-    edge_lst = []
-    for subtree in skeleton:
-        source_pt = subtree.source
-        print('src', source_pt)
-        for sink_pt in subtree.sinks:
-            edge_arr = ((source_pt.x, source_pt.y), (sink_pt.x, sink_pt.y))
-            edge_lst.append(edge_arr)
-    return edge_lst
-
-
-def skeletonize(polygon, holes=None, tol=1e-10):
-    """
+    TODO: Fix docstring here
     Compute the straight skeleton of a polygon.
 
     The polygon should be given as a list of vertices in counter-clockwise order.
@@ -756,14 +754,6 @@ def skeletonize(polygon, holes=None, tol=1e-10):
     Returns:
         List of list of skeleton edges (list of point coordinates as tuples)
     """
-
-    # Code works on cw and ccw order for polygons and holes,
-    # respectively. So reverse vertex order for both inputs
-    polygon = polygon[::-1]
-    if holes is not None:
-        holes = [hole[::-1] for hole in holes]
-
-    slav = _SLAV(polygon, holes, tol)
     output = []
     prioque = _EventQueue()
 
@@ -789,17 +779,93 @@ def skeletonize(polygon, holes=None, tol=1e-10):
                 continue
             (arc, events) = slav.handle_split_event(i)
         prioque.put_all(events)
-
+        print('--- outer loop ---')
         # As we traverse priorque, output list of "subtrees", which are in the form
         # of (source, height, sinks) where source is the highest points, height is
         # its distance to an edge, and sinks are the point connected to the source.
-        # TODO: Swap this for adj matrix
         if arc is not None:
             output.append(arc)
             for sink in arc.sinks:
                 _debug.line((arc.source.x, arc.source.y, sink.x, sink.y), fill='red')
             _debug.show()
 
-    # Convert subtrees to collection of edges (list of list of point coordinates)
-    output = _subtree_to_edge_mtx(output)
     return output
+
+def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
+    """
+    Wrapper for main skeletonize function, handles default inputs and returns default
+    output.
+
+    Compute the straight skeleton of a polygon with the _skeletonize function, and
+    returns skeleton as list of subtree of source and sink points.
+
+    Args:
+        polygon: list of list of point coordinates in ccw order.
+            Example square: [[0,0], [1,0], [1,1], [0,1]]
+        holes: list of polygons representing holes in cw order.
+            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
+
+    Returns:
+        List of subtrees.
+    """
+    slav = _slav_from_polygon(polygon, holes, tol)
+    subtree_list = _skeletonize(slav)
+
+    return subtree_list
+
+def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
+    """
+    Compute the straight skeleton of a polygon with the _skeletonize function, and
+    returns skeleton as list of edges.
+
+    Args:
+        polygon: list of list of point coordinates in ccw order.
+            Example square: [[0,0], [1,0], [1,1], [0,1]]
+        holes: list of polygons representing holes in cw order.
+            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
+
+    Returns:
+        list of lines as coordinate tuples.
+    """
+    edge_lst = []
+    slav = _slav_from_polygon(polygon, holes, tol)
+    subtree_list = _skeletonize(slav)
+
+    for subtree in subtree_list:
+        source_pt = subtree.source
+        for sink_pt in subtree.sinks:
+            edge_arr = ((source_pt.x, source_pt.y), (sink_pt.x, sink_pt.y))
+            edge_lst.append(edge_arr)
+
+    return edge_lst
+
+def _skeleton_as_dag(polygon, holes=None, tol=1e-10):
+    """
+    Compute the straight skeleton of a polygon with the _skeletonize function, and
+    returns skeleton as dag.
+
+    Args:
+        skeleton: list of polyskel.Subtree, which are namedTuples of consisting of
+        a source point, and list of sink points.
+
+    Returns:
+        list of LineSegment2Ds
+    """
+    dag = PolygonDAG()
+    slav = _slav_from_polygon(polygon, holes, tol)
+
+    pts = [pt for pt in slav._lavs[0]]
+
+    for pt in pts:
+        print(pt.point)
+
+    # subtree_list = _skeletonize(slav)
+
+    # for subtree in subtree_list:
+    #     source_pt = subtree.source
+
+    #     for sink_pt in subtree.sinks:
+    #         edge_arr = ((source_pt.x, source_pt.y), (sink_pt.x, sink_pt.y))
+    #         #edge_lst.append(edge_arr)
+
+    return dag
