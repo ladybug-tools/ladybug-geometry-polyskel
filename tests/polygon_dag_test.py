@@ -19,107 +19,107 @@ from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 
 
-def helper_skeletonize(polygon, holes, tol=1e-10):
-    # A short skeletonize fx for testing.
-    # Skeletonize fx
-    dag = None
-    polygon = polygon[::-1]
-    slav = polyskel._SLAV(polygon, [], 1e-10)
-    prioque = polyskel._EventQueue()
-
-    for lav in slav:
-        for vertex in lav:
-            v = vertex.next_event()
-            prioque.put(v)
-
-    while not (prioque.empty() or slav.empty()):
-        i = prioque.get()  # vertex a, b is self or next vertex
-        # Handle edge or split events.
-        # arc: subtree(event.intersection_point, event.distance, sinks)
-        # events: updated events with new vertex
-        if isinstance(i, polyskel._EdgeEvent):
-            if not i.vertex_a.is_valid or not i.vertex_b.is_valid:
-                # Discarded outdated edge event
-                continue
-            (arc, events) = slav.handle_edge_event(i)
-        elif isinstance(i, polyskel._SplitEvent):
-            if not i.vertex.is_valid:
-                # Discarded outdated split event
-                continue
-            (arc, events) = slav.handle_split_event(i)
-
-        prioque.put_all(events)
-
-    return dag
+TOL = 1e-10
 
 
-def test_polygon_dict():
-    """Test the dictionary"""
+def _cmpstr(item1, item2):
+    return '{} vs {}'.format(item1, item2)
+
+
+def test_dag_noskel():
+    """Test the dag with no skeleton"""
+
+    # Points
+    pt_array = [[0, 0], [6, 0], [6, 6], [3, 9], [0, 6]]
+
     # Make the polygon
-    polygon = Polygon2D.from_array(
-        [[0, 0], [6, 0], [6, 6], [3, 9], [0, 6]])
+    polygon = Polygon2D.from_array(pt_array)
 
-    chk_key_lst = [
-        [[0, 0], [6, 0]],
-        [[6, 0], [6, 6]],
-        [[6, 6], [3, 9]],
-        [[3, 9], [0, 6]],
-        [[0, 6], [0, 0]]
-    ]
+    # Make the check cases
+    chk_pt_lst = [Point2D.from_array(p) for p in pt_array]
 
-    # Init dictionary
+    # Inititalize a DAG object
     d = PolygonDAG()
-    segments = polygon.segments
+    vertices = polygon.vertices
 
-    # Add edges to dictionary
-    [d.add_segment_adj(segments[i], [segments[i + 1]])
-        for i in range(len(segments) - 1)]
-    d.add_segment_adj(segments[-1], [segments[0]])
+    # Add edges to DAG
+    [d.add_node(vertices[i], [vertices[i + 1]], True)
+        for i in range(len(vertices) - 1)]
+    d.add_node(vertices[-1], [vertices[0]], True)
 
-    # Test the key index
-    for i, chk_key in enumerate(chk_key_lst):
-        line = LineSegment2D.from_array(chk_key)
-        adjs = d.get_segment_adj(line)
-        print(adjs)
-        #print(d.keys[i])
-        #assert LineSegment2D.from_array(chk_key) is d.keys[i]
+    # Test number
+    assert len(chk_pt_lst) == d.num_nodes, _cmpstr(len(chk_pt_lst), d.num_nodes)
 
-    # Test the dictionary
-    pass
+    # Test root
+    assert d.root._order == 0
 
-def test_dag_dict():
-    """Test the DAG."""
-    # Make the polygon
-    polygon = Polygon2D.from_array(
-        [[0, 0], [6, 0], [6, 6], [3, 9], [0, 6]])
+    # Test adjacencies are correct
+    curr_node = d.root
+    for chk_pt in chk_pt_lst:
+        assert chk_pt.is_equivalent(curr_node.pt, TOL), _cmpstr(chk_pt, curr_node.pt)
 
-    chk_edges = [
-        [[3., 4.75735931], [3., 9.]],
-        [[3., 4.75735931], [6., 6.]],
-        [[3., 3.], [6., 0.]],
-        [[3., 3.], [0., 0.]],
-        [[3., 4.75735931], [0., 6.]],
-        [[3., 4.75735931], [3., 4.75735931]],
-        [[3., 4.75735931], [3., 3.]]]
+        # Increment
+        curr_node = curr_node.adj_lst[0]
 
+    # Test the adj matrix
+    amtx = d.adj_matrix()
+
+    # Adj matrix to test against
     chk_amtx = [
-        [[0., 0.]]
-    ]
+         [0, 1, 0, 0, 0],  # 0
+         [0, 0, 1, 0, 0],  # 1
+         [0, 0, 0, 1, 0],  # 2
+         [0, 0, 0, 0, 1],  # 3
+         [1, 0, 0, 0, 0]]  # 4
+    #     0, 1, 2, 3, 4
 
-    skel = polyskel.skeletonize(polygon, [])
-    #dag = helper_skeletonize(polygon, [])
-
-
-    # Test if hash results in all the same edges in dag.dict
-    assert True
-
-    # Test if the edges are correct in the dag.dict
-    assert True
-
-
-def test_dag_amtx():
     # Test if the adj matrix is correct
-    assert True
+    for i in range(len(chk_amtx)):
+        for j in range(len(chk_amtx[0])):
+            assert amtx[i][j] == chk_amtx[i][j], _cmpstr(amtx[i][j], chk_amtx[i][j])
+
+    dag = polyskel._skeleton_as_dag(polygon)
+    print('test')
+
+def test_dag_skel():
+    """Test the DAG with skeleton"""
+
+    pt_array = [[0, 0], [6, 0], [6, 6], [0, 6]]
+
+    # Make the polygon
+    polygon = Polygon2D.from_array(pt_array)
+
+    # Adj matrix to test against
+    chk_amtx = [
+         [0, 1, 0, 1, 1, 0],  # 0
+         [1, 0, 1, 0, 0, 1],  # 1
+         [0, 1, 0, 1, 0, 1],  # 2
+         [1, 0, 1, 0, 1, 0],  # 3
+         [1, 0, 0, 1, 0, 1],  # 4
+         [0, 1, 1, 0, 1, 0]]  # 5
+    #     0, 1, 2, 3, 4, 5
+
+    dag = polyskel._skeleton_as_dag(polygon)
+
+    assert dag is not None
+
+    # amtx, lbls = dag.adj_matrix, dag.adj_labels
+
+    # # Check the labels are integers in order
+    # vertices = polygon.vertices
+    # for li in lbls.keys():
+    #     assert lbls[li].pt.is_equivalent(vertices[li]), \
+    #         _cmpstr(lbls[li].pt, vertices[li])
+
+    # # Check the size
+    # assert len(amtx) == len(chk_amtx), _cmpstr(len(amtx), len(chk_amtx))
+    # assert len(amtx[0]) == len(chk_amtx[0]), _cmpstr(len(amtx[0]), len(chk_amtx[0]))
+
+    # # Test the labels
+    # # Test if the adj matrix is correct
+    # for i in range(len(chk_amtx)):
+    #     for j in range(len(chk_amtx[0])):
+    #         assert amtx[i][j] == chk_amtx[i][j], _cmpstr(amtx[i][j], chk_amtx[i][j])
 
 
 def test_dag_ccw():
@@ -130,6 +130,6 @@ def test_dag_ccw():
 
 if __name__ == "__main__":
 
-    # Test if hash works
-    #test_dag_dict()
-    test_polygon_dict()
+    test_dag_noskel()
+    #test_dag_skel()
+

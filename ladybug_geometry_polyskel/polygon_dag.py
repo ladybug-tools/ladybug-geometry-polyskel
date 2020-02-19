@@ -39,42 +39,119 @@ def _vector2hash(vector, tol=4):
 
 class _Node(object):
     """Private Node class for DAG containment"""
-    def __init__(self, key, val, adj_lst):
+    def __init__(self, key, val, order, exterior, adj_lst):
+        """ Private class to handle nodes in PolygonDAG.
+
+        Args:
+            val: Any python object
+            key: Hash of passed object
+            order: integer counting order of Node (based on DAG propagation)
+            adj_lst: list of keys: ['key1', 'key2' ....  'keyn']
+            exterior: Boolean value representing if point on exterior edge
+        """
         self.key = key
-        self.val = val
-        self.adj_lst = adj_lst  # adj_lst: ['key1', 'key2' ....  'keyn']
+        self.pt = val
+        self._order = order
+        self._exterior = exterior
+        self.adj_lst = adj_lst
 
     def num_children(self):
         return len(self.adj_lst)
 
     def __repr__(self):
-        #return 'key: {}; val: {}'.format(self.key, self.val)
-        return self.key
+        return '{}: {}'.format(self._order, self.key)
+
 
 class PolygonDAG(object):
-    """Private dictionary that coordinates point hashing"""
+    """Private dictionary that coordinates polygon pt adjacencies."""
     def __init__(self):
-        self.dag = {}
-        self.keys = []
-        self.num_node = 0
+        self._dag = {}
+        self._root = None
+        self.num_nodes = 0
 
-    def get_segment_adj(self, val):
-        key = _vector2hash(val)
-        if key in self.dag:
-            return self.dag[key].adj_lst
 
-    def add_segment_adj(self, val, adj_lst):
-        """Instantiate _AdjGraphNode, we creates key = num_node
+    def __repr__(self):
+        return '\n'.join((n.__repr__() for n in self.ordered_nodes()))
+
+    @property
+    def root(self):
+        """ Root node, used for traversal of DAG """
+        if self._root is None:
+            self._root = self.ordered_nodes()[0]
+        return self._root
+
+    def get_node(self, key):
+        """ Retrieves the pt node based on passed value.
+
+        Args:
+            val: A Linept2D object
+
+        Returns:
+            List of adjacent Linept2D objects, as keys
         """
-        # Make the key
+        if key in self._dag:
+            return self._dag[key]
+
+    def add_node(self, val, adj_lst, exterior=False):
+        """ Consumes a polygon pt, and computes its key value, and addss it in the
+        DAG if it doesn't exist. If it does exist it appends adj_lst to existing pt.
+
+        Args:
+            val: A Linept2D object
+            adj_lst: A list of Linept2D objects
+
+        Returns:
+            The pt node.
+        """
+
+        # Get key
         key = _vector2hash(val)
-        if key in self.dag:
-            self.dag[key].adj_lst += adj_lst
 
-        # Add to DAG
-        self.dag[key] = _Node(key, val, adj_lst)
-        self.num_node += 1
+        # Get node if it exists
+        if key not in self._dag:
+            # If key doesn't exist, add to DAG
+            self.num_nodes += 1
+            self._dag[key] = _Node(key, val, self.num_nodes-1, exterior, [])
 
+        # Add the adj_lst to dag
+        adj_lst = [self.add_node(adj, [], exterior) for adj in adj_lst]
+        self._dag[key].adj_lst += adj_lst
+        return self._dag[key]
+
+    def nodes(self):
+        """Returns an iterable of pt nodes"""
+        return self._dag.values()
+
+    def ordered_nodes(self):
+        """Returns an iterable of pt nodes in order of addition"""
+        nodes = list(self.nodes())
+        nodes.sort(key=lambda v: v._order)
+        return nodes
+
+    def adj_matrix(self):
+        """ Returns an adjacency matrix of DAG.
+        1 = adjacency from row node to col node.
+        0 = no adjacency.
+
+        Returns:
+            N x N square matrix where N is number of nodes.
+        """
+        nodes = self.ordered_nodes()
+
+        # Initialize amtx with no adjacencies
+        amtx = [[0 for i in range(self.num_nodes)]
+                for j in range(self.num_nodes)]
+
+        for i in range(self.num_nodes):
+            adj_indices = [adj._order for adj in nodes[i].adj_lst]
+            for adj_idx in adj_indices:
+                amtx[i][adj_idx] = 1
+
+        return amtx
+
+    def adj_labels(self):
+        """ Returns a dictionary where key corresponds to index in adj_matrix """
+        return {i: node for i, node in enumerate(self.ordered_nodes())}
 
 
 # class AdjGraph(object):
