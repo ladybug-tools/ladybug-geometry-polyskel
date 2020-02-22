@@ -34,14 +34,7 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
     if holes is None:
         holes = []
 
-    # FIXME Remove orig code for now
     tst_edges = polyskel.skeleton_as_edge_list(polygon, holes, 1e-10)
-    # Run function
-    # if lb:
-    #    tst_edges = polyskel._skeletonize(polygon, holes)
-    # else:
-    #     skel = orig_polyskel._skeletonize(polygon, holes)
-    #     tst_edges = polyskel._subtree_to_edge_mtx(skel)
 
     # Tests
     # Check types

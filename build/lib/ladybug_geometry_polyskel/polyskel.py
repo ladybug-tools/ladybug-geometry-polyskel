@@ -1,6 +1,7 @@
 # coding=utf-8
 """
 Implementation of the straight skeleton algorithm by Felkel and Obdrzalek[1].
+
 [1] Felkel, Petr and Stepan Obdrzalek. 1998. "Straight Skeleton Implementation." In
 Proceedings of Spring Conference on Computer Graphics, Budmerice, Slovakia. 210 - 218.
 """
@@ -13,6 +14,12 @@ from itertools import tee, islice, cycle, chain
 from collections import namedtuple
 import operator
 
+# FIXME: temp while prototyping. Do not PR
+import sys
+lbgeom_path = "/app/ladybug-geometry/"
+if lbgeom_path not in sys.path:
+    sys.path.insert(0, lbgeom_path)
+
 # Geometry classes
 from ladybug_geometry.geometry2d.pointvector import Point2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
@@ -22,18 +29,20 @@ from ladybug_geometry import intersection2d
 COUNT = 0
 
 # Polygon sorting classes
+from .polygon_directed_graph import PolygonDirectedGraph
+
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
 Subtree = namedtuple('Subtree', 'source, height, sinks')
 _SplitEventSubClass = namedtuple('_SplitEvent',
                                  'distance, intersection_point, vertex, opposite_edge')
 _EdgeEventSubClass = namedtuple('_EdgeEvent',
                                 'distance intersection_point vertex_a vertex_b')
-
 log = logging.getLogger("__name__")
 # logging.basicConfig(filename='dg.log',level=logging.DEBUG)
 
 class _Debug:
-    """The _Debug class stores the bisectors for each edge event."""
+    """The _Debug class stores the bisectors for each edge event during the algorithm
+    operation, and the final output skeleton."""
 
     def __init__(self, image):
         if image is not None:
@@ -66,11 +75,9 @@ def set_debug(image):
 
 
 class _SplitEvent(_SplitEventSubClass):
-    """A Split Event is a reflex vertex that splits an Edge Event.
-
-    They therefore split the entire polygon and create new adjacencies between the split
-    edge and each of the two edges incident to the reflex vertex
-    (Felkel and Obdrzalek 1998, 1).
+    """A Split Event is a reflex vertex that splits an Edge Event. They therefore split
+    the entire polygon and create new adjacencies between the split edge and each of
+    the two edges incident to the reflex vertex (Felkel and Obdrzalek 1998, 1).
     """
 
     __slots__ = ()
@@ -85,9 +92,8 @@ class _SplitEvent(_SplitEventSubClass):
 
 class _EdgeEvent(_EdgeEventSubClass):
     """
-    An Edge Event is an edge extended from a perimeter edge, that shrinks to zero.
-
-    This will make its neighoring edges adjacent (Felkel and Obdrzalek 1998, 2).
+    An Edge Event is an edge extended from a perimeter edge, that shrinks to zero,
+    making its neighoring edges adjacent (Felkel and Obdrzalek 1998, 2).
     """
     __slots__ = ()
 
@@ -100,7 +106,9 @@ class _EdgeEvent(_EdgeEventSubClass):
 
 
 class _LAVertex:
-    """A LAVertex is a vertex in a double connected circular list of active vertices."""
+    """A LAVertex is a vertex in a double connected circular list of active vertices
+    (LAV) (Felkel and Obdrzalek 1998, 3).
+    """
 
     def __init__(self, point, edge_left, edge_right, direction_vectors=None, tol=1e-10):
         self.point = point
@@ -110,7 +118,9 @@ class _LAVertex:
         self.next = None
         self.lav = None
         self.tol = tol
-        self.id = None
+        global COUNT
+        COUNT += 1
+        self.id = COUNT
         # this should be handled better. Maybe membership in lav implies validity?
         self._valid = True
         creator_vectors = (edge_left.v.normalize() * -1, edge_right.v.normalize())
@@ -146,10 +156,10 @@ class _LAVertex:
 
     def next_event(self):
         """ Computes the event (change to edge) associated with each polygon vertex.
-
         Reflex vertices can result in split or edge events, while non-reflex vertices
         will result in only edge events.
-
+        Args:
+            None
         Returns:
             EdgeEvent associated with self.
         """
@@ -298,21 +308,19 @@ class _LAVertex:
 
 
 class _SLAV:
-    """ A SLAV is a set of circular lists of active vertices.
-
-    It stores a loop of vertices for the outer boundary, and for all holes and
-    sub-polyons created during the straight skeleton computation
-    (Felkel and Obdrzalek 1998, 2).
+    """ A SLAV is a set of circular lists of active vertices. It stores a loop of
+    vertices for the outer boundary, and for all holes and sub-polyons created durnig
+    the straight skeleton computation (Felkel and Obdrzalek 1998, 2).
     """
 
     def __init__(self, polygon, holes, tol):
         self.tol = tol
-        contours = [_normalize_contour(polygon, tol)]
-        contours.extend([_normalize_contour(hole, tol) for hole in holes])
+        contours = [_normalize_contour(polygon)]
+        contours.extend([_normalize_contour(hole) for hole in holes])
 
         self._lavs = [_LAV.from_polygon(contour, self) for contour in contours]
 
-        # Store original polygon edges for calculating split events
+        # store original polygon edges for calculating split events
         self._original_edges = [
             _OriginalEdge(
                 LineSegment2D.from_end_points(vertex.prev.point, vertex.point),
@@ -332,14 +340,10 @@ class _SLAV:
         return len(self._lavs) == 0
 
     def handle_edge_event(self, event):
-        """Resolves adjacency of new edge event.
-
-        This function resolves the edge event with previous edges, LAV, and then stores
-        edge information in a Subtree.
-
+        """Consumes an edge event, resolves adjacency of new edge event with previous
+        edges, LAV, and then stores edge information in a Subtree.
         Args:
             event: EdgeEvent
-
         Returns:
             Subtree namedTuple
         """
@@ -348,17 +352,29 @@ class _SLAV:
 
         lav = event.vertex_a.lav
         # Triangle, one sink point
+        #print(event.intersection_point, event.vertex_a, event.vertex_b)
+
         if event.vertex_a.prev.point.is_equivalent(event.vertex_b.next.point, self.tol):
+            #print('sink')
             log.info('%.2f Peak event at intersection %s from <%s,%s,%s> in %s',
                      event.distance, event.intersection_point, event.vertex_a,
                      event.vertex_b, event.vertex_a.prev, lav)
             self._lavs.remove(lav)
             lst_lav = list(lav)
+            #print('int', event.intersection_point)
             for vi, vertex in enumerate(lst_lav):
+                #print(event.intersection_point)
+                #if vi != len(lst_lav)-1:
+                #    print(lst_lav[vi+1].point)
+                #else:
+                #    print('end')
+                #print(vertex.id, vertex.point)
+                #print('-')
                 sinks.append(vertex.point)
                 vertex.invalidate()
             #print('-')
         else:
+            #print('edge')
             log.info('%.2f Edge event at intersection %s from <%s,%s> in %s',
                      event.distance, event.intersection_point, event.vertex_a,
                      event.vertex_b, lav)
@@ -382,14 +398,10 @@ class _SLAV:
         return (Subtree(event.intersection_point, event.distance, sinks), events)
 
     def handle_split_event(self, event):
-        """Consumes a split event.
-
-        This function resolves the adjacency of new split event with previous edges, LAV,
-        and then stores edge information in a Subtree.
-
+        """Consumes a split event, resolves adjacency of new split event with previous
+        edges, LAV, and then stores edge information in a Subtree.
         Args:
             event: EdgeEvent
-
         Returns:
             Subtree namedTuple
         """
@@ -506,9 +518,8 @@ class _SLAV:
 
 
 class _LAV:
-    """A single circular list of active vertices.
-
-    Stored in a SLAV (Felkel and Obdrzalek 1998, 2).
+    """ A LAV is a single circular list of active vertices, stored in a SLAV (Felkel
+    and Obdrzalek 1998, 2).
     """
 
     def __init__(self, slav):
@@ -520,13 +531,12 @@ class _LAV:
 
     @classmethod
     def from_polygon(cls, polygon, slav):
-        """Construct a LAV from a list of point coordinates representing a polygon.
-
+        """Constructs a LAV from a list of point coordinates
+        representing a polygon.
         Args:
             polygon: list of points (tuple of x,y coordinates).
             slav: SLAV (a set of circular lists of active vertices).
             tol: tolerance for point equality.
-
         Returns:
             LAV (single circular list of active vertices).
         """
@@ -553,13 +563,11 @@ class _LAV:
     @classmethod
     def from_chain(cls, head, slav):
         """Creates new LAV from consumed _LAVertex, and reference _SLAV.
-
         Args:
             head: Head _LAVertex that creates new _LAV loop.
             slav: Reference SLAV (a set of circular lists of active vertices).
-
         Returns:
-            LAV (a single circular list of active vertices).
+            LAV (single circular list of active vertices).
         """
         lav = cls(slav)
         lav.head = head
@@ -570,7 +578,6 @@ class _LAV:
 
     def invalidate(self, vertex):
         """Sets vertex validity to False, and handles head relationship.
-
         Args:
             vertex: _LAVertex to be invalidated.
         """
@@ -582,8 +589,8 @@ class _LAV:
         vertex.lav = None
 
     def unify(self, vertex_a, vertex_b, point):
-        """Generate a new _LAVertex from input Point2D and then resolves adjacency to old edges.
-
+        """Generates a new _LAVertex from input Point2D,
+        and then resolves adjacency to old edges.
         Args:
             vertex_a = _LAVertex
             vertex_b = _LAVertex
@@ -638,7 +645,8 @@ class _LAV:
                 return
 
     def _show(self):
-        """ Iterates through _LAV linked list and prints _LAVertex."""
+        """ Iterates through _LAV linked list and prints _LAVertex.
+        """
         cur = self.head
         while True:
             print(cur.__repr__())
@@ -680,14 +688,11 @@ class _EventQueue:
 # Skeleton Code
 def _window(lst):
     """
-    Window operator for lists.
-
-    Consume a list of items, and returns a zipped list of the previous, current and next
-    items in the list, accessible by the same index.
-
+    Consumes a list of items, and returns a zipped list of the
+    previous, current and next items in the list, accessible by the
+    same index.
     Args:
         lst: list
-
     Returns:
         Zipped list of previous, current and next items in list.
     """
@@ -697,13 +702,12 @@ def _window(lst):
     return zip(prevs, items, nexts)
 
 
-def _normalize_contour(contour, tol):
+def _normalize_contour(contour):
     """
     Consumes list of x,y coordinate tuples and returns list of Point2Ds.
 
     Args:
         contour: list of x,y tuples from contour.
-        tol: Number for point equivalence tolerance.
     Return:
          list of Point2Ds of contour.
     """
@@ -712,26 +716,30 @@ def _normalize_contour(contour, tol):
     for prev, point, next in _window(contour):
         normed_prev = (point - prev).normalize()
         normed_next = (next - point).normalize()
-
-        if not point.is_equivalent(next, tol) or \
-                normed_prev.is_equivalent(normed_next, tol):
+        #if not point.is_equivalent(next, tol) or normed_prev.is_equivalent(normed_next):
+        if not (point == next or normed_prev == normed_next):
             normed_contour.append(point)
 
     return normed_contour
 
-
 def _skeletonize(slav):
     """
-    Compute polygon straight skeleton from a Set of List of Active vertice (SLAV).
+    TODO: Fix docstring here
+    Compute the straight skeleton of a polygon.
 
-    The SLAV will represent the polygon as a double linked list of vertices in
-    counter-clockwise order. Holes is a similiar list with the vertices of which
-    should be in clockwise order.
+    The polygon should be given as a list of vertices in counter-clockwise order.
+    Holes is a similiar list with the vertices of which should be in clockwise order.
+
+    Returns the straight skeleton as a list of edges, where edges are a list of
+    point tuples.
 
     Args:
-        slav: SLAV object.
+        polygon: list of list of point coordinates in ccw order.
+            Example square: [[0,0], [1,0], [1,1], [0,1]]
+        holes: list of polygons representing holes in cw order.
+            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
     Returns:
-        List of subtrees.
+        List of list of skeleton edges (list of point coordinates as tuples)
     """
     output = []
     prioque = _EventQueue()
@@ -772,22 +780,25 @@ def _skeletonize(slav):
 
 def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
     """
-    Compute the polygon straight skeleton as a list of subtree of source and sink points.
+    Wrapper for main skeletonize function, handles default inputs and returns default
+    output.
+
+    Compute the straight skeleton of a polygon with the _skeletonize function, and
+    returns skeleton as list of subtree of source and sink points.
 
     Args:
-        polygon: nested list of endpoint coordinates in ccw order.
+        polygon: list of list of point coordinates in ccw order.
             Example square: [[0,0], [1,0], [1,1], [0,1]]
         holes: list of polygons representing holes in cw order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
-        tol: Tolerance for point equivalence.
 
     Returns:
         List of subtrees.
     """
 
     # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [reversed(hole) for hole in holes]
-    slav = _SLAV(reversed(polygon), holes, tol)
+    holes = [] if holes is None else [hole[::-1] for hole in holes]
+    slav = _SLAV(polygon[::-1], holes, tol)
 
     subtree_list = _skeletonize(slav)
 
@@ -796,14 +807,14 @@ def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
 
 def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     """
-    Compute the straight skeleton of a polygon and returns skeleton as list of edges.
+    Compute the straight skeleton of a polygon with the _skeletonize function, and
+    returns skeleton as list of edges.
 
     Args:
         polygon: list of list of point coordinates in ccw order.
             Example square: [[0,0], [1,0], [1,1], [0,1]]
         holes: list of polygons representing holes in cw order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
-        tol: Tolerance for point equivalence.
 
     Returns:
         list of lines as coordinate tuples.
@@ -822,3 +833,48 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
             edge_lst.append(edge_arr)
 
     return edge_lst
+
+
+def _skeleton_as_dg(polygon, holes=None, tol=1e-10):
+    """
+    Compute the straight skeleton of a polygon with the _skeletonize function, and
+    returns skeleton as dg.
+
+    Args:
+        skeleton: list of polyskel.Subtree, which are namedTuples of consisting of
+        a source point, and list of sink points.
+
+    Returns:
+        list of LineSegment2Ds
+    """
+    dg = PolygonDirectedGraph()
+
+    # Reverse order to ensure cw order for input
+    holes = [] if holes is None else [hole[::-1] for hole in holes]
+    slav = _SLAV(polygon[::-1], holes, tol)
+
+    # Get the exterior polygon coordinates making sure to flip back to ccw
+    vertices = list(slav._lavs[0])[::-1]
+
+    # Add to dg
+
+    # Start with last point to be consistent with order of point input.
+
+    # Add rest of vertices in order.
+    for i in range(len(vertices) - 1):
+        curr_v = vertices[i]
+        next_v = vertices[i+1]
+        dg.add_node(curr_v.point, [next_v.point])
+    dg.add_node(vertices[-1].point, [vertices[0].point])
+
+    # Compute the skeleton
+    subtree_list = _skeletonize(slav)
+
+    for subtree in subtree_list:
+        event_pt = subtree.source
+        for sink_pt in subtree.sinks:
+            # Add a bidirectional edge to represent skeleton edges
+            dg.add_node(sink_pt, [event_pt])
+            dg.add_node(event_pt, [sink_pt])
+
+    return dg
