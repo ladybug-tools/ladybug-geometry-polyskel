@@ -44,13 +44,14 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
     if holes is None:
         holes = []
 
-    #FIXME Remove orig code for now
-    tst_edges = lb_polyskel.skeletonize(polygon, holes)
+    # FIXME Remove orig code for now
+    slav = lb_polyskel._SLAV(polygon, holes, 1e-10)
+    tst_edges = lb_polyskel._skeletonize(slav)
     # Run function
     # if lb:
-    #    tst_edges = lb_polyskel.skeletonize(polygon, holes)
+    #    tst_edges = lb_polyskel._skeletonize(polygon, holes)
     # else:
-    #     skel = orig_polyskel.skeletonize(polygon, holes)
+    #     skel = orig_polyskel._skeletonize(polygon, holes)
     #     tst_edges = lb_polyskel._subtree_to_edge_mtx(skel)
 
     # Tests
@@ -322,33 +323,19 @@ def test_polyskel_concave_two_holes():
     holes = [hole1, hole2]
     assert helper_assert_polygon_equality(poly, chk_edges, holes, lb=True)
 
-def test_polygon2d_dag_init():
-    """Test the DAG."""
-    from pprint import pprint as pp
-
-    # Make the polygon
-    p = Polygon2D.from_array(
-        [[0, 0], [5, 0], [6, 5], [2, 7], [0, 5]])
-
-    # Skeletonize and retrieve DAG from polyskeleton
-    dag = lb_polyskel.skeletonize(p.to_array(), [], 1e-10)
-
 
 if __name__ == "__main__":
 
-    # # Base
-    # test_polygon_init()
+    # Base
+    test_polygon_init()
 
-    # # Convex
-    # test_polyskel_triangle()
-    # test_polyskel_square()
-    # test_polyskel_pentagon()
-    # test_polyskel_complex_convex()
+    # Convex
+    test_polyskel_triangle()
+    test_polyskel_square()
+    test_polyskel_pentagon()
+    test_polyskel_complex_convex()
 
     # # Concave
     test_polyskel_simple_concave()
     test_polyskel_concave()
     test_polyskel_concave_two_holes()
-
-    # DAG
-    test_polygon2d_dag_init()
