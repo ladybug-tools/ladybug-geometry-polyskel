@@ -5,15 +5,9 @@ from __future__ import division
 from pprint import pprint as pp
 
 from ladybug_geometry_polyskel import polyskel as lb_polyskel
-
-# FIXME: temp while prototyping. Do not PR
-import sys
-lbgeom_path = "/app/ladybug-geometry/"
-if lbgeom_path not in sys.path:
-    sys.path.insert(0, lbgeom_path)
-
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
+
 
 def helper_check_lavertex(v1, v2):
     """ Checking equality of different LAVertex properties
@@ -45,8 +39,7 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
         holes = []
 
     # FIXME Remove orig code for now
-    slav = lb_polyskel._SLAV(polygon, holes, 1e-10)
-    tst_edges = lb_polyskel._skeletonize(slav)
+    tst_edges = lb_polyskel.skeleton_as_edge_list(polygon, holes, 1e-10)
     # Run function
     # if lb:
     #    tst_edges = lb_polyskel._skeletonize(polygon, holes)
@@ -91,39 +84,6 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
         raise Exception('Equality error.')
 
     return is_equal
-
-
-def test_polygon_init():
-    """ Test rectangle init."""
-    polygon = [
-        [0, 0],
-        [2, 0],
-        [2, 2],
-        [1, 1],
-        [0, 2]]
-
-    # With LB
-    SLAV = lb_polyskel._SLAV(polygon, [], tol=1e-10)
-    contour = lb_polyskel._normalize_contour(polygon)
-    lb_lav = lb_polyskel._LAV.from_polygon(contour, SLAV)
-
-    # FIXME Removing original code dependency for now
-    # # With orig
-    # SLAV = orig_polyskel._SLAV(polygon, [])
-    # contour = orig_polyskel._normalize_contour(polygon)
-    # orig_lav = orig_polyskel._LAV.from_polygon(contour, SLAV)
-
-    # # iterate through LAV
-    # for i in range(4):
-    #     if i == 0:
-    #         vertex1 = lb_lav.head
-    #         vertex2 = orig_lav.head
-    #     else:
-    #         vertex1 = vertex1.next
-    #         vertex2 = vertex2.next
-
-    #     # Compare
-    #     helper_check_lavertex(vertex1, vertex2)
 
 
 def test_polyskel_triangle():
@@ -325,9 +285,6 @@ def test_polyskel_concave_two_holes():
 
 
 if __name__ == "__main__":
-
-    # Base
-    test_polygon_init()
 
     # Convex
     test_polyskel_triangle()
