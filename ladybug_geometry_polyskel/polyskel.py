@@ -14,19 +14,11 @@ from itertools import tee, islice, cycle, chain
 from collections import namedtuple
 import operator
 
-# FIXME: temp while prototyping. Do not PR
-import sys
-lbgeom_path = "/app/ladybug-geometry/"
-if lbgeom_path not in sys.path:
-    sys.path.insert(0, lbgeom_path)
-
 # Geometry classes
 from ladybug_geometry.geometry2d.pointvector import Point2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
-
-COUNT = 0
 
 # Polygon sorting classes
 from .polygon_directed_graph import PolygonDirectedGraph
@@ -37,8 +29,10 @@ _SplitEventSubClass = namedtuple('_SplitEvent',
                                  'distance, intersection_point, vertex, opposite_edge')
 _EdgeEventSubClass = namedtuple('_EdgeEvent',
                                 'distance intersection_point vertex_a vertex_b')
+
 log = logging.getLogger("__name__")
 # logging.basicConfig(filename='dg.log',level=logging.DEBUG)
+
 
 class _Debug:
     """The _Debug class stores the bisectors for each edge event during the algorithm
@@ -118,9 +112,7 @@ class _LAVertex:
         self.next = None
         self.lav = None
         self.tol = tol
-        global COUNT
-        COUNT += 1
-        self.id = COUNT
+        self.id = None
         # this should be handled better. Maybe membership in lav implies validity?
         self._valid = True
         creator_vectors = (edge_left.v.normalize() * -1, edge_right.v.normalize())
@@ -315,12 +307,12 @@ class _SLAV:
 
     def __init__(self, polygon, holes, tol):
         self.tol = tol
-        contours = [_normalize_contour(polygon)]
+        contours = [_normalize_contour(polygon, tol)]
         contours.extend([_normalize_contour(hole) for hole in holes])
 
         self._lavs = [_LAV.from_polygon(contour, self) for contour in contours]
 
-        # store original polygon edges for calculating split events
+        # Store original polygon edges for calculating split events
         self._original_edges = [
             _OriginalEdge(
                 LineSegment2D.from_end_points(vertex.prev.point, vertex.point),
@@ -352,29 +344,16 @@ class _SLAV:
 
         lav = event.vertex_a.lav
         # Triangle, one sink point
-        #print(event.intersection_point, event.vertex_a, event.vertex_b)
-
         if event.vertex_a.prev.point.is_equivalent(event.vertex_b.next.point, self.tol):
-            #print('sink')
             log.info('%.2f Peak event at intersection %s from <%s,%s,%s> in %s',
                      event.distance, event.intersection_point, event.vertex_a,
                      event.vertex_b, event.vertex_a.prev, lav)
             self._lavs.remove(lav)
             lst_lav = list(lav)
-            #print('int', event.intersection_point)
             for vi, vertex in enumerate(lst_lav):
-                #print(event.intersection_point)
-                #if vi != len(lst_lav)-1:
-                #    print(lst_lav[vi+1].point)
-                #else:
-                #    print('end')
-                #print(vertex.id, vertex.point)
-                #print('-')
                 sinks.append(vertex.point)
                 vertex.invalidate()
-            #print('-')
         else:
-            #print('edge')
             log.info('%.2f Edge event at intersection %s from <%s,%s> in %s',
                      event.distance, event.intersection_point, event.vertex_a,
                      event.vertex_b, lav)
@@ -384,17 +363,10 @@ class _SLAV:
                 lav.head = new_vertex
 
             sinks.extend((event.vertex_a.point, event.vertex_b.point))
-
-            #print(event.vertex_a.id, event.vertex_a.point)
-            #print(new_vertex.id, 'int',  event.intersection_point)
-            #print(event.vertex_b.id, event.vertex_b.point)
-
             next_event = new_vertex.next_event()
             if next_event is not None:
                 events.append(next_event)
-            #print('-')
-        #print(len(sinks))
-        #print('--')
+
         return (Subtree(event.intersection_point, event.distance, sinks), events)
 
     def handle_split_event(self, event):
@@ -702,12 +674,13 @@ def _window(lst):
     return zip(prevs, items, nexts)
 
 
-def _normalize_contour(contour):
+def _normalize_contour(contour, tol):
     """
     Consumes list of x,y coordinate tuples and returns list of Point2Ds.
 
     Args:
         contour: list of x,y tuples from contour.
+        tol: Number for point equivalence tolerance.
     Return:
          list of Point2Ds of contour.
     """
@@ -716,30 +689,27 @@ def _normalize_contour(contour):
     for prev, point, next in _window(contour):
         normed_prev = (point - prev).normalize()
         normed_next = (next - point).normalize()
-        #if not point.is_equivalent(next, tol) or normed_prev.is_equivalent(normed_next):
-        if not (point == next or normed_prev == normed_next):
+
+        if not point.is_equivalent(next, tol) or \
+                normed_prev.is_equivalent(normed_next, tol):
             normed_contour.append(point)
 
     return normed_contour
 
+
 def _skeletonize(slav):
     """
-    TODO: Fix docstring here
-    Compute the straight skeleton of a polygon.
+    Main function to compute the straight skeleton of a polygon from its set of
+    List of Active vertice (SLAV).
 
-    The polygon should be given as a list of vertices in counter-clockwise order.
-    Holes is a similiar list with the vertices of which should be in clockwise order.
-
-    Returns the straight skeleton as a list of edges, where edges are a list of
-    point tuples.
+    The SLAV will represent the polygon as a double linked list of vertices in
+    counter-clockwise order. Holes is a similiar list with the vertices of which
+    should be in clockwise order.
 
     Args:
-        polygon: list of list of point coordinates in ccw order.
-            Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in cw order.
-            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
+        slav: SLAV object.
     Returns:
-        List of list of skeleton edges (list of point coordinates as tuples)
+        List of subtrees.
     """
     output = []
     prioque = _EventQueue()
