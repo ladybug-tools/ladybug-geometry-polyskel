@@ -19,8 +19,6 @@ from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
 
-COUNT = 0
-
 # Polygon sorting classes
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
 Subtree = namedtuple('Subtree', 'source, height, sinks')
@@ -31,6 +29,7 @@ _EdgeEventSubClass = namedtuple('_EdgeEvent',
 
 log = logging.getLogger("__name__")
 # logging.basicConfig(filename='dg.log',level=logging.DEBUG)
+
 
 class _Debug:
     """The _Debug class stores the bisectors for each edge event."""
@@ -357,7 +356,6 @@ class _SLAV:
             for vi, vertex in enumerate(lst_lav):
                 sinks.append(vertex.point)
                 vertex.invalidate()
-            #print('-')
         else:
             log.info('%.2f Edge event at intersection %s from <%s,%s> in %s',
                      event.distance, event.intersection_point, event.vertex_a,
@@ -368,17 +366,10 @@ class _SLAV:
                 lav.head = new_vertex
 
             sinks.extend((event.vertex_a.point, event.vertex_b.point))
-
-            #print(event.vertex_a.id, event.vertex_a.point)
-            #print(new_vertex.id, 'int',  event.intersection_point)
-            #print(event.vertex_b.id, event.vertex_b.point)
-
             next_event = new_vertex.next_event()
             if next_event is not None:
                 events.append(next_event)
-            #print('-')
-        #print(len(sinks))
-        #print('--')
+
         return (Subtree(event.intersection_point, event.distance, sinks), events)
 
     def handle_split_event(self, event):
