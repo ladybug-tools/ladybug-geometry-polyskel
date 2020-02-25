@@ -6,12 +6,6 @@ from pprint import pprint as pp
 from ladybug_geometry_polyskel import polyskel
 from ladybug_geometry_polyskel.polygon_directed_graph import PolygonDirectedGraph
 
-# FIXME: temp while prototyping. Do not PR
-import sys
-lbgeom_path = "/app/ladybug-geometry/"
-if lbgeom_path not in sys.path:
-    sys.path.insert(0, lbgeom_path)
-
 from math import pi
 
 from ladybug_geometry.geometry2d.polygon import Polygon2D
