@@ -99,7 +99,7 @@ def test_dg_skel_rectangle():
         4: 'Point2D (2.00, 2.00)',
         5: 'Point2D (4.00, 2.00)'}
 
-    dg = polyskel._skeleton_as_dg(polygon)
+    dg = polyskel._skeleton_as_directed_graph(polygon)
 
     amtx = dg.adj_matrix()
     lbls = dg.adj_matrix_labels()
@@ -156,7 +156,7 @@ def test_dg_skel_concave():
         6: 'Point2D (3.91, 2.09)',
         7: 'Point2D (3.00, 1.82)'}
 
-    dg = polyskel._skeleton_as_dg(polygon.to_array())
+    dg = polyskel._skeleton_as_directed_graph(polygon.to_array())
 
     amtx = dg.adj_matrix()
     lbls = dg.adj_matrix_labels()
@@ -198,12 +198,12 @@ def test_edge_direction():
     dg.add_node(pt_array[-1], [pt_array[0]])
 
     # Check
-    nodes = dg.ordered_nodes()
+    nodes = dg.ordered_nodes
     for i in range(dg.num_nodes-1):
         assert not dg.is_edge_bidirect(nodes[i], nodes[i+1])
 
     # Check unidirectionality
-    next_node = dg.get_next_unidirect_node(dg.root)
+    next_node = dg.next_unidirect_node(dg.root)
     assert not dg.is_edge_bidirect(dg.root, next_node)
 
     # Add bidirectional edge
@@ -211,7 +211,7 @@ def test_edge_direction():
     bidir_key = dg.add_node(Point2D(1, 1), [Point2D(0, 0)])
 
     # Check bidirectionality
-    assert dg.is_edge_bidirect(dg.get_node(bidir_key), dg.root)
+    assert dg.is_edge_bidirect(dg.node(bidir_key), dg.root)
 
 
 def test_exterior_cycle():
@@ -219,9 +219,9 @@ def test_exterior_cycle():
 
     # Make the polygon
     polygon = Polygon2D.from_array([[0, 0], [6, 0], [6, 4], [0, 4]])
-    dg = polyskel._skeleton_as_dg(polygon)
+    dg = polyskel._skeleton_as_directed_graph(polygon)
 
-    exterior = dg.get_exterior_cycle(dg.root)
+    exterior = dg.exterior_cycle(dg.root)
 
     for pt, node in zip(polygon.vertices, exterior):
         assert node.pt.is_equivalent(pt, 1e-10)
@@ -263,11 +263,11 @@ def test_min_ccw_cycle():
     chk_poly = Polygon2D.from_array(chk_poly)
 
     # Skeletonize
-    dg = polyskel._skeleton_as_dg(poly.to_array())
+    dg = polyskel._skeleton_as_directed_graph(poly.to_array())
 
     ref_node = dg.root
 
-    next_node = dg.get_next_unidirect_node(ref_node)
+    next_node = dg.next_unidirect_node(ref_node)
     _cycle = [ref_node]
     cycle = dg.min_ccw_cycle(ref_node, next_node, next_node.adj_lst, _cycle)
 
@@ -276,7 +276,7 @@ def test_min_ccw_cycle():
     assert cycle_poly.is_equivalent(chk_poly, 1e-2)
 
 
-def test_get_smallest_closed_cycles():
+def test_smallest_closed_cycles():
     """ Test method to define closed loops representing nested
     polygons """
 
@@ -294,9 +294,9 @@ def test_get_smallest_closed_cycles():
     chk_poly_lst = [Polygon2D.from_array(ptlst) for ptlst in chk_poly_lst]
 
     # Skeletonize
-    dg = polyskel._skeleton_as_dg(polygon.to_array())
+    dg = polyskel._skeleton_as_directed_graph(polygon.to_array())
 
-    poly_lst = dg.get_smallest_closed_cycles()
+    poly_lst = dg.smallest_closed_cycles()
 
     assert len(poly_lst) == len(chk_poly_lst)
     assert isinstance(poly_lst[0][0].pt, Point2D)
@@ -316,4 +316,4 @@ if __name__ == "__main__":
     test_exterior_cycle()
     test_ccw_angle()
     test_min_ccw_cycle()
-    test_get_smallest_closed_cycles()
+    test_smallest_closed_cycles()
