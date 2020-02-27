@@ -308,7 +308,7 @@ class _SLAV:
     def __init__(self, polygon, holes, tol):
         self.tol = tol
         contours = [_normalize_contour(polygon, tol)]
-        contours.extend([_normalize_contour(hole) for hole in holes])
+        contours.extend([_normalize_contour(hole, tol) for hole in holes])
 
         self._lavs = [_LAV.from_polygon(contour, self) for contour in contours]
 
@@ -750,11 +750,8 @@ def _skeletonize(slav):
 
 def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
     """
-    Wrapper for main skeletonize function, handles default inputs and returns default
-    output.
-
-    Compute the straight skeleton of a polygon with the _skeletonize function, and
-    returns skeleton as list of subtree of source and sink points.
+    Compute the straight skeleton of a polygon with and returns skeleton as
+    list of subtree of source and sink points.
 
     Args:
         polygon: list of list of point coordinates in ccw order.
@@ -767,8 +764,8 @@ def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
     """
 
     # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [hole[::-1] for hole in holes]
-    slav = _SLAV(polygon[::-1], holes, tol)
+    holes = [] if holes is None else [reversed(hole) for hole in holes]
+    slav = _SLAV(reversed(polygon), holes, tol)
 
     subtree_list = _skeletonize(slav)
 
@@ -777,8 +774,7 @@ def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
 
 def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     """
-    Compute the straight skeleton of a polygon with the _skeletonize function, and
-    returns skeleton as list of edges.
+    Compute the straight skeleton of a polygon and returns skeleton as list of edges.
 
     Args:
         polygon: list of list of point coordinates in ccw order.
@@ -805,17 +801,17 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     return edge_lst
 
 
-def _skeleton_as_dg(polygon, holes=None, tol=1e-10):
+def _skeleton_as_directed_graph(polygon, holes=None, tol=1e-10):
     """
-    Compute the straight skeleton of a polygon with the _skeletonize function, and
-    returns skeleton as dg.
+    Compute the straight skeleton of a polygon and returns skeleton as
+    a PolygonDirectedGraph.
 
     Args:
         skeleton: list of polyskel.Subtree, which are namedTuples of consisting of
         a source point, and list of sink points.
 
     Returns:
-        list of LineSegment2Ds
+        A PolygonDirectedGraph object.
     """
     dg = PolygonDirectedGraph()
 
@@ -826,16 +822,13 @@ def _skeleton_as_dg(polygon, holes=None, tol=1e-10):
     # Get the exterior polygon coordinates making sure to flip back to ccw
     vertices = list(slav._lavs[0])[::-1]
 
-    # Add to dg
-
-    # Start with last point to be consistent with order of point input.
-
-    # Add rest of vertices in order.
+    # Start with last point to be consistent with order of point input, and then
+    # add rest of vertices in order.
     for i in range(len(vertices) - 1):
         curr_v = vertices[i]
         next_v = vertices[i+1]
-        dg.add_node(curr_v.point, [next_v.point])
-    dg.add_node(vertices[-1].point, [vertices[0].point])
+        dg.add_node(curr_v.point, [next_v.point], exterior=True)
+    dg.add_node(vertices[-1].point, [vertices[0].point], exterior=True)
 
     # Compute the skeleton
     subtree_list = _skeletonize(slav)
@@ -845,6 +838,6 @@ def _skeleton_as_dg(polygon, holes=None, tol=1e-10):
         for sink_pt in subtree.sinks:
             # Add a bidirectional edge to represent skeleton edges
             dg.add_node(sink_pt, [event_pt])
-            dg.add_node(event_pt, [sink_pt])
+            dg.add_node(event_pt, [sink_pt], exterior=False)
 
     return dg

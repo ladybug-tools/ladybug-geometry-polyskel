@@ -1,15 +1,9 @@
 # coding=utf-8
 """
-Implementation of a dg.
+Implementation of a Directed Graph.
 """
 
 from __future__ import division
-
-# FIXME: temp while prototyping. Do not PR
-import sys
-lbgeom_path = "/app/ladybug-geometry/"
-if lbgeom_path not in sys.path:
-    sys.path.insert(0, lbgeom_path)
 
 # Geometry classes
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
@@ -21,48 +15,42 @@ import math
 
 
 def _vector2hash(vector, tol=4):
-    #  FIXME: find a better way of hashing spatial coordinates
-    # myhash = "("
-    # for i in range(len(vector)):
-    #     coordinate = vector[i]
-    #     myhash += str(round(coordinate, tol))
-    #     if i < len(vector)-1:
-    #         myhash += ","
-    # myhash += ")"
+    #  TODO: Find a better way of hashing spatial coordinates
     myhash = vector.__repr__()
     return myhash
 
 
 class _Node(object):
-    """Private Node class for dg containment"""
-    def __init__(self, key, val, order, adj_lst):
-        """ Private class to handle nodes in Polygondg.
+
+    def __init__(self, key, val, order, adj_lst, exterior):
+        """Private class to handle nodes in PolygonDirectedGraph.
 
         Args:
             val: Any python object
             key: Hash of passed object
             order: integer counting order of Node (based on dg propagation)
             adj_lst: list of keys: ['key1', 'key2' ....  'keyn']
-            exterior: Boolean value representing if point on exterior edge
+            exterior: Allows user to pass node boundary condition. None if not
+                set by user, else True or False according to user.
         """
+
         self.key = key
         self.pt = val
         self._order = order
         self.adj_lst = adj_lst
-
-    def num_children(self):
-        return len(self.adj_lst)
+        self.exterior = exterior
 
     def __repr__(self):
         return '{}: {}'.format(self._order, self.key)
 
-    def adj_num(self):
-        """ Number of adjacent nodes"""
+    @property
+    def adj_count(self):
+        """Number of adjacent nodes"""
         return len(self.adj_lst)
 
 
 class PolygonDirectedGraph(object):
-    """An directed graph that represents polygon adjacency relationships
+    """A directed graph that represents polygon adjacency relationships
     for points and edges. This class assumes that exterior edges are naked
     (unidirectional) and interior edges are bidirectional.
     """
@@ -73,30 +61,53 @@ class PolygonDirectedGraph(object):
         self.num_nodes = 0
 
     def __repr__(self):
-        return '\n'.join((n.__repr__() for n in self.ordered_nodes()))
+        return '\n'.join((n.__repr__() for n in self.ordered_nodes))
+
+    @staticmethod
+    def from_polygon(polygon):
+        """Generate a directed graph from a polygon
+
+        Args:
+            polygon: A Polygon2D
+
+        Returns:
+            A PolygonDirectedGraph of the polygon.
+        """
+
+        dg = PolygonDirectedGraph()
+        vertices = polygon.vertices
+        for i in range(len(vertices) - 1):
+            dg.add_node(vertices[i], [vertices[i+1]], exterior=True)
+        dg.add_node(vertices[-1], [vertices[0]], exterior=True)
+
+        return dg
 
     @property
     def root(self):
-        """ Root node, used for traversal of dg """
+        """Get the root node, used for traversal of directed graph."""
+
         if self._root is None:
-            self._root = self.ordered_nodes()[0]
+            self._root = self.ordered_nodes[0]
         return self._root
 
-    def get_node(self, key):
-        """ Retrieves the pt node based on passed value.
+    def node(self, key):
+        """Retrieves the node based on passed value.
 
         Args:
-            val: A Linept2D object
+            val: The key for a node in the directed graph.
 
         Returns:
-            List of adjacent Linept2D objects, as keys
+            The node for the passed key.
         """
-        if key in self._directed_graph:
-            return self._directed_graph[key]
 
-    def add_node(self, val, adj_lst):
-        """ Consumes a polygon point, and computes its key value, and adds it in the
-        dg if it doesn't exist. If it does exist it appends adj_lst to existing pt.
+        try:
+            return self._directed_graph[key]
+        except KeyError:
+            return None
+
+    def add_node(self, val, adj_lst, exterior=None):
+        """Consumes a polygon point, and computes its key value, and adds it in the
+        graph if it doesn't exist. If it does exist it appends adj_lst to existing pt.
 
         Args:
             val: A Point2D object
@@ -113,35 +124,71 @@ class PolygonDirectedGraph(object):
         if key not in self._directed_graph:
             # If key doesn't exist, add to dg
             self.num_nodes += 1
-            self._directed_graph[key] = _Node(key, val, self.num_nodes-1, [])
+            self._directed_graph[key] = _Node(key, val, self.num_nodes-1, [], exterior)
 
-        # Add the adj_lst to dg
-        adj_lst = (self.get_node(self.add_node(adj, [])) for adj in adj_lst)
+        # Add the adj_lst to dg, and leave exterior None
+        adj_lst = [self.node(self.add_node(adj, [])) for adj in adj_lst]
 
         # Add nodes to node in dg
         self._directed_graph[key].adj_lst += adj_lst
 
+        # If pass exterior boolean, change node attribute
+        if exterior is not None:
+            self._directed_graph[key].exterior = exterior
+
         return key
 
+    def insert_middle_node(self, node, new_val, next_node, exterior=None):
+        """Insert node in the middle of an edge defined by node and next_node.
+
+        Args:
+            node: _Node to left.
+            new_val: Value for middle node.
+            next_node: _Node to right.
+            exterior: Optional boolean for exterior attribute.
+
+        Returns:
+            key of new_val node.
+        """
+
+        key = self.add_node(new_val, [next_node.pt], exterior=exterior)
+
+        # Update the adjacency list of node
+        new_adj_lst = [self.node(key)]
+        for adj_node in node.adj_lst:
+            if adj_node.key == next_node.key:
+                continue
+            new_adj_lst.append(adj_node)
+        node.adj_lst = new_adj_lst
+
+        return key
+
+    def node_exists(self, key):
+        """True if node in directed graph else False"""
+        return key in self._directed_graph
+
+    @property
     def nodes(self):
-        """Returns an iterable of pt nodes"""
+        """Get an iterable of pt nodes"""
         return self._directed_graph.values()
 
+    @property
     def ordered_nodes(self):
-        """Returns an iterable of pt nodes in order of addition"""
-        nodes = list(self.nodes())
+        """Get an iterable of pt nodes in order of addition"""
+        nodes = list(self.nodes)
         nodes.sort(key=lambda v: v._order)
         return nodes
 
     def adj_matrix(self):
-        """ Returns an adjacency matrix of dg.
-        1 = adjacency from row node to col node.
-        0 = no adjacency.
+        """Gets an adjacency matrix of the directed graph where:
+
+        * 1 = adjacency from row node to col node.
+        * 0 = no adjacency.
 
         Returns:
             N x N square matrix where N is number of nodes.
         """
-        nodes = self.ordered_nodes()
+        nodes = self.ordered_nodes
 
         # Initialize amtx with no adjacencies
         amtx = [[0 for i in range(self.num_nodes)]
@@ -155,13 +202,13 @@ class PolygonDirectedGraph(object):
         return amtx
 
     def adj_matrix_labels(self):
-        """ Returns a dictionary where label key corresponds to index in adj_matrix
+        """Returns a dictionary where label key corresponds to index in adj_matrix
         and value is node key"""
-        return {i: node.key for i, node in enumerate(self.ordered_nodes())}
+        return {i: node.key for i, node in enumerate(self.ordered_nodes)}
 
-    @classmethod
-    def is_edge_bidirect(cls, node1, node2):
-        """ Are two nodes bidirectional.
+    @staticmethod
+    def is_edge_bidirect(node1, node2):
+        """Are two nodes bidirectional.
 
         Args:
             node1: _Node object
@@ -174,9 +221,9 @@ class PolygonDirectedGraph(object):
         return node1.key in (n.key for n in node2.adj_lst) and \
             node2.key in (n.key for n in node1.adj_lst)
 
-    @classmethod
-    def get_next_unidirect_node(cls, node):
-        """ Retrieves the first unidirectional point adjacent
+    @staticmethod
+    def next_unidirect_node(node):
+        """Retrieves the first unidirectional point adjacent
         to consumed point. They define an exterior or naked edge.
 
         Args:
@@ -190,14 +237,41 @@ class PolygonDirectedGraph(object):
         # Check bidirectionality
         next_node = None
         for _next_node in node.adj_lst:
-            if not cls.is_edge_bidirect(node, _next_node):
+            if not PolygonDirectedGraph.is_edge_bidirect(node, _next_node):
                 next_node = _next_node
                 break
 
         return next_node
 
-    def get_exterior_cycle(self, cycle_root):
-        """ Retreives exterior boundary. If there is a no continuous outer boundary
+    @classmethod
+    def next_exterior_node(cls, node):
+        """Retrieves the first exterior node adjacent
+        to consumed node. They define an exterior or naked edge.
+
+        Args:
+            node: _Node
+
+        Returns:
+            Next node that defines exterior edge, or None if all
+            adjacencies are bidirectional.
+        """
+
+        # Check bidirectionality
+        next_node = None
+        for _next_node in node.adj_lst:
+            if _next_node.exterior is None:
+                if not cls.is_edge_bidirect(node, _next_node):
+                    next_node = _next_node
+                    break
+            elif _next_node.exterior is True:
+                next_node = _next_node
+                break
+
+        return next_node
+
+    @classmethod
+    def exterior_cycle(cls, cycle_root):
+        """Retreives exterior boundary. If there is a no continuous outer boundary
         cycle from the node it will return None.
 
         This method assumes that exterior edges are naked (unidirectional) and
@@ -211,42 +285,40 @@ class PolygonDirectedGraph(object):
 
         # Get the first exterior edge
         curr_node = cycle_root
-        next_node = self.get_next_unidirect_node(curr_node)
-
+        next_node = cls.next_exterior_node(curr_node)
         if not next_node:
             return None
 
         ext_cycle = [curr_node]
         while next_node.key != cycle_root.key:
             ext_cycle.append(next_node)
-            next_node = self.get_next_unidirect_node(next_node)
+            next_node = cls.next_exterior_node(next_node)
             if not next_node:
                 return None
 
         return ext_cycle
 
-    def get_smallest_closed_cycles(self):
-        """ Traverses a directed graph of connected straight skeleton edges and
-        produces a list of the smallest individual polygons defined by the edges. This
-        is achieved by looping through the exterior edges, and identifying the closed
-        loop with the smallest counter-clockwise angle of rotation between edges. Since
-        the exterior edges of a polygon split by a straight skeleton will always result
-        in either a split or edge event, of the interior skeleton, this will identify the
-        smallest polygon nested in the directed graph.
+    def smallest_closed_cycles(self, recurse_limit=None):
+        """ Gets a list of the smallest individual polygons defined by the edges.
 
-        # TODO: Holes?
+
+        This is achieved by looping through the exterior edges of the directed graph, and
+        identifying the closed loop with the smallest counter-clockwise angle of rotation
+        between edges. Since the exterior edges of a polygon split by a straight skeleton
+        will always result in either a split or edge event, of the interior skeleton,
+        this will identify the smallest polygon nested in the directed graph.
 
         Returns:
             A list of polygon point arrays.
         """
 
-        polygon_lst = []
+        polygon_node_lst = []
 
-        # TODO: Better way to get the exterior root node? Define in DG class?
+        # TODO: Add attributes for root for exterior nodes.
 
         # Get continous exterior nodes list.
-        for node in self.ordered_nodes():
-            ext_nodes = self.get_exterior_cycle(node)
+        for node in self.ordered_nodes:
+            ext_nodes = self.exterior_cycle(node)
             if ext_nodes is not None:
                 break
 
@@ -255,12 +327,14 @@ class PolygonDirectedGraph(object):
         for i, ext_node in enumerate(ext_nodes[:-1]):
             cycle = [ext_node]
             next_node = ext_nodes[i + 1]
-            cycle = self.min_ccw_cycle(ext_node, next_node, next_node.adj_lst, cycle)
-            polygon_lst.append(cycle)
+            cycle = self.min_ccw_cycle(ext_node, next_node, next_node.adj_lst,
+                                       cycle, recurse_limit, 0)
+            polygon_node_lst.append(cycle)
 
-        return polygon_lst
+        return polygon_node_lst
 
-    def min_ccw_cycle(self, ref_node, next_node, adj_lst, cycle):
+    def min_ccw_cycle(self, ref_node, next_node, adj_lst, cycle, recurse_limit=None,
+                      count=0):
         """
         Recursively identifes most counter-clockwise adjacent node and returns closed
         loop.
@@ -274,6 +348,10 @@ class PolygonDirectedGraph(object):
         Returns:
             A list of nodes that form a polygon.
         """
+
+        # Base case: recursion limit is hit
+        if recurse_limit and count >= recurse_limit:
+            raise RecursionError
 
         # Base case: loop is completed
         if next_node.key == cycle[0].key:
@@ -305,4 +383,59 @@ class PolygonDirectedGraph(object):
                 min_theta = theta
                 min_node = adj_node
 
-        return self.min_ccw_cycle(next_node, min_node, min_node.adj_lst, cycle)
+        return self.min_ccw_cycle(next_node, min_node, min_node.adj_lst,
+                                  cycle, recurse_limit, count+1)
+
+    def graph_intersect(self, segment):
+        """Updates graph with intersection of partial segment that crosses through
+        polygon.
+
+        Args:
+            segment: LineSegment2D to intersect. Does not need to be contained within
+            polygon.
+
+        Returns:
+            Updated directed graph.
+        """
+        int_key_lst = []
+
+        for node in self.ordered_nodes:
+
+            # Convert graph edge to trimming segment
+            next_node = node.adj_lst[0]
+            trim_seg = LineSegment2D.from_end_points(node.pt, next_node.pt)
+            int_pt = intersection2d.intersect_line2d_infinite(trim_seg, segment)
+
+            # Add intersection point as new node in graph
+            if int_pt:
+                int_key = self.insert_middle_node(node, int_pt, next_node,
+                                                  exterior=False)
+                int_key_lst.append(int_key)
+
+        # Add intersection edges
+        if len(int_key_lst) == 2:
+            # Typical case with convex cases
+            # Make edge between intersection nodes
+            n1, n2 = self.node(int_key_lst[0]), self.node(int_key_lst[1])
+            self.add_node(n1.pt, [n2.pt], exterior=False)
+            self.add_node(n2.pt, [n1.pt], exterior=False)
+
+        elif len(int_key_lst) > 2:
+            # Edge case with concave geometry creates multiple intersections
+            # Sort distance and add adjacency
+            n = self.node(int_key_lst[0])
+            distances = [(0, 0.0)]
+
+            for i, k in enumerate(int_key_lst[1:]):
+                distance = LineSegment2D.from_end_points(n.pt, self.node(k).pt).length
+                distances.append((i + 1, distance))
+
+            distances = sorted(distances, key=lambda t: t[1])
+
+            for i in range(len(distances)-1):
+                k1, k2 = distances[i][0], distances[i+1][0]
+                n1, n2 = self.node(int_key_lst[k1]), self.node(int_key_lst[k2])
+
+                # Add bidirection so the min cycle works
+                self.add_node(n1.pt, [n2.pt], exterior=False)
+                self.add_node(n2.pt, [n1.pt], exterior=False)
