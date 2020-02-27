@@ -32,6 +32,9 @@ def _vector2hash(vector, tol):
 class _Node(object):
     """Private class to handle nodes in PolygonDirectedGraph.
 
+    def __init__(self, key, val, order, adj_lst, exterior):
+        """Private class to handle nodes in PolygonDirectedGraph.
+
         Args:
             val: Any python object
             key: Hash of passed object
