@@ -8,22 +8,26 @@ from __future__ import division
 # Geometry classes
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
-from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
-
-import math
 
 
 def _vector2hash(vector, tol=4):
+    """ Hashes spatial coordinates for use in dictionary.
+
+    Args:
+        vector: A Vector2D object.
+
+    Returns:
+        String hash of vector object.
+    """
+
     #  TODO: Find a better way of hashing spatial coordinates
     myhash = vector.__repr__()
     return myhash
 
 
 class _Node(object):
-
-    def __init__(self, key, val, order, adj_lst, exterior):
-        """Private class to handle nodes in PolygonDirectedGraph.
+    """Private class to handle nodes in PolygonDirectedGraph.
 
         Args:
             val: Any python object
@@ -32,7 +36,11 @@ class _Node(object):
             adj_lst: list of keys: ['key1', 'key2' ....  'keyn']
             exterior: Allows user to pass node boundary condition. None if not
                 set by user, else True or False according to user.
-        """
+    """
+    __slots__ = ('key', 'val', 'order', 'adj_lst', 'exterior')
+
+    def __init__(self, key, val, order, adj_lst, exterior):
+        """Initialize _Node"""
 
         self.key = key
         self.pt = val
@@ -51,7 +59,9 @@ class _Node(object):
 
 class PolygonDirectedGraph(object):
     """A directed graph that represents polygon adjacency relationships
-    for points and edges. This class assumes that exterior edges are naked
+    for points and edges.
+
+    This class assumes that exterior edges are naked
     (unidirectional) and interior edges are bidirectional.
     """
 
@@ -233,7 +243,6 @@ class PolygonDirectedGraph(object):
             Next node that defines unidirectional edge, or None if all
             adjacencies are bidirectional.
         """
-
         # Check bidirectionality
         next_node = None
         for _next_node in node.adj_lst:
@@ -243,8 +252,8 @@ class PolygonDirectedGraph(object):
 
         return next_node
 
-    @classmethod
-    def next_exterior_node(cls, node):
+    @staticmethod
+    def next_exterior_node(node):
         """Retrieves the first exterior node adjacent
         to consumed node. They define an exterior or naked edge.
 
@@ -259,8 +268,10 @@ class PolygonDirectedGraph(object):
         # Check bidirectionality
         next_node = None
         for _next_node in node.adj_lst:
+
             if _next_node.exterior is None:
-                if not cls.is_edge_bidirect(node, _next_node):
+                # If user-assigned attribute isn't defined, check bidirectionality.
+                if not PolygonDirectedGraph.is_edge_bidirect(node, _next_node):
                     next_node = _next_node
                     break
             elif _next_node.exterior is True:
@@ -269,8 +280,8 @@ class PolygonDirectedGraph(object):
 
         return next_node
 
-    @classmethod
-    def exterior_cycle(cls, cycle_root):
+    @staticmethod
+    def exterior_cycle(cycle_root):
         """Retreives exterior boundary. If there is a no continuous outer boundary
         cycle from the node it will return None.
 
@@ -285,14 +296,14 @@ class PolygonDirectedGraph(object):
 
         # Get the first exterior edge
         curr_node = cycle_root
-        next_node = cls.next_exterior_node(curr_node)
+        next_node = PolygonDirectedGraph.next_exterior_node(curr_node)
         if not next_node:
             return None
 
         ext_cycle = [curr_node]
         while next_node.key != cycle_root.key:
             ext_cycle.append(next_node)
-            next_node = cls.next_exterior_node(next_node)
+            next_node = PolygonDirectedGraph.next_exterior_node(next_node)
             if not next_node:
                 return None
 
@@ -313,8 +324,6 @@ class PolygonDirectedGraph(object):
         """
 
         polygon_node_lst = []
-
-        # TODO: Add attributes for root for exterior nodes.
 
         # Get continous exterior nodes list.
         for node in self.ordered_nodes:
@@ -360,7 +369,8 @@ class PolygonDirectedGraph(object):
         cycle.append(next_node)
 
         # Get current edge direction vector
-        edge_dir = Vector2D(*(next_node.pt - ref_node.pt).to_array())
+        # Point subtraction or addition results in Vector2D
+        edge_dir = next_node.pt - ref_node.pt
 
         # Initialize values for comparison
         min_theta = float("inf")
@@ -374,7 +384,7 @@ class PolygonDirectedGraph(object):
                 continue
 
             # Get next edge direction vector
-            next_edge_dir = Vector2D(*(adj_node.pt - next_node.pt).to_array())
+            next_edge_dir = adj_node.pt - next_node.pt
 
             # Flip the next_edge and calculate theta
             theta = edge_dir.angle_clockwise(next_edge_dir * -1)
