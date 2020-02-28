@@ -758,6 +758,7 @@ def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
             Example square: [[0,0], [1,0], [1,1], [0,1]]
         holes: list of polygons representing holes in cw order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
+        tol: Tolerance for point equivalence.
 
     Returns:
         List of subtrees.
@@ -781,6 +782,7 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
             Example square: [[0,0], [1,0], [1,1], [0,1]]
         holes: list of polygons representing holes in cw order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
+        tol: Tolerance for point equivalence.
 
     Returns:
         list of lines as coordinate tuples.
@@ -801,14 +803,17 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     return edge_lst
 
 
-def _skeleton_as_directed_graph(polygon, holes=None, tol=1e-10):
+def _skeleton_as_directed_graph(polygon, holes, tol):
     """
     Compute the straight skeleton of a polygon and returns skeleton as
     a PolygonDirectedGraph.
 
     Args:
-        skeleton: list of polyskel.Subtree, which are namedTuples of consisting of
-        a source point, and list of sink points.
+        polygon: list of list of point coordinates in ccw order.
+            Example square: [[0,0], [1,0], [1,1], [0,1]]
+        holes: list of polygons representing holes in cw order.
+            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
+        tol: Tolerance for point equivalence.
 
     Returns:
         A PolygonDirectedGraph object.
@@ -841,3 +846,26 @@ def _skeleton_as_directed_graph(polygon, holes=None, tol=1e-10):
             dg.add_node(event_pt, [sink_pt], exterior=False)
 
     return dg
+
+
+def skeleton_as_polygon_list(polygon, holes=None, tol=1e-10):
+    """Compute the straight skeleton of a polygon and returns skeleton as
+    a a list of polygon point arrays.
+
+    Args:
+        polygon: list of list of point coordinates in ccw order.
+            Example square: [[0,0], [1,0], [1,1], [0,1]]
+        holes: list of polygons representing holes in cw order.
+            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
+        tol: Tolerance for point equivalence.
+
+    Returns:
+        A list of a list of point arrays representing polygons that define
+        the straight skeleton.
+    """
+
+    dg = _skeleton_as_directed_graph(polygon, holes, tol)
+
+    polygons = [[n.pt.to_array() for n in poly] for poly in dg.smallest_closed_cycles()]
+
+    return polygons

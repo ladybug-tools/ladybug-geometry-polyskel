@@ -99,7 +99,7 @@ def test_dg_skel_rectangle():
         4: 'Point2D (2.00, 2.00)',
         5: 'Point2D (4.00, 2.00)'}
 
-    dg = polyskel._skeleton_as_directed_graph(polygon)
+    dg = polyskel._skeleton_as_directed_graph(polygon, [], 1e-10)
 
     amtx = dg.adj_matrix()
     lbls = dg.adj_matrix_labels()
@@ -156,7 +156,7 @@ def test_dg_skel_concave():
         6: 'Point2D (3.91, 2.09)',
         7: 'Point2D (3.00, 1.82)'}
 
-    dg = polyskel._skeleton_as_directed_graph(polygon.to_array())
+    dg = polyskel._skeleton_as_directed_graph(polygon.to_array(), [], 1e-2)
 
     amtx = dg.adj_matrix()
     lbls = dg.adj_matrix_labels()
@@ -219,7 +219,7 @@ def test_exterior_cycle():
 
     # Make the polygon
     polygon = Polygon2D.from_array([[0, 0], [6, 0], [6, 4], [0, 4]])
-    dg = polyskel._skeleton_as_directed_graph(polygon)
+    dg = polyskel._skeleton_as_directed_graph(polygon, [], 1e-10)
 
     exterior = dg.exterior_cycle(dg.root)
 
@@ -263,13 +263,12 @@ def test_min_ccw_cycle():
     chk_poly = Polygon2D.from_array(chk_poly)
 
     # Skeletonize
-    dg = polyskel._skeleton_as_directed_graph(poly.to_array())
+    dg = polyskel._skeleton_as_directed_graph(poly.to_array(), [], 1e-10)
 
     ref_node = dg.root
 
     next_node = dg.next_unidirect_node(ref_node)
-    _cycle = [ref_node]
-    cycle = dg.min_ccw_cycle(ref_node, next_node, next_node.adj_lst, _cycle)
+    cycle = dg.min_ccw_cycle(ref_node, next_node)
 
     cycle_poly = Polygon2D.from_array([n.pt for n in cycle])
 
@@ -277,8 +276,7 @@ def test_min_ccw_cycle():
 
 
 def test_smallest_closed_cycles():
-    """ Test method to define closed loops representing nested
-    polygons """
+    """Test method to define closed loops representing nested polygons"""
 
     # Make the polygon
     polygon = Polygon2D.from_array([[0, 0], [6, 0], [6, 6], [3, 4], [0, 6]])
@@ -294,7 +292,7 @@ def test_smallest_closed_cycles():
     chk_poly_lst = [Polygon2D.from_array(ptlst) for ptlst in chk_poly_lst]
 
     # Skeletonize
-    dg = polyskel._skeleton_as_directed_graph(polygon.to_array())
+    dg = polyskel._skeleton_as_directed_graph(polygon.to_array(), [], 1e-10)
 
     poly_lst = dg.smallest_closed_cycles()
 

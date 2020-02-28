@@ -46,6 +46,10 @@ class _Node(object):
         self.pt = val
         self._order = order
         self.adj_lst = adj_lst
+        # IDEA: Change exterior to data (similar to networkX)
+        # and pass conditional function to get_exterior
+        # this resolves redundancy between unidirect and exterior
+        # node/edge properties.
         self.exterior = exterior
 
     def __repr__(self):
@@ -84,11 +88,28 @@ class PolygonDirectedGraph(object):
             A PolygonDirectedGraph of the polygon.
         """
 
+        dg = PolygonDirectedGraph.from_point_array(polygon.vertices, loop=True)
+
+        return dg
+
+    @staticmethod
+    def from_point_array(point_array, loop=True):
+        """Generate a directed graph from a 1-dimensional array of points.
+
+        Args:
+            point_array: Array of Point2D objects.
+            loop: Optional parameter to connect 1d array
+
+        Returns:
+            A PolygonDirectedGraph of the point array.
+        """
+
         dg = PolygonDirectedGraph()
-        vertices = polygon.vertices
-        for i in range(len(vertices) - 1):
-            dg.add_node(vertices[i], [vertices[i+1]], exterior=True)
-        dg.add_node(vertices[-1], [vertices[0]], exterior=True)
+        for i in range(len(point_array) - 1):
+            dg.add_node(point_array[i], [point_array[i+1]], exterior=True)
+
+        if loop:
+            dg.add_node(point_array[-1], [point_array[0]], exterior=True)
 
         return dg
 
@@ -282,8 +303,7 @@ class PolygonDirectedGraph(object):
 
     @staticmethod
     def exterior_cycle(cycle_root):
-        """Retreives exterior boundary. If there is a no continuous outer boundary
-        cycle from the node it will return None.
+        """Computes exterior boundary from a given node.
 
         This method assumes that exterior edges are naked (unidirectional) and
         interior edges are bidirectional.
@@ -308,6 +328,46 @@ class PolygonDirectedGraph(object):
                 return None
 
         return ext_cycle
+
+    @property
+    def exterior_cycles(self):
+        """Computes all exterior boundaries.
+
+        Returns:
+            List of boundaries as list of nodes. The first polygon will
+            be the outer exterior edge (in counter-clockwise order), and
+            subsequent edges will be the edges of the holes in the graph
+            (in clockwise order).
+        """
+
+        exterior_poly_lst = []
+        exterior_check = {}
+
+        for root_node in self.ordered_nodes:
+
+            # Store node in check
+            exterior_check[root_node.key] = None
+
+            # Get next exterior adjacent node
+            next_node = self.next_exterior_node(root_node)
+            is_valid = (next_node is not None) and \
+                (next_node.key not in exterior_check)
+
+            if not is_valid:
+                continue
+
+            # Create list of exterior points
+            # and add to dict to prevent repetition
+            exterior_poly = [root_node]
+            exterior_check[next_node.key] = None
+            while next_node.key != root_node.key:
+                exterior_poly.append(next_node)
+                exterior_check[next_node.key] = None
+                next_node = self.next_exterior_node(next_node)
+
+            exterior_poly_lst.append(exterior_poly)
+
+        return exterior_poly_lst
 
     def smallest_closed_cycles(self, recurse_limit=None):
         """ Gets a list of the smallest individual polygons defined by the edges.
@@ -334,16 +394,15 @@ class PolygonDirectedGraph(object):
         # Add first node to ensure complete cycle
         ext_nodes += [ext_nodes[0]]
         for i, ext_node in enumerate(ext_nodes[:-1]):
-            cycle = [ext_node]
             next_node = ext_nodes[i + 1]
-            cycle = self.min_ccw_cycle(ext_node, next_node, next_node.adj_lst,
-                                       cycle, recurse_limit, 0)
+            cycle = self.min_ccw_cycle(ext_node, next_node,
+                                       recurse_limit=recurse_limit, count=0)
             polygon_node_lst.append(cycle)
 
         return polygon_node_lst
 
-    def min_ccw_cycle(self, ref_node, next_node, adj_lst, cycle, recurse_limit=None,
-                      count=0):
+    @classmethod
+    def min_ccw_cycle(cls, ref_node, next_node, cycle=None, recurse_limit=None, count=0):
         """
         Recursively identifes most counter-clockwise adjacent node and returns closed
         loop.
@@ -351,22 +410,27 @@ class PolygonDirectedGraph(object):
         Args:
             ref_node: The first node, for first edge.
             next_node: The node next to ref_node that constitues a polygon edge.
-            adj_lst: List of adjacent nodes to next_node.
             cycle: Current list of nodes that will form a polygon.
+            recurse_limit: optional parameter to limit recursion for debugging.
+            count: optional paramter to limit recursion for debugging.
 
         Returns:
             A list of nodes that form a polygon.
         """
-
-        # Base case: recursion limit is hit
+        # Base case 1: recursion limit is hit
         if recurse_limit and count >= recurse_limit:
             raise RecursionError
 
-        # Base case: loop is completed
-        if next_node.key == cycle[0].key:
+        # Base case 2: loop is completed
+        if cycle and (next_node.key == cycle[0].key):
             return cycle
 
+        # Set parameters
+        if cycle is None:
+            cycle = [ref_node]
+
         cycle.append(next_node)
+        adj_lst = next_node.adj_lst
 
         # Get current edge direction vector
         # Point subtraction or addition results in Vector2D
@@ -393,10 +457,10 @@ class PolygonDirectedGraph(object):
                 min_theta = theta
                 min_node = adj_node
 
-        return self.min_ccw_cycle(next_node, min_node, min_node.adj_lst,
-                                  cycle, recurse_limit, count+1)
+        return cls.min_ccw_cycle(next_node, min_node, cycle,
+                                 recurse_limit=recurse_limit, count=count+1)
 
-    def graph_intersect(self, segment):
+    def intersect_graph_with_segment(self, segment):
         """Updates graph with intersection of partial segment that crosses through
         polygon.
 
