@@ -113,7 +113,27 @@ class PolygonDirectedGraph(object):
             loop: Optional parameter to connect 1d array
         """
 
+<<<<<<< refs/remotes/ladybug-tools/master
         dg = cls()
+=======
+        dg = PolygonDirectedGraph.from_point_array(polygon.vertices, loop=True)
+
+        return dg
+
+    @staticmethod
+    def from_point_array(point_array, loop=True):
+        """Generate a directed graph from a 1-dimensional array of points.
+
+        Args:
+            point_array: Array of Point2D objects.
+            loop: Optional parameter to connect 1d array
+
+        Returns:
+            A PolygonDirectedGraph of the point array.
+        """
+
+        dg = PolygonDirectedGraph()
+>>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
         for i in range(len(point_array) - 1):
             dg.add_node(point_array[i], [point_array[i+1]], exterior=True)
 
@@ -519,9 +539,89 @@ class PolygonDirectedGraph(object):
 
         return ext_cycle
 
+<<<<<<< refs/remotes/ladybug-tools/master
     @staticmethod
     def min_ccw_cycle(ref_node, next_node, cycle=None, recurse_limit=None, count=0):
         """Recursively identifes most counter-clockwise adjacent node and returns closed loop.
+=======
+    @property
+    def exterior_cycles(self):
+        """Computes all exterior boundaries.
+
+        Returns:
+            List of boundaries as list of nodes. The first polygon will
+            be the outer exterior edge (in counter-clockwise order), and
+            subsequent edges will be the edges of the holes in the graph
+            (in clockwise order).
+        """
+
+        exterior_poly_lst = []
+        exterior_check = {}
+
+        for root_node in self.ordered_nodes:
+
+            # Store node in check
+            exterior_check[root_node.key] = None
+
+            # Get next exterior adjacent node
+            next_node = self.next_exterior_node(root_node)
+            is_valid = (next_node is not None) and \
+                (next_node.key not in exterior_check)
+
+            if not is_valid:
+                continue
+
+            # Create list of exterior points
+            # and add to dict to prevent repetition
+            exterior_poly = [root_node]
+            exterior_check[next_node.key] = None
+            while next_node.key != root_node.key:
+                exterior_poly.append(next_node)
+                exterior_check[next_node.key] = None
+                next_node = self.next_exterior_node(next_node)
+
+            exterior_poly_lst.append(exterior_poly)
+
+        return exterior_poly_lst
+
+    def smallest_closed_cycles(self, recurse_limit=None):
+        """ Gets a list of the smallest individual polygons defined by the edges.
+
+
+        This is achieved by looping through the exterior edges of the directed graph, and
+        identifying the closed loop with the smallest counter-clockwise angle of rotation
+        between edges. Since the exterior edges of a polygon split by a straight skeleton
+        will always result in either a split or edge event, of the interior skeleton,
+        this will identify the smallest polygon nested in the directed graph.
+
+        Returns:
+            A list of polygon point arrays.
+        """
+
+        polygon_node_lst = []
+
+        # Get continous exterior nodes list.
+        for node in self.ordered_nodes:
+            ext_nodes = self.exterior_cycle(node)
+            if ext_nodes is not None:
+                break
+
+        # Add first node to ensure complete cycle
+        ext_nodes += [ext_nodes[0]]
+        for i, ext_node in enumerate(ext_nodes[:-1]):
+            next_node = ext_nodes[i + 1]
+            cycle = self.min_ccw_cycle(ext_node, next_node,
+                                       recurse_limit=recurse_limit, count=0)
+            polygon_node_lst.append(cycle)
+
+        return polygon_node_lst
+
+    @classmethod
+    def min_ccw_cycle(cls, ref_node, next_node, cycle=None, recurse_limit=None, count=0):
+        """
+        Recursively identifes most counter-clockwise adjacent node and returns closed
+        loop.
+>>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
 
         Args:
             ref_node: The first node, for first edge.
@@ -533,21 +633,37 @@ class PolygonDirectedGraph(object):
         Returns:
             A list of nodes that form a polygon if the cycle exists, else None.
         """
+<<<<<<< refs/remotes/ladybug-tools/master
 
+=======
+        # Base case 1: recursion limit is hit
+>>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
         if recurse_limit and count >= recurse_limit:
             # Base case 1: recursion limit is hit
             raise RecursionError
+<<<<<<< refs/remotes/ladybug-tools/master
         elif next_node is None:
             # Base case 2: No node exists in adjacency list
             raise Exception('Error finding the minimum counterclockwise cycle '
                             'in this polygon')
         elif cycle and (next_node.key == cycle[0].key):
             # Base case 3: loop is completed
+=======
+
+        # Base case 2: loop is completed
+        if cycle and (next_node.key == cycle[0].key):
+>>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
             return cycle
 
         # Set parameters
         if cycle is None:
             cycle = [ref_node]
+<<<<<<< refs/remotes/ladybug-tools/master
+=======
+
+        cycle.append(next_node)
+        adj_lst = next_node.adj_lst
+>>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
 
         cycle.append(next_node)
         # Get current edge direction vector
@@ -573,5 +689,64 @@ class PolygonDirectedGraph(object):
                 min_theta = theta
                 min_node = adj_node
 
+<<<<<<< refs/remotes/ladybug-tools/master
         return PolygonDirectedGraph.min_ccw_cycle(
             next_node, min_node, cycle, recurse_limit=recurse_limit, count=count+1)
+=======
+        return cls.min_ccw_cycle(next_node, min_node, cycle,
+                                 recurse_limit=recurse_limit, count=count+1)
+
+    def intersect_graph_with_segment(self, segment):
+        """Updates graph with intersection of partial segment that crosses through
+        polygon.
+
+        Args:
+            segment: LineSegment2D to intersect. Does not need to be contained within
+            polygon.
+
+        Returns:
+            Updated directed graph.
+        """
+        int_key_lst = []
+
+        for node in self.ordered_nodes:
+
+            # Convert graph edge to trimming segment
+            next_node = node.adj_lst[0]
+            trim_seg = LineSegment2D.from_end_points(node.pt, next_node.pt)
+            int_pt = intersection2d.intersect_line2d_infinite(trim_seg, segment)
+
+            # Add intersection point as new node in graph
+            if int_pt:
+                int_key = self.insert_middle_node(node, int_pt, next_node,
+                                                  exterior=False)
+                int_key_lst.append(int_key)
+
+        # Add intersection edges
+        if len(int_key_lst) == 2:
+            # Typical case with convex cases
+            # Make edge between intersection nodes
+            n1, n2 = self.node(int_key_lst[0]), self.node(int_key_lst[1])
+            self.add_node(n1.pt, [n2.pt], exterior=False)
+            self.add_node(n2.pt, [n1.pt], exterior=False)
+
+        elif len(int_key_lst) > 2:
+            # Edge case with concave geometry creates multiple intersections
+            # Sort distance and add adjacency
+            n = self.node(int_key_lst[0])
+            distances = [(0, 0.0)]
+
+            for i, k in enumerate(int_key_lst[1:]):
+                distance = LineSegment2D.from_end_points(n.pt, self.node(k).pt).length
+                distances.append((i + 1, distance))
+
+            distances = sorted(distances, key=lambda t: t[1])
+
+            for i in range(len(distances)-1):
+                k1, k2 = distances[i][0], distances[i+1][0]
+                n1, n2 = self.node(int_key_lst[k1]), self.node(int_key_lst[k2])
+
+                # Add bidirection so the min cycle works
+                self.add_node(n1.pt, [n2.pt], exterior=False)
+                self.add_node(n2.pt, [n1.pt], exterior=False)
+>>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
