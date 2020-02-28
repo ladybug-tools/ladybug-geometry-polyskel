@@ -37,7 +37,7 @@ class _Node(object):
             exterior: Allows user to pass node boundary condition. None if not
                 set by user, else True or False according to user.
     """
-    __slots__ = ('key', 'val', 'order', 'adj_lst', 'exterior')
+    __slots__ = ('key', 'pt', '_order', 'adj_lst', 'exterior')
 
     def __init__(self, key, val, order, adj_lst, exterior):
         """Initialize _Node"""
