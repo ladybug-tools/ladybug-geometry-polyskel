@@ -10,8 +10,10 @@ from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry import intersection2d
 from math import log10
 
+from math import pi
 
-def _vector2hash(vector, tol):
+
+def _vector2hash(vector, tol=4):
     """ Hashes spatial coordinates for use in dictionary.
 
     Args:
@@ -230,7 +232,7 @@ class PolygonDirectedGraph(object):
         adj_keys = {n.key: None for n in node.adj_lst}
         adj_keys[node.key] = None
         for adj_val in adj_val_lst:
-            adj_key = _vector2hash(adj_val, self._tol)
+            adj_key = _vector2hash(adj_val)
             if adj_key in adj_keys:
                 continue
 
@@ -575,6 +577,7 @@ class PolygonDirectedGraph(object):
             # and add to dict to prevent repetition
             exterior_poly = [root_node]
             exterior_check[next_node.key] = None
+
             while next_node.key != root_node.key:
                 exterior_poly.append(next_node)
                 exterior_check[next_node.key] = None
@@ -662,10 +665,6 @@ class PolygonDirectedGraph(object):
 =======
 
         cycle.append(next_node)
-        adj_lst = next_node.adj_lst
->>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
-
-        cycle.append(next_node)
         # Get current edge direction vector
         # N.B point subtraction or addition results in Vector2D
         edge_dir = next_node.pt - ref_node.pt
@@ -718,8 +717,8 @@ class PolygonDirectedGraph(object):
 
             # Add intersection point as new node in graph
             if int_pt:
-                int_key = self.insert_middle_node(node, int_pt, next_node,
-                                                  exterior=False)
+                int_key = self.insert_node(node, int_pt, next_node,
+                                           exterior=False)
                 int_key_lst.append(int_key)
 
         # Add intersection edges
