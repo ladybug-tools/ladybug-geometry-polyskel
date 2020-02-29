@@ -10,6 +10,8 @@ from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry import intersection2d
 
+from math import pi
+
 
 def _vector2hash(vector, tol=4):
     """ Hashes spatial coordinates for use in dictionary.
@@ -75,7 +77,12 @@ class PolygonDirectedGraph(object):
         self.num_nodes = 0
 
     def __repr__(self):
-        return '\n'.join((n.__repr__() for n in self.ordered_nodes))
+        s = ''
+        for n in self.ordered_nodes:
+            s += '{}, [{}]\n'.format(
+                n.pt.to_array(),
+                ', '.join([str(_n.pt.to_array()) for _n in n.adj_lst]))
+        return s
 
     @staticmethod
     def from_polygon(polygon):
@@ -136,6 +143,42 @@ class PolygonDirectedGraph(object):
         except KeyError:
             return None
 
+    def _check_and_make_node(self, key, val, exterior=None):
+        # If key doesn't exist, add to dg
+        if key not in self._directed_graph:
+            self.num_nodes += 1
+            self._directed_graph[key] = _Node(key, val, self.num_nodes - 1, [], exterior)
+        return self._directed_graph[key]
+
+    def add_adj(self, node, adj_val_lst):
+        """Adds nodes to node.adj_lst.
+
+        This method will ensure no repetitions will occur in adj_lst.
+
+        Args:
+            node: _Node to add adjacencies to.
+            adj_val_lst: List of Point2D objects to add as adjacent nodes.
+        """
+        adj_keys = {n.key: None for n in node.adj_lst}
+        adj_keys[node.key] = None
+        for adj_val in adj_val_lst:
+            adj_key = _vector2hash(adj_val)
+            if adj_key in adj_keys:
+                continue
+
+            self._check_and_make_node(adj_key, adj_val, exterior=None)
+            adj_keys[adj_key] = None
+            node.adj_lst.append(self.node(adj_key))
+
+    def remove_adj(self, node, adj_key_lst):
+        """Removes nodes in node.adj_lst.
+
+        Args:
+            node: _Node to remove adjacencies to.
+            adj_val_lst: List of adjacency keys to remove as adjacent nodes.
+        """
+        node.adj_lst = [n for n in node.adj_lst if n.key not in set(adj_key_lst)]
+
     def add_node(self, val, adj_lst, exterior=None):
         """Consumes a polygon point, and computes its key value, and adds it in the
         graph if it doesn't exist. If it does exist it appends adj_lst to existing pt.
@@ -152,24 +195,20 @@ class PolygonDirectedGraph(object):
         key = _vector2hash(val)
 
         # Get node if it exists
-        if key not in self._directed_graph:
-            # If key doesn't exist, add to dg
-            self.num_nodes += 1
-            self._directed_graph[key] = _Node(key, val, self.num_nodes-1, [], exterior)
+        self._check_and_make_node(key, val, exterior)
+
+        node = self._directed_graph[key]
 
         # Add the adj_lst to dg, and leave exterior None
-        adj_lst = [self.node(self.add_node(adj, [])) for adj in adj_lst]
-
-        # Add nodes to node in dg
-        self._directed_graph[key].adj_lst += adj_lst
+        self.add_adj(node, adj_lst)
 
         # If pass exterior boolean, change node attribute
         if exterior is not None:
-            self._directed_graph[key].exterior = exterior
+            node.exterior = exterior
 
-        return key
+        return node.key
 
-    def insert_middle_node(self, node, new_val, next_node, exterior=None):
+    def insert_node(self, node, new_val, next_node, exterior=None):
         """Insert node in the middle of an edge defined by node and next_node.
 
         Args:
@@ -181,18 +220,20 @@ class PolygonDirectedGraph(object):
         Returns:
             key of new_val node.
         """
+        # Add new_val as a node, with next_node as an adjacency
+        new_key = self.add_node(new_val, [next_node.pt], exterior=exterior)
 
-        key = self.add_node(new_val, [next_node.pt], exterior=exterior)
+        # Update parent by adding new adjacency, and removing old adjacency
+        self.add_adj(node, [self.node(new_key).pt])
 
-        # Update the adjacency list of node
-        new_adj_lst = [self.node(key)]
-        for adj_node in node.adj_lst:
-            if adj_node.key == next_node.key:
-                continue
-            new_adj_lst.append(adj_node)
-        node.adj_lst = new_adj_lst
+        # Edge case where the new point is coincident to parent or next_point.
+        # This occurs when intersection passes through a corner.
+        if (new_key == next_node.key) or (new_key == node.key):
+            return new_key
 
-        return key
+        self.remove_adj(node, [next_node.key])
+
+        return new_key
 
     def node_exists(self, key):
         """True if node in directed graph else False"""
@@ -360,6 +401,7 @@ class PolygonDirectedGraph(object):
             # and add to dict to prevent repetition
             exterior_poly = [root_node]
             exterior_check[next_node.key] = None
+
             while next_node.key != root_node.key:
                 exterior_poly.append(next_node)
                 exterior_check[next_node.key] = None
@@ -430,8 +472,6 @@ class PolygonDirectedGraph(object):
             cycle = [ref_node]
 
         cycle.append(next_node)
-        adj_lst = next_node.adj_lst
-
         # Get current edge direction vector
         # Point subtraction or addition results in Vector2D
         edge_dir = next_node.pt - ref_node.pt
@@ -441,16 +481,14 @@ class PolygonDirectedGraph(object):
         min_node = None
 
         # Identify the node with the smallest ccw angle
-        for adj_node in adj_lst:
-
-            # Make sure this node isn't backtracking traversal
+        for adj_node in next_node.adj_lst:
+            # Make sure this node isn't backtracking by checking
+            # new node isn't parent of next_node
             if adj_node.key == cycle[-2].key:
                 continue
 
             # Get next edge direction vector
             next_edge_dir = adj_node.pt - next_node.pt
-
-            # Flip the next_edge and calculate theta
             theta = edge_dir.angle_clockwise(next_edge_dir * -1)
 
             if theta < min_theta:
@@ -482,8 +520,8 @@ class PolygonDirectedGraph(object):
 
             # Add intersection point as new node in graph
             if int_pt:
-                int_key = self.insert_middle_node(node, int_pt, next_node,
-                                                  exterior=False)
+                int_key = self.insert_node(node, int_pt, next_node,
+                                           exterior=False)
                 int_key_lst.append(int_key)
 
         # Add intersection edges
