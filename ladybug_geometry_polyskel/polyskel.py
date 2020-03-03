@@ -18,6 +18,9 @@ from ladybug_geometry.geometry2d.pointvector import Point2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
+from ladybug_geometry.geometry2d.polygon import Polygon2D
+from ladybug_geometry.geometry3d.pointvector import Vector3D
+from ladybug_geometry_polyskel.polygon_directed_graph import PolygonDirectedGraph
 
 # Polygon sorting classes
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
