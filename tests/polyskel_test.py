@@ -4,9 +4,11 @@ from __future__ import division
 
 from pprint import pprint as pp
 
-from ladybug_geometry_polyskel import polyskel as lb_polyskel
+from ladybug_geometry_polyskel import polyskel
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
+from ladybug_geometry.geometry3d.pointvector import Vector3D
+from ladybug_geometry_polyskel.polygon_directed_graph import PolygonDirectedGraph
 
 
 def helper_check_lavertex(v1, v2):
@@ -39,13 +41,13 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
         holes = []
 
     # FIXME Remove orig code for now
-    tst_edges = lb_polyskel.skeleton_as_edge_list(polygon, holes, 1e-10)
+    tst_edges = polyskel.skeleton_as_edge_list(polygon, holes, 1e-10)
     # Run function
     # if lb:
-    #    tst_edges = lb_polyskel._skeletonize(polygon, holes)
+    #    tst_edges = polyskel._skeletonize(polygon, holes)
     # else:
     #     skel = orig_polyskel._skeletonize(polygon, holes)
-    #     tst_edges = lb_polyskel._subtree_to_edge_mtx(skel)
+    #     tst_edges = polyskel._subtree_to_edge_mtx(skel)
 
     # Tests
     # Check types
@@ -282,6 +284,22 @@ def test_polyskel_concave_two_holes():
 
     holes = [hole1, hole2]
     assert helper_assert_polygon_equality(poly, chk_edges, holes, lb=True)
+
+
+def test_polygon_offset():
+    """ Test the offset method """
+
+    # Construct a simple rectangle
+    poly = [[0, 0], [4, 0], [4, 6], [0, 6]]
+    poly = Polygon2D.from_array(poly)
+
+    # Make solution polygon (list of polygons)
+    chk_off = Polygon2D.from_array([[1, 1], [3, 1], [3, 5], [1, 5]])
+
+    # Run method
+    offset = polyskel.offset(poly, 1)
+
+    assert offset[0].is_equivalent(chk_off, 1e-2)
 
 
 if __name__ == "__main__":
