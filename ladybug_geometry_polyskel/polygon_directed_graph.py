@@ -622,12 +622,9 @@ class PolygonDirectedGraph(object):
 
         return polygon_node_lst
 
-    @classmethod
-    def min_ccw_cycle(cls, ref_node, next_node, cycle=None, recurse_limit=None, count=0):
-        """
-        Recursively identifes most counter-clockwise adjacent node and returns closed
-        loop.
->>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
+    @staticmethod
+    def min_ccw_cycle(ref_node, next_node, cycle=None, recurse_limit=None, count=0):
+        """Recursively identifes most counter-clockwise adjacent node and returns closed loop.
 
         Args:
             ref_node: The first node, for first edge.
@@ -691,23 +688,16 @@ class PolygonDirectedGraph(object):
                 min_theta = theta
                 min_node = adj_node
 
-<<<<<<< refs/remotes/ladybug-tools/master
-        return PolygonDirectedGraph.min_ccw_cycle(
-            next_node, min_node, cycle, recurse_limit=recurse_limit, count=count+1)
-=======
-        return cls.min_ccw_cycle(next_node, min_node, cycle,
-                                 recurse_limit=recurse_limit, count=count+1)
+        return PolygonDirectedGraph.min_ccw_cycle(next_node, min_node, cycle,
+                                                  recurse_limit=recurse_limit,
+                                                  count=count+1)
 
     def intersect_graph_with_segment(self, segment):
-        """Updates graph with intersection of partial segment that crosses through
-        polygon.
+        """Update graph with intersection of partial segment that crosses through polygon.
 
         Args:
             segment: LineSegment2D to intersect. Does not need to be contained within
             polygon.
-
-        Returns:
-            Updated directed graph.
         """
         int_key_lst = []
 
