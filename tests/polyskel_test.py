@@ -8,7 +8,8 @@ from ladybug_geometry_polyskel import polyskel
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
-from ladybug_geometry_polyskel.polygon_directed_graph import PolygonDirectedGraph
+from ladybug_geometry_polyskel.polygon_directed_graph import \
+    PolygonDirectedGraph, _vector2hash
 
 
 def helper_check_lavertex(v1, v2):
@@ -287,7 +288,7 @@ def test_polyskel_concave_two_holes():
 
 
 def test_polygon_offset():
-    """ Test the offset method """
+    """Test the offset method"""
 
     # Construct a simple rectangle
     poly = [[0, 0], [4, 0], [4, 6], [0, 6]]
@@ -301,7 +302,6 @@ def test_polygon_offset():
 
     assert offset[0].is_equivalent(chk_off, 1e-2)
 
-
 if __name__ == "__main__":
 
     # Convex
@@ -310,7 +310,7 @@ if __name__ == "__main__":
     test_polyskel_pentagon()
     test_polyskel_complex_convex()
 
-    # # Concave
+    # Concave
     test_polyskel_simple_concave()
     test_polyskel_concave()
     test_polyskel_concave_two_holes()
