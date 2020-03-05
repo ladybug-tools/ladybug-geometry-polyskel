@@ -6,26 +6,27 @@ Implementation of a Directed Graph.
 from __future__ import division
 
 # Geometry classes
-from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry import intersection2d
+from math import log10
 
-from math import pi
 
-
-def _vector2hash(vector, tol=4):
+def _vector2hash(vector, tol):
     """ Hashes spatial coordinates for use in dictionary.
 
     Args:
         vector: A Vector2D object.
+        tol: floating point precision tolerance.
 
     Returns:
-        String hash of vector object.
+        Hash of vector as a string of rounded coordinates.
     """
+    try:
+        rtol = int(log10(tol)) * -1
+    except ValueError:
+        rtol = 0
 
-    #  TODO: Find a better way of hashing spatial coordinates
-    myhash = vector.__repr__()
-    return myhash
+    return str((round(vector.x, rtol), round(vector.y, rtol)))
 
 
 class _Node(object):
@@ -64,16 +65,23 @@ class _Node(object):
 
 
 class PolygonDirectedGraph(object):
-    """A directed graph that represents polygon adjacency relationships
-    for points and edges.
+    """A directed graph for point and edge adjacency relationships.
 
-    This class assumes that exterior edges are naked
-    (unidirectional) and interior edges are bidirectional.
+    This class assumes that exterior edges are naked (unidirectional) and interior
+    edges are bidirectional.
+
+    Args:
+        tol: floating point precision used for hashing points.
+
+    Properties:
+        * num_nodes
     """
 
-    def __init__(self):
+    def __init__(self, tol=1e-5):
+        """Initialize a PolygonDirectedGraph."""
         self._directed_graph = {}
         self._root = None
+        self._tol = tol
         self.num_nodes = 0
 
     def __repr__(self):
@@ -84,34 +92,25 @@ class PolygonDirectedGraph(object):
                 ', '.join([str(_n.pt.to_array()) for _n in n.adj_lst]))
         return s
 
-    @staticmethod
-    def from_polygon(polygon):
-        """Generate a directed graph from a polygon
+    @classmethod
+    def from_polygon(cls, polygon):
+        """Generate a directed graph from a polygon.
 
         Args:
-            polygon: A Polygon2D
-
-        Returns:
-            A PolygonDirectedGraph of the polygon.
+            polygon: A Polygon2D object.
         """
+        return cls.from_point_array(polygon.vertices, loop=True)
 
-        dg = PolygonDirectedGraph.from_point_array(polygon.vertices, loop=True)
-
-        return dg
-
-    @staticmethod
-    def from_point_array(point_array, loop=True):
+    @classmethod
+    def from_point_array(cls, point_array, loop=True):
         """Generate a directed graph from a 1-dimensional array of points.
 
         Args:
             point_array: Array of Point2D objects.
             loop: Optional parameter to connect 1d array
-
-        Returns:
-            A PolygonDirectedGraph of the point array.
         """
 
-        dg = PolygonDirectedGraph()
+        dg = cls()
         for i in range(len(point_array) - 1):
             dg.add_node(point_array[i], [point_array[i+1]], exterior=True)
 
@@ -162,7 +161,7 @@ class PolygonDirectedGraph(object):
         adj_keys = {n.key: None for n in node.adj_lst}
         adj_keys[node.key] = None
         for adj_val in adj_val_lst:
-            adj_key = _vector2hash(adj_val)
+            adj_key = _vector2hash(adj_val, self._tol)
             if adj_key in adj_keys:
                 continue
 
@@ -192,7 +191,7 @@ class PolygonDirectedGraph(object):
         """
 
         # Get key
-        key = _vector2hash(val)
+        key = _vector2hash(val, self._tol)
 
         # Get node if it exists
         self._check_and_make_node(key, val, exterior)
@@ -412,8 +411,7 @@ class PolygonDirectedGraph(object):
         return exterior_poly_lst
 
     def smallest_closed_cycles(self, recurse_limit=None):
-        """ Gets a list of the smallest individual polygons defined by the edges.
-
+        """Gets a list of the smallest individual polygons defined by the edges.
 
         This is achieved by looping through the exterior edges of the directed graph, and
         identifying the closed loop with the smallest counter-clockwise angle of rotation
@@ -445,9 +443,7 @@ class PolygonDirectedGraph(object):
 
     @classmethod
     def min_ccw_cycle(cls, ref_node, next_node, cycle=None, recurse_limit=None, count=0):
-        """
-        Recursively identifes most counter-clockwise adjacent node and returns closed
-        loop.
+        """Recursively identifes most counter-clockwise adjacent node and returns closed loop.
 
         Args:
             ref_node: The first node, for first edge.

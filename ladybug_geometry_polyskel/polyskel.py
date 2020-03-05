@@ -620,8 +620,7 @@ class _LAV:
                 return
 
     def _show(self):
-        """ Iterates through _LAV linked list and prints _LAVertex.
-        """
+        """ Iterates through _LAV linked list and prints _LAVertex."""
         cur = self.head
         while True:
             print(cur.__repr__())
@@ -821,11 +820,11 @@ def _skeleton_as_directed_graph(polygon, holes, tol):
     Returns:
         A PolygonDirectedGraph object.
     """
-    dg = PolygonDirectedGraph()
+    dg = PolygonDirectedGraph(tol=tol)
 
     # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [hole[::-1] for hole in holes]
-    slav = _SLAV(polygon[::-1], holes, tol)
+    holes = [] if holes is None else [list(reversed(hole)) for hole in holes]
+    slav = _SLAV(reversed(polygon), holes, tol)
 
     # Get the exterior polygon coordinates making sure to flip back to ccw
     vertices = list(slav._lavs[0])[::-1]
@@ -834,7 +833,7 @@ def _skeleton_as_directed_graph(polygon, holes, tol):
     # add rest of vertices in order.
     for i in range(len(vertices) - 1):
         curr_v = vertices[i]
-        next_v = vertices[i+1]
+        next_v = vertices[i + 1]
         dg.add_node(curr_v.point, [next_v.point], exterior=True)
     dg.add_node(vertices[-1].point, [vertices[0].point], exterior=True)
 
@@ -852,8 +851,7 @@ def _skeleton_as_directed_graph(polygon, holes, tol):
 
 
 def skeleton_as_polygon_list(polygon, holes=None, tol=1e-10):
-    """Compute the straight skeleton of a polygon and returns skeleton as
-    a a list of polygon point arrays.
+    """Computes the straight skeleton of a polygon as a list of polygon point arrays.
 
     Args:
         polygon: list of list of point coordinates in ccw order.
@@ -875,12 +873,12 @@ def skeleton_as_polygon_list(polygon, holes=None, tol=1e-10):
 
 
 def perimeter_sub_polygons(polygon, distance, tol=1e-10):
-    """Splits the polygon into perimeter zones based on the polygon
-    straight skeleton.
+    """Splits the polygon into perimeter zones based on the polygon straight skeleton.
 
     Args:
         distance: Distance to offset perimeter.
         tol: Tolerance for point equivalence.
+
     Returns:
         A list of perimeter zones as Polygon2D objects.
     """
@@ -927,20 +925,24 @@ def perimeter_sub_polygons(polygon, distance, tol=1e-10):
 
 
 def sub_polygons(polygon, distance, tol=1e-10):
-    """Splits the polygon into perimeter and core zones based on the polygon
-    straight skeleton.
+    """Converts the polygon straight skeleton into perimeter and core sub-polygons.
 
     Args:
         distance: Distance to offset perimeter.
         tol: Tolerance for point equivalence.
+
     Returns:
-        A list of perimeter zones, and list of core zones as Polygon2D objects.
+        A tuple with two elements
+
+        - perimeter_sub_polygon: A list of perimeter sub-polygons as Polygon2D objects.
+
+        - core_sub_polygon: A list of core sub-polygons as Polygon2D objects.
     """
     perimeter_sub_polygon = perimeter_sub_polygons(polygon, distance, tol)
 
     # Make a graph from the perimeter (offset) polygons
     # so we infer the core polygons
-    g = PolygonDirectedGraph()
+    g = PolygonDirectedGraph(tol)
     for poly in perimeter_sub_polygon:
         pts = poly.vertices
         for i in range(len(pts)-1):
@@ -961,6 +963,7 @@ def offset(polygon, distance, tol=1e-10):
         distance: Distance to offset. Only positive distance works in
             current implementation.
         tol: Tolerance for point equivalence.
+
     Returns:
         A list of offset contours as Polygon2D objects.
     """

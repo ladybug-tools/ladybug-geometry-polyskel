@@ -4,7 +4,8 @@ from __future__ import division
 
 from pprint import pprint as pp
 from ladybug_geometry_polyskel import polyskel
-from ladybug_geometry_polyskel.polygon_directed_graph import PolygonDirectedGraph
+from ladybug_geometry_polyskel.polygon_directed_graph import \
+    PolygonDirectedGraph, _vector2hash
 
 from math import pi
 
@@ -92,12 +93,12 @@ def test_dg_skel_rectangle():
     #     0, 1, 2, 3, 4, 5
 
     chk_lbls = {
-        0: 'Point2D (0.00, 0.00)',
-        1: 'Point2D (6.00, 0.00)',
-        2: 'Point2D (6.00, 4.00)',
-        3: 'Point2D (0.00, 4.00)',
-        4: 'Point2D (2.00, 2.00)',
-        5: 'Point2D (4.00, 2.00)'}
+        0: '(0.0, 0.0)',
+        1: '(6.0, 0.0)',
+        2: '(6.0, 4.0)',
+        3: '(0.0, 4.0)',
+        4: '(2.0, 2.0)',
+        5: '(4.0, 2.0)'}
 
     dg = polyskel._skeleton_as_directed_graph(polygon, [], 1e-10)
 
@@ -147,14 +148,14 @@ def test_dg_skel_concave():
     #     0, 1, 2, 3, 4, 5, 6, 7
 
     chk_lbls = {
-        0: 'Point2D (0.00, 0.00)',
-        1: 'Point2D (6.00, 0.00)',
-        2: 'Point2D (6.00, 6.00)',
-        3: 'Point2D (3.00, 4.00)',
-        4: 'Point2D (0.00, 6.00)',
-        5: 'Point2D (2.09, 2.09)',
-        6: 'Point2D (3.91, 2.09)',
-        7: 'Point2D (3.00, 1.82)'}
+        0: '(0.0, 0.0)',
+        1: '(6.0, 0.0)',
+        2: '(6.0, 6.0)',
+        3: '(3.0, 4.0)',
+        4: '(0.0, 6.0)',
+        5: '(2.09, 2.09)',
+        6: '(3.91, 2.09)',
+        7: '(3.0, 1.82)'}
 
     dg = polyskel._skeleton_as_directed_graph(polygon.to_array(), [], 1e-2)
 
@@ -305,6 +306,35 @@ def test_smallest_closed_cycles():
         assert poly.is_equivalent(chk_poly, 1e-2)
 
 
+def test_vector2hash():
+    """Test the vector hash method"""
+
+    # Integer vector
+    vec = Vector2D(1, 1)
+    hash = _vector2hash(vec, tol=0)
+    assert hash == '(1.0, 1.0)', hash
+
+    # Float with 1e-4 points
+    vec = Vector2D(1.1111, 1.1111)
+    hash = _vector2hash(vec, tol=1e-4)
+    assert hash == '(1.1111, 1.1111)', hash
+
+    # Float with 1e-4 points w/ rounding
+    vec = Vector2D(1.11116, 1.11116)
+    hash = _vector2hash(vec, tol=1e-4)
+    assert hash == '(1.1112, 1.1112)', hash
+
+    # Round to the ones
+    vec = Vector2D(115.11116, 115.11116)
+    hash = _vector2hash(vec, tol=1)
+    assert hash == '(115.0, 115.0)', hash
+
+    # Round to the tenths
+    vec = Vector2D(116.11116, 116.11116)
+    hash = _vector2hash(vec, tol=10)
+    assert hash == '(120.0, 120.0)', hash
+
+
 if __name__ == "__main__":
 
     test_dg_noskel()
@@ -315,3 +345,4 @@ if __name__ == "__main__":
     test_ccw_angle()
     test_min_ccw_cycle()
     test_smallest_closed_cycles()
+    test_vector2hash()
