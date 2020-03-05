@@ -10,10 +10,8 @@ from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry import intersection2d
 from math import log10
 
-from math import pi
 
-
-def _vector2hash(vector, tol=4):
+def _vector2hash(vector, tol):
     """ Hashes spatial coordinates for use in dictionary.
 
     Args:
@@ -76,6 +74,14 @@ class PolygonDirectedGraph(object):
         tol: floating point precision used for hashing points.
 
     Properties:
+        * num_nodes
+    This class assumes that exterior edges are naked (unidirectional) and interior
+    edges are bidirectional.
+
+    Args:
+        tol: floating point precision used for hashing points.
+
+    Properties:
         * num_nodes: Number of nodes in graph.
         * root_keys: list of root hashes on exterior boundaries.
 
@@ -114,6 +120,7 @@ class PolygonDirectedGraph(object):
             point_array: Array of Point2D objects.
             loop: Optional parameter to connect 1d array
         """
+        return cls.from_point_array(polygon.vertices, loop=True)
 
 <<<<<<< refs/remotes/ladybug-tools/master
         dg = cls()
@@ -129,9 +136,6 @@ class PolygonDirectedGraph(object):
         Args:
             point_array: Array of Point2D objects.
             loop: Optional parameter to connect 1d array
-
-        Returns:
-            A PolygonDirectedGraph of the point array.
         """
 
         dg = PolygonDirectedGraph()
@@ -232,7 +236,7 @@ class PolygonDirectedGraph(object):
         adj_keys = {n.key: None for n in node.adj_lst}
         adj_keys[node.key] = None
         for adj_val in adj_val_lst:
-            adj_key = _vector2hash(adj_val)
+            adj_key = _vector2hash(adj_val, self._tol)
             if adj_key in adj_keys:
                 continue
 
@@ -588,8 +592,7 @@ class PolygonDirectedGraph(object):
         return exterior_poly_lst
 
     def smallest_closed_cycles(self, recurse_limit=None):
-        """ Gets a list of the smallest individual polygons defined by the edges.
-
+        """Gets a list of the smallest individual polygons defined by the edges.
 
         This is achieved by looping through the exterior edges of the directed graph, and
         identifying the closed loop with the smallest counter-clockwise angle of rotation
