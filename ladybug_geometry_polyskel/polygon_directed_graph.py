@@ -91,6 +91,7 @@ class PolygonDirectedGraph(object):
         """Initialize a PolygonDirectedGraph."""
         self._directed_graph = {}
         self._tol = tol
+        self.root_keys = []
         self.num_nodes = 0
         self.outer_root_key = None
         self.hole_root_keys = []
@@ -152,55 +153,9 @@ class PolygonDirectedGraph(object):
     def nodes(self):
         """Get an iterable of pt nodes"""
         return self._directed_graph.values()
-
-    @property
-    def ordered_nodes(self):
-        """Get an iterable of pt nodes in order of addition"""
-        nodes = list(self.nodes)
-        nodes.sort(key=lambda v: v._order)
-        return nodes
-
-    @property
-    def exterior_cycles(self):
-        """Computes all exterior boundaries.
-
-        Returns:
-            List of boundaries as list of nodes. The first polygon will
-            be the outer exterior edge (in counter-clockwise order), and
-            subsequent edges will be the edges of the holes in the graph
-            (in clockwise order).
-        """
-
-        exterior_poly_lst = []
-        exterior_check = {}
-
-        for root_node in self.ordered_nodes:
-
-            # Store node in check
-            exterior_check[root_node.key] = None
-
-            # Get next exterior adjacent node
-            next_node = self.next_exterior_node(root_node)
-
-            is_valid = (next_node is not None) and \
-                (next_node.key not in exterior_check)
-
-            if not is_valid:
-                continue
-
-            # Create list of exterior points
-            exterior_poly = [root_node]
-            # Add to dict to prevent repetition
-            exterior_check[next_node.key] = None
-
-            while next_node.key != root_node.key:
-                exterior_poly.append(next_node)
-                exterior_check[next_node.key] = None
-                next_node = self.next_exterior_node(next_node)
-
-            exterior_poly_lst.append(exterior_poly)
-
-        return exterior_poly_lst
+    def add_root_key(self, root_key):
+        """Add the root node, used for traversal of directed graph."""
+        self.root_keys.append(root_key)
 
     def node(self, key):
         """Retrieves the node based on passed value.
@@ -565,7 +520,6 @@ class PolygonDirectedGraph(object):
         exterior_check = {}
 
         for root_node in self.ordered_nodes:
-
             # Store node in check
             exterior_check[root_node.key] = None
 
@@ -578,8 +532,8 @@ class PolygonDirectedGraph(object):
                 continue
 
             # Create list of exterior points
-            # and add to dict to prevent repetition
             exterior_poly = [root_node]
+            # Add to dict to prevent repetition
             exterior_check[next_node.key] = None
 
             while next_node.key != root_node.key:
@@ -672,7 +626,7 @@ class PolygonDirectedGraph(object):
         # Initialize values for comparison
         min_theta = float("inf")
         min_node = None
-
+        #print('adj ', next_node.adj_lst)
         # Identify the node with the smallest ccw angle
         for adj_node in next_node.adj_lst:
             # Make sure this node isn't backtracking by checking
@@ -687,7 +641,7 @@ class PolygonDirectedGraph(object):
             if theta < min_theta:
                 min_theta = theta
                 min_node = adj_node
-
+        #print('min', min_node)
         return PolygonDirectedGraph.min_ccw_cycle(next_node, min_node, cycle,
                                                   recurse_limit=recurse_limit,
                                                   count=count+1)

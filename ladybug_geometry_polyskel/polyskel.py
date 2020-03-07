@@ -805,7 +805,7 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     edge_lst = []
 
     # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [hole[::-1] for hole in holes]
+    holes = [] if holes is None else[hole[::-1] for hole in holes]
     slav = _SLAV(polygon[::-1], holes, tol)
     subtree_list = _skeletonize(slav)
 
