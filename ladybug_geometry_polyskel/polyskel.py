@@ -12,6 +12,7 @@ import heapq
 from itertools import tee, islice, cycle, chain
 from collections import namedtuple
 import operator
+import math
 
 # Geometry classes
 from ladybug_geometry.geometry2d.pointvector import Point2D

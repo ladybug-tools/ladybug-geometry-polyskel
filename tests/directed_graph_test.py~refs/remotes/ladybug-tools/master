@@ -335,14 +335,39 @@ def test_vector2hash():
     assert hash == '(120.0, 120.0)', hash
 
 
+def test_sub_polygon_traversal():
+    # Graph methods to retrieve subpolygons
+
+    tol = 1e-10
+    pts = [[0, 0], [6, 0], [6, 8], [0, 8]]
+    poly = Polygon2D.from_array(pts)
+
+    # Test retrieval of exterior cycle form root node
+    g = polyskel._skeleton_as_directed_graph(poly, None, tol)
+    chk_nodes = [[0, 0], [6, 0], [6, 8], [0, 8], [3, 5], [3, 3]]
+    assert len(chk_nodes) == len(g.ordered_nodes)
+    for i, n in enumerate(g.ordered_nodes):
+        assert n.pt.is_equivalent(Point2D.from_array(chk_nodes[i]), tol)
+
+    # Check root
+    assert g.outer_root_key == _vector2hash(Vector2D(0, 0), 1e-5)
+
+    # Get exterior cycle
+    exterior = g.exterior_cycle(g.node(g.outer_root_key))
+    chk_nodes = [[0, 0], [6, 0], [6, 8], [0, 8]]
+    assert len(chk_nodes) == len(exterior)
+    for i, n in enumerate(exterior):
+        assert n.pt.is_equivalent(Point2D.from_array(chk_nodes[i]), tol)
+
 if __name__ == "__main__":
 
-    test_dg_noskel()
-    test_dg_skel_rectangle()
-    test_dg_skel_concave()
-    test_edge_direction()
-    test_exterior_cycle()
-    test_ccw_angle()
-    test_min_ccw_cycle()
-    test_smallest_closed_cycles()
-    test_vector2hash()
+    # test_dg_noskel()
+    # test_dg_skel_rectangle()
+    # test_dg_skel_concave()
+    # test_edge_direction()
+    # test_exterior_cycle()
+    # test_ccw_angle()
+    # test_min_ccw_cycle()
+    # test_smallest_closed_cycles()
+    # test_vector2hash()
+    test_sub_polygon_traversal()
