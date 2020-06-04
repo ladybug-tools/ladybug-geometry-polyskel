@@ -327,37 +327,37 @@ def _add_holes_to_polygons(polys, hole_polys):
 
 
 def _hole_exists_in_skeleton(polygon, dg):
-        """Check if polygon is in directed graph skeleton.
+    """Check if polygon is in directed graph skeleton.
 
-        This method is based on the PolygonDirectedGraph.polygon_exist method,
-        with modifications to detect incorrect straight skeletons.
+    This method is based on the PolygonDirectedGraph.polygon_exist method,
+    with modifications to detect incorrect straight skeletons.
 
-        Args:
-            polygons: A Polygon2D object.
-            dg: A PolygonDirectedGraph.
+    Args:
+        polygons: A Polygon2D object.
+        dg: A PolygonDirectedGraph.
 
-        Return:
-            True if exists, else False.
-        """
-        vertices_loop = list(polygon.vertices)
-        vertices_loop = vertices_loop + [vertices_loop[0]]
+    Return:
+        True if exists, else False.
+    """
+    vertices_loop = list(polygon.vertices)
+    vertices_loop = vertices_loop + [vertices_loop[0]]
 
-        for i in range(len(vertices_loop) - 1):
-            pt1 = vertices_loop[i]
-            pt2 = vertices_loop[i + 1]
+    for i in range(len(vertices_loop) - 1):
+        pt1 = vertices_loop[i]
+        pt2 = vertices_loop[i + 1]
 
-            if not dg.pt_exists(pt1):
-                return False
+        if not dg.pt_exists(pt1):
+            return False
 
-            node1 = dg.node(_vector2hash(pt1, dg._tol))
-            node2 = dg.node(_vector2hash(pt2, dg._tol))
-            key_lst = [n.key for n in node1.adj_lst]
+        node1 = dg.node(_vector2hash(pt1, dg._tol))
+        node2 = dg.node(_vector2hash(pt2, dg._tol))
+        key_lst = [n.key for n in node1.adj_lst]
 
-            if node2.key in key_lst:
-                return False
+        if node2.key in key_lst:
+            return False
 
-            if len(key_lst) == 1:
-                # Check to make sure hole is connected to skeleton
-                return False
+        if len(key_lst) == 1:
+            # Check to make sure hole is connected to skeleton
+            return False
 
-        return True
+    return True

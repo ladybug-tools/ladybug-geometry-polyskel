@@ -33,12 +33,20 @@ class _Node(object):
     """Private class to handle nodes in PolygonDirectedGraph.
 
         Args:
-            val: Any python object
-            key: Hash of passed object
+            val: A Point2D object.
+            key: Hash of Point2D object.
             order: integer counting order of Node (based on dg propagation)
-            adj_lst: list of keys: ['key1', 'key2' ....  'keyn']
-            exterior: Allows user to pass node boundary condition. None if not
-                set by user, else True or False according to user.
+            adj_lst: list of keys adjacent to this node.
+            exterior: Node boundary condition. None if not set by user, else True
+                or False according to user.
+
+        Properties:
+        * pt: A Point2D object.
+        * key: Hash of Point2D object.
+        * adj_lst: A list of keys adjacent to this node.
+        * exterior: Node boundary condition. None if not set by user, else True or
+            False according to user.
+        * adj_count: Number of adjacent nodes to this node.
     """
     __slots__ = ('key', 'pt', '_order', 'adj_lst', 'exterior')
 
@@ -49,7 +57,7 @@ class _Node(object):
         self.pt = val
         self._order = order
         self.adj_lst = adj_lst
-        # IDEA: Change exterior to data (similar to networkX)
+        # Potentially change exterior to data (similar to networkX)
         # and pass conditional function to get_exterior
         # this resolves redundancy between unidirect and exterior
         # node/edge properties.
@@ -74,16 +82,18 @@ class PolygonDirectedGraph(object):
         tol: floating point precision used for hashing points.
 
     Properties:
+        * outer_root_key: Root key for outside exterior boundary (i.e not holes).
+        * hole_root_keys: List of root keys for inside exterior boundary (holes).
         * num_nodes: Number of nodes in graph.
-        * root_keys: list of root hashes on exterior boundaries.
-
+        * nodes: An iterable of nodes in graph.
+        * ordered_nodes: An interable of nodes in graph in order they were added.
+        * exterior_cycles: A list of unidirectional edge arrays.
     """
 
     def __init__(self, tol=1e-5):
         """Initialize a PolygonDirectedGraph."""
         self._directed_graph = {}
         self._tol = tol
-        self.num_nodes = 0
         self.outer_root_key = None
         self.hole_root_keys = []
 
@@ -121,6 +131,10 @@ class PolygonDirectedGraph(object):
             dg.add_node(point_array[-1], [point_array[0]], exterior=True)
 
         return dg
+
+    @property
+    def num_nodes(self):
+        return len(self.nodes)
 
     @property
     def nodes(self):
@@ -192,10 +206,12 @@ class PolygonDirectedGraph(object):
             return None
 
     def _check_and_make_node(self, key, val, exterior=None):
-        # If key doesn't exist, add to dg
+        """If key doesn't exist, add to dg.
+
+        Helper function for add_node.
+        """
         if key not in self._directed_graph:
-            self.num_nodes += 1
-            self._directed_graph[key] = _Node(key, val, self.num_nodes - 1, [], exterior)
+            self._directed_graph[key] = _Node(key, val, self.num_nodes, [], exterior)
         return self._directed_graph[key]
 
     def add_adj(self, node, adj_val_lst):
