@@ -15,7 +15,7 @@ def helper_check_lavertex(v1, v2):
     assert v1.is_reflex == v2.is_reflex
 
 
-def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
+def helper_assert_polygon_equality(polygon, chk_edges, holes=None):
     """
     Consumes polygons and holes as a list of list of vertices, and the
     corresponding list of skeleton edges for checking. This function compares
@@ -26,8 +26,6 @@ def helper_assert_polygon_equality(polygon, chk_edges, holes=None, lb=True):
          polygon: list of list of polygon vertices as floats in ccw order.
          chk_edges: list of list of line segments as floats.
          holes: list of list of polygon hole vertices as floats in cw order.
-         lb: Boolean flag on wheter to use Ladybug or Bottfy's implementation
-         of polyskel.
     Returns:
         Boolean of equality.
     """
@@ -127,7 +125,7 @@ def test_polyskel_pentagon():
         [(5.0, 5.0),                (10.,  0.)],
         [(5.0, 5.0),                (0.,   0.)]]
 
-    assert helper_assert_polygon_equality(polygon, chk_edges, lb=True)
+    assert helper_assert_polygon_equality(polygon, chk_edges)
 
 
 def test_polyskel_complex_convex():
@@ -167,7 +165,7 @@ def test_polyskel_complex_convex():
         [(5.5, 5.5446), (11.0, 5.0)],
         [(5.5, 5.5446), (5.3866, 4.399)]]
 
-    assert helper_assert_polygon_equality(polygon, chk_edges, lb=True)
+    assert helper_assert_polygon_equality(polygon, chk_edges)
 
 
 def test_polyskel_simple_concave():
@@ -189,8 +187,6 @@ def test_polyskel_simple_concave():
         [(1.0, 0.7207592200561265), (1.0, 0.5)]]
 
     assert helper_assert_polygon_equality(polygon, chk_edges)
-    # print('---- lb test ----')
-    # assert helper_assert_polygon_equality(polygon, chk_edges, lb=False)
 
 
 def test_polyskel_concave():
@@ -212,8 +208,7 @@ def test_polyskel_concave():
         [(1.414213562373095, 0.585786437626905), (2.0, 2.0)],
         [(1.414213562373095, 0.585786437626905), (2.0, 0.0)]]
 
-    assert helper_assert_polygon_equality(polygon, chk_edges, lb=False)
-    # assert helper_assert_polygon_equality(polygon, chk_edges, lb=True)
+    assert helper_assert_polygon_equality(polygon, chk_edges)
 
 
 def test_polyskel_concave_two_holes():
@@ -270,5 +265,5 @@ def test_polyskel_concave_two_holes():
         [(1.0659, 0.9), (1.0, 0.9)]]
 
     holes = [hole1, hole2]
-    assert helper_assert_polygon_equality(poly, chk_edges, holes, lb=True)
+    assert helper_assert_polygon_equality(poly, chk_edges, holes)
 

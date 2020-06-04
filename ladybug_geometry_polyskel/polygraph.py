@@ -74,14 +74,6 @@ class PolygonDirectedGraph(object):
         tol: floating point precision used for hashing points.
 
     Properties:
-        * num_nodes
-    This class assumes that exterior edges are naked (unidirectional) and interior
-    edges are bidirectional.
-
-    Args:
-        tol: floating point precision used for hashing points.
-
-    Properties:
         * num_nodes: Number of nodes in graph.
         * root_keys: list of root hashes on exterior boundaries.
 
@@ -120,26 +112,8 @@ class PolygonDirectedGraph(object):
             point_array: Array of Point2D objects.
             loop: Optional parameter to connect 1d array
         """
-        return cls.from_point_array(polygon.vertices, loop=True)
 
-<<<<<<< refs/remotes/ladybug-tools/master
         dg = cls()
-=======
-        dg = PolygonDirectedGraph.from_point_array(polygon.vertices, loop=True)
-
-        return dg
-
-    @staticmethod
-    def from_point_array(point_array, loop=True):
-        """Generate a directed graph from a 1-dimensional array of points.
-
-        Args:
-            point_array: Array of Point2D objects.
-            loop: Optional parameter to connect 1d array
-        """
-
-        dg = PolygonDirectedGraph()
->>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
         for i in range(len(point_array) - 1):
             dg.add_node(point_array[i], [point_array[i+1]], exterior=True)
 
@@ -312,6 +286,38 @@ class PolygonDirectedGraph(object):
     def node_exists(self, key):
         """True if node in directed graph else False"""
         return key in self._directed_graph
+
+    def pt_exists(self, pt):
+        """True if a point (as Point2D) in directed graph exists as node else False.
+        """
+        return self.node_exists(_vector2hash(pt, self._tol))
+
+    def polygon_exists(self, polygon):
+        """Check if polygon is in directed graph.
+
+        Args:
+            polygons: A Polygon2D object.
+            dg: A PolygonDirectedGraph.
+
+        Return:
+            True if exists, else False.
+        """
+        vertices_loop = list(polygon.vertices)
+        vertices_loop = vertices_loop + [vertices_loop[0]]
+
+        for i in range(len(vertices_loop) - 1):
+            pt1 = vertices_loop[i]
+            pt2 = vertices_loop[i + 1]
+
+            if not self.pt_exists(pt1):
+                return False
+
+            node1 = self.node(_vector2hash(pt1, self._tol))
+            node2 = self.node(_vector2hash(pt2, self._tol))
+            if node2.key in [n.key for n in node1.adj_lst]:
+                return False
+
+        return True
 
     def adj_matrix(self):
         """Gets an adjacency matrix of the directed graph where:
@@ -527,33 +533,21 @@ class PolygonDirectedGraph(object):
         Returns:
             A list of nodes that form a polygon if the cycle exists, else None.
         """
-<<<<<<< refs/remotes/ladybug-tools/master
 
-=======
-        # Base case 1: recursion limit is hit
->>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
         if recurse_limit and count >= recurse_limit:
             # Base case 1: recursion limit is hit
             raise RecursionError
-<<<<<<< refs/remotes/ladybug-tools/master
         elif next_node is None:
             # Base case 2: No node exists in adjacency list
             raise Exception('Error finding the minimum counterclockwise cycle '
                             'in this polygon')
         elif cycle and (next_node.key == cycle[0].key):
             # Base case 3: loop is completed
-=======
-
-        # Base case 2: loop is completed
-        if cycle and (next_node.key == cycle[0].key):
->>>>>>> feat(PolygonDirectedGraph): Update methods for offset and zoning.
             return cycle
 
         # Set parameters
         if cycle is None:
             cycle = [ref_node]
-<<<<<<< refs/remotes/ladybug-tools/master
-=======
 
         cycle.append(next_node)
         # Get current edge direction vector
@@ -563,7 +557,7 @@ class PolygonDirectedGraph(object):
         # Initialize values for comparison
         min_theta = float("inf")
         min_node = None
-        #print('adj ', next_node.adj_lst)
+
         # Identify the node with the smallest ccw angle
         for adj_node in next_node.adj_lst:
             # Make sure this node isn't backtracking by checking
@@ -578,8 +572,7 @@ class PolygonDirectedGraph(object):
             if theta < min_theta:
                 min_theta = theta
                 min_node = adj_node
-        #print('min', min_node)
-        return PolygonDirectedGraph.min_ccw_cycle(next_node, min_node, cycle,
-                                                  recurse_limit=recurse_limit,
-                                                  count=count+1)
+
+        return PolygonDirectedGraph.min_ccw_cycle(
+            next_node, min_node, cycle, recurse_limit=recurse_limit, count=count+1)
 
