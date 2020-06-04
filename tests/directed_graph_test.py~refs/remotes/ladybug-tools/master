@@ -358,16 +358,3 @@ def test_sub_polygon_traversal():
     assert len(chk_nodes) == len(exterior)
     for i, n in enumerate(exterior):
         assert n.pt.is_equivalent(Point2D.from_array(chk_nodes[i]), tol)
-
-if __name__ == "__main__":
-
-    # test_dg_noskel()
-    # test_dg_skel_rectangle()
-    # test_dg_skel_concave()
-    # test_edge_direction()
-    # test_exterior_cycle()
-    # test_ccw_angle()
-    # test_min_ccw_cycle()
-    # test_smallest_closed_cycles()
-    # test_vector2hash()
-    test_sub_polygon_traversal()
