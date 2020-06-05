@@ -766,9 +766,9 @@ def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
     Compute the polygon straight skeleton as a list of subtree of source and sink points.
 
     Args:
-        polygon: nested list of endpoint coordinates in ccw order.
+        polygon: nested list of endpoint coordinates in counter-clockwise order.
             Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in cw order.
+        holes: list of polygons representing holes in clockwise order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
         tol: Tolerance for point equivalence.
 
@@ -790,9 +790,9 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     Compute the straight skeleton of a polygon and returns skeleton as list of edges.
 
     Args:
-        polygon: list of list of point coordinates in ccw order.
+        polygon: list of list of point coordinates in counter-clockwise order.
             Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in cw order.
+        holes: list of polygons representing holes in clockwise order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
         tol: Tolerance for point equivalence.
 

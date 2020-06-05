@@ -10,10 +10,10 @@ from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry_polyskel.polygon_directed_graph import \
     PolygonDirectedGraph, _vector2hash
 
-from pprint import pprint as pp
-import math
+# from pprint import pprint as pp
+# import math
 
-from astrobot.utils import *
+# from astrobot.utils import *
 # TODO: Move this to Polygon2D?
 def interior_angles(polygon, radian=True):
     """Compute the interior angles of a polygon, accounting for reflex angles.

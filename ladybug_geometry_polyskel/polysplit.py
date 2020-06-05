@@ -39,6 +39,7 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-10):
         holes: A list of Polygon2D objects representing holes in the polygon.
             Default: None.
         tol: Tolerance for point equivalence. Default: 1e-10.
+
     Returns:
         A tuple with two lists:
 
@@ -106,11 +107,14 @@ def _skeleton_as_directed_graph(_polygon, holes, tol):
         A PolygonDirectedGraph object.
     """
 
-    assert not _polygon.is_clockwise, 'Exterior polygon must be in counter-clockwise ' \
-        'order, is currently clockwise.'
+    if _polygon.is_clockwise:
+        # Exterior polygon must be in counter-clockwise order.
+        _polygon = _polygon.reverse()
     if holes is not None:
-        assert all([not hole.is_clockwise for hole in holes]), 'Polygon for holes ' \
-            'must be in counter-clockwise order. A clockwise hole has been detected.'
+        # Interior polygon must be in counter-clockwise order.
+        for i, hole in enumerate(holes):
+            if hole.is_clockwise:
+                holes[i] = hole.reverse()
 
     # Make directed graph
     dg = PolygonDirectedGraph(tol=tol)
@@ -207,7 +211,7 @@ def _split_polygon_graph(node1, node2, distance, poly_graph):
     except RuntimeError:
         raise Exception(POLYSKELETON_ERROR_MSG + ' Error splitting the minimum '
                         'counterclockwise subpolygon:\n{}'.format(
-                         [n.pt.to_array() for n in poly_graph]))
+                         [n.pt for n in poly_graph.vertices]))
 
     return split_poly_nodes
 
@@ -256,7 +260,7 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol=1e-10):
         except RuntimeError:
             raise Exception(POLYSKELETON_ERROR_MSG + ' Error calculating the '
                             'minimum counterclockwise subpolygon for the following '
-                            'polygon:\n{}'.format([n.pt.to_array() for n in exterior]))
+                            'polygon:\n{}'.format([n.pt for n in exterior]))
 
         # Offset edge from specified distance, and cut a perimeter polygon
         split_poly_graph = _split_polygon_graph(

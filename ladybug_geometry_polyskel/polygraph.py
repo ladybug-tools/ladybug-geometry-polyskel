@@ -75,8 +75,8 @@ class _Node(object):
 class PolygonDirectedGraph(object):
     """A directed graph for point and edge adjacency relationships.
 
-    This class assumes that exterior edges are naked (unidirectional) and interior
-    edges are bidirectional.
+    This class assumes that exterior edges are naked (unidirectional), oriented
+    counter-clockwise, and interior edges are bidirectional.
 
     Args:
         tol: floating point precision used for hashing points.
