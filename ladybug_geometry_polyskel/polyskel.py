@@ -1,7 +1,6 @@
 # coding=utf-8
 """
 Implementation of the straight skeleton algorithm by Felkel and Obdrzalek[1].
-
 [1] Felkel, Petr and Stepan Obdrzalek. 1998. "Straight Skeleton Implementation." In
 Proceedings of Spring Conference on Computer Graphics, Budmerice, Slovakia. 210 - 218.
 """
@@ -19,9 +18,6 @@ from ladybug_geometry.geometry2d.pointvector import Point2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry2d.ray import Ray2D
 from ladybug_geometry import intersection2d
-from ladybug_geometry.geometry2d.polygon import Polygon2D
-from ladybug_geometry.geometry3d.pointvector import Vector3D
-from ladybug_geometry_polyskel.polygon_directed_graph import PolygonDirectedGraph
 
 # Polygon sorting classes
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
@@ -770,9 +766,9 @@ def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
     Compute the polygon straight skeleton as a list of subtree of source and sink points.
 
     Args:
-        polygon: nested list of endpoint coordinates in ccw order.
+        polygon: nested list of endpoint coordinates in counter-clockwise order.
             Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in cw order.
+        holes: list of polygons representing holes in clockwise order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
         tol: Tolerance for point equivalence.
 
@@ -794,9 +790,9 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     Compute the straight skeleton of a polygon and returns skeleton as list of edges.
 
     Args:
-        polygon: list of list of point coordinates in ccw order.
+        polygon: list of list of point coordinates in counter-clockwise order.
             Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in cw order.
+        holes: list of polygons representing holes in clockwise order.
             Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
         tol: Tolerance for point equivalence.
 
@@ -806,7 +802,7 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     edge_lst = []
 
     # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [hole[::-1] for hole in holes]
+    holes = [] if holes is None else[hole[::-1] for hole in holes]
     slav = _SLAV(polygon[::-1], holes, tol)
     subtree_list = _skeletonize(slav)
 
@@ -817,170 +813,3 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
             edge_lst.append(edge_arr)
 
     return edge_lst
-
-
-def _skeleton_as_directed_graph(polygon, holes, tol):
-    """
-    Compute the straight skeleton of a polygon as a PolygonDirectedGraph.
-
-    Args:
-        polygon: list of list of point coordinates in ccw order.
-            Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in cw order.
-            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
-        tol: Tolerance for point equivalence.
-
-    Returns:
-        A PolygonDirectedGraph object.
-    """
-    dg = PolygonDirectedGraph(tol=tol)
-
-    # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [list(reversed(hole)) for hole in holes]
-    slav = _SLAV(reversed(polygon), holes, tol)
-
-    # Get the exterior polygon coordinates making sure to flip back to ccw
-    vertices = list(slav._lavs[0])[::-1]
-
-    # Start with last point to be consistent with order of point input, and then
-    # add rest of vertices in order.
-    for i in range(len(vertices) - 1):
-        curr_v = vertices[i]
-        next_v = vertices[i + 1]
-        dg.add_node(curr_v.point, [next_v.point], exterior=True)
-    dg.add_node(vertices[-1].point, [vertices[0].point], exterior=True)
-
-    # Compute the skeleton
-    subtree_list = _skeletonize(slav)
-
-    for subtree in subtree_list:
-        event_pt = subtree.source
-        for sink_pt in subtree.sinks:
-            # Add a bidirectional edge to represent skeleton edges
-            dg.add_node(sink_pt, [event_pt])
-            dg.add_node(event_pt, [sink_pt], exterior=False)
-
-    return dg
-
-
-def skeleton_as_polygon_list(polygon, holes=None, tol=1e-10):
-    """Compute the polygon straight skeleton as a list of polygon point arrays.
-
-    Args:
-        polygon: list of list of point coordinates in ccw order.
-            Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in cw order.
-            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
-        tol: Tolerance for point equivalence.
-
-    Returns:
-        A list of a list of point arrays representing polygons that define
-        the straight skeleton.
-    """
-
-    dg = _skeleton_as_directed_graph(polygon, holes, tol)
-
-    polygons = [[n.pt.to_array() for n in poly] for poly in dg.smallest_closed_cycles()]
-
-    return polygons
-
-
-def perimeter_sub_polygons(polygon, distance, tol=1e-10):
-    """Compute the perimeter sub-polygons from the polygon straight skeleton.
-
-    Args:
-        distance: Distance to offset perimeter.
-        tol: Tolerance for point equivalence.
-
-    Returns:
-        A list of perimeter zones as Polygon2D objects.
-    """
-
-    perimeter_sub_polygon = []
-
-    # Compute the straight skeleton of the polygon and get exterior edges
-    g = _skeleton_as_directed_graph(polygon.to_array(), None, tol)
-    exterior_poly_lst = g.exterior_cycles
-
-    # TODO: For holes change this to loop through all exterior edges
-    exterior_poly = exterior_poly_lst[0]
-
-    # Fit offset segment to skeleton polygon
-    for exterior_node in exterior_poly:
-
-        next_node = exterior_node.adj_lst[0]
-        ext_seg = LineSegment2D.from_end_points(exterior_node.pt, next_node.pt)
-
-        # Compute normal facing into polygon
-        ext_arr = ext_seg.v.to_array()
-        ext_seg_v = Vector3D(ext_arr[0], ext_arr[1], 0)
-        normal = ext_seg_v.cross(Vector3D(0, 0, -1)).normalize() * distance
-
-        # Move segment by normal to get offset segment
-        offset_seg = ext_seg.move(normal)
-
-        # Make new graph
-        new_poly_nodes = PolygonDirectedGraph.min_ccw_cycle(exterior_node, next_node)
-        poly_graph = PolygonDirectedGraph.from_point_array(
-            [n.pt for n in new_poly_nodes])
-
-        # Update graph by intersecting offset segment with other edges
-        poly_graph.intersect_graph_with_segment(offset_seg)
-
-        # Get the minimum cycle. Since we start at the exterior edge, this will
-        # return the perimter offset.
-        next_node = poly_graph.root.adj_lst[0]
-        new_poly_nodes = poly_graph.min_ccw_cycle(poly_graph.root, next_node)
-
-        perimeter_sub_polygon.append(Polygon2D([n.pt for n in new_poly_nodes]))
-
-    return perimeter_sub_polygon
-
-
-def sub_polygons(polygon, distance, tol=1e-10):
-    """Compute the perimeter and core sub-polygons from the polygon straight skeleton.
-
-    Args:
-        distance: Distance to offset perimeter.
-        tol: Tolerance for point equivalence.
-
-    Returns:
-        A tuple with two elements
-
-        - perimeter_sub_polygon: A list of perimeter sub-polygons as Polygon2D objects.
-
-        - core_sub_polygon: A list of core sub-polygons as Polygon2D objects.
-    """
-    perimeter_sub_polygon = perimeter_sub_polygons(polygon, distance, tol)
-
-    # Make a graph from the perimeter (offset) polygons
-    # so we infer the core polygons
-    g = PolygonDirectedGraph(tol)
-    for poly in perimeter_sub_polygon:
-        pts = poly.vertices
-        for i in range(len(pts)-1):
-            g.add_node(pts[i], [pts[i + 1]])
-        g.add_node(pts[-1], [pts[0]])
-
-    # Reverse the node_loop since inner naked edges are in cw order
-    core_sub_polygon = [Polygon2D([node.pt for node in reversed(node_loop)])
-                        for node_loop in g.exterior_cycles[1:]]
-
-    return perimeter_sub_polygon, core_sub_polygon
-
-
-def offset(polygon, distance, tol=1e-10):
-    """Offset the polygon boundary by defined distance.
-
-    Args:
-        distance: Distance to offset. Only positive distance works in
-            current implementation.
-        tol: Tolerance for point equivalence.
-
-    Returns:
-        A list of offset contours as Polygon2D objects.
-    """
-
-    _, offsets = sub_polygons(polygon, distance, tol)
-
-    return offsets

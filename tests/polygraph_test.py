@@ -3,15 +3,14 @@
 from __future__ import division
 
 from pprint import pprint as pp
-from ladybug_geometry_polyskel import polyskel
-from ladybug_geometry_polyskel.polygon_directed_graph import \
+from ladybug_geometry_polyskel import polyskel, polysplit
+from ladybug_geometry_polyskel.polygraph import \
     PolygonDirectedGraph, _vector2hash
 
 from math import pi
 
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-from ladybug_geometry.geometry2d.line import LineSegment2D
 
 
 TOL = 1e-10
@@ -38,18 +37,20 @@ def test_dg_noskel():
     vertices = polygon.vertices
 
     # Add edges to dg
-    [d.add_node(vertices[i], [vertices[i + 1]])
-        for i in range(len(vertices) - 1)]
+    for i in range(len(vertices) - 1):
+        k = d.add_node(vertices[i], [vertices[i + 1]])
+        if i == 0:
+            d.outer_root_key = k
     d.add_node(vertices[-1], [vertices[0]])
 
     # Test number
     assert len(chk_pt_lst) == d.num_nodes, _cmpstr(len(chk_pt_lst), d.num_nodes)
 
     # Test root
-    assert d.root._order == 0
+    assert d.node(d.outer_root_key)._order == 0
 
     # Test adjacencies are correct
-    curr_node = d.root
+    curr_node = d.node(d.outer_root_key)
     for chk_pt in chk_pt_lst:
         assert chk_pt.is_equivalent(curr_node.pt, TOL), _cmpstr(chk_pt, curr_node.pt)
 
@@ -100,7 +101,7 @@ def test_dg_skel_rectangle():
         4: '(2.0, 2.0)',
         5: '(4.0, 2.0)'}
 
-    dg = polyskel._skeleton_as_directed_graph(polygon, [], 1e-10)
+    dg = polysplit._skeleton_as_directed_graph(polygon, [], 1e-10)
 
     amtx = dg.adj_matrix()
     lbls = dg.adj_matrix_labels()
@@ -157,7 +158,7 @@ def test_dg_skel_concave():
         6: '(3.91, 2.09)',
         7: '(3.0, 1.82)'}
 
-    dg = polyskel._skeleton_as_directed_graph(polygon.to_array(), [], 1e-2)
+    dg = polysplit._skeleton_as_directed_graph(polygon, [], 1e-2)
 
     amtx = dg.adj_matrix()
     lbls = dg.adj_matrix_labels()
@@ -195,8 +196,12 @@ def test_edge_direction():
     dg = PolygonDirectedGraph()
 
     for i in range(len(pt_array)-1):
-        dg.add_node(pt_array[i], [pt_array[i+1]])
+        k = dg.add_node(pt_array[i], [pt_array[i+1]])
+        if i == 0:
+            dg.outer_root_key = k
     dg.add_node(pt_array[-1], [pt_array[0]])
+
+    root = dg.node(dg.outer_root_key)
 
     # Check
     nodes = dg.ordered_nodes
@@ -204,15 +209,15 @@ def test_edge_direction():
         assert not dg.is_edge_bidirect(nodes[i], nodes[i+1])
 
     # Check unidirectionality
-    next_node = dg.next_unidirect_node(dg.root)
-    assert not dg.is_edge_bidirect(dg.root, next_node)
+    next_node = dg.next_unidirect_node(root)
+    assert not dg.is_edge_bidirect(root, next_node)
 
     # Add bidirectional edge
     dg.add_node(Point2D(0, 0), [Point2D(1, 1)])
     bidir_key = dg.add_node(Point2D(1, 1), [Point2D(0, 0)])
 
     # Check bidirectionality
-    assert dg.is_edge_bidirect(dg.node(bidir_key), dg.root)
+    assert dg.is_edge_bidirect(dg.node(bidir_key), root)
 
 
 def test_exterior_cycle():
@@ -220,9 +225,10 @@ def test_exterior_cycle():
 
     # Make the polygon
     polygon = Polygon2D.from_array([[0, 0], [6, 0], [6, 4], [0, 4]])
-    dg = polyskel._skeleton_as_directed_graph(polygon, [], 1e-10)
+    dg = polysplit._skeleton_as_directed_graph(polygon, [], 1e-10)
 
-    exterior = dg.exterior_cycle(dg.root)
+    root = dg.node(dg.outer_root_key)
+    exterior = dg.exterior_cycle(root)
 
     for pt, node in zip(polygon.vertices, exterior):
         assert node.pt.is_equivalent(pt, 1e-10)
@@ -264,9 +270,9 @@ def test_min_ccw_cycle():
     chk_poly = Polygon2D.from_array(chk_poly)
 
     # Skeletonize
-    dg = polyskel._skeleton_as_directed_graph(poly.to_array(), [], 1e-10)
+    dg = polysplit._skeleton_as_directed_graph(poly, [], 1e-10)
 
-    ref_node = dg.root
+    ref_node = dg.node(dg.outer_root_key)
 
     next_node = dg.next_unidirect_node(ref_node)
     cycle = dg.min_ccw_cycle(ref_node, next_node)
@@ -293,7 +299,7 @@ def test_smallest_closed_cycles():
     chk_poly_lst = [Polygon2D.from_array(ptlst) for ptlst in chk_poly_lst]
 
     # Skeletonize
-    dg = polyskel._skeleton_as_directed_graph(polygon.to_array(), [], 1e-10)
+    dg = polysplit._skeleton_as_directed_graph(polygon, [], 1e-10)
 
     poly_lst = dg.smallest_closed_cycles()
 
@@ -335,14 +341,26 @@ def test_vector2hash():
     assert hash == '(120.0, 120.0)', hash
 
 
-if __name__ == "__main__":
+def test_sub_polygon_traversal():
+    # Graph methods to retrieve subpolygons
 
-    test_dg_noskel()
-    test_dg_skel_rectangle()
-    test_dg_skel_concave()
-    test_edge_direction()
-    test_exterior_cycle()
-    test_ccw_angle()
-    test_min_ccw_cycle()
-    test_smallest_closed_cycles()
-    test_vector2hash()
+    tol = 1e-10
+    pts = [[0, 0], [6, 0], [6, 8], [0, 8]]
+    poly = Polygon2D.from_array(pts)
+
+    # Test retrieval of exterior cycle form root node
+    g = polysplit._skeleton_as_directed_graph(poly, None, tol)
+    chk_nodes = [[0, 0], [6, 0], [6, 8], [0, 8], [3, 5], [3, 3]]
+    assert len(chk_nodes) == len(g.ordered_nodes)
+    for i, n in enumerate(g.ordered_nodes):
+        assert n.pt.is_equivalent(Point2D.from_array(chk_nodes[i]), tol)
+
+    # Check root
+    assert g.outer_root_key == _vector2hash(Vector2D(0, 0), 1e-5)
+
+    # Get exterior cycle
+    exterior = g.exterior_cycle(g.node(g.outer_root_key))
+    chk_nodes = [[0, 0], [6, 0], [6, 8], [0, 8]]
+    assert len(chk_nodes) == len(exterior)
+    for i, n in enumerate(exterior):
+        assert n.pt.is_equivalent(Point2D.from_array(chk_nodes[i]), tol)
