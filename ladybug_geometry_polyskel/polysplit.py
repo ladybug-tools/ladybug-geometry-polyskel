@@ -56,11 +56,10 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-10):
 
     if holes is not None:
         holes_exist = all([_hole_exists_in_skeleton(hole, dg) for hole in holes])
-
         if not holes_exist:
-            raise Exception(POLYSKELETON_ERROR_MSG + ' Error calculating the '
-                            'holes for the polygon. Try changing the geometry '
-                            'of the hole.')
+            raise RuntimeError(POLYSKELETON_ERROR_MSG + ' Error calculating the '
+                               'holes for the polygon. Try changing the geometry '
+                               'of the hole.')
 
     # Make list of roots for graph traversal of just the exterior cycles
     root_keys = [dg.outer_root_key] + dg.hole_root_keys
@@ -145,8 +144,8 @@ def _skeleton_as_directed_graph(_polygon, holes, tol):
                     if dg.outer_root_key is None:
                         dg.outer_root_key = k
                     else:
-                        raise Exception('Outer root key is already assigned. '
-                                        'Cannot reassign outer root key.')
+                        raise RuntimeError('Outer root key is already assigned. '
+                                           'Cannot reassign outer root key.')
                 else:
                     dg.hole_root_keys.append(k)
 
@@ -209,9 +208,9 @@ def _split_polygon_graph(node1, node2, distance, poly_graph):
     try:
         split_poly_nodes = poly_graph.min_ccw_cycle(root_node, next_node)
     except RuntimeError:
-        raise Exception(POLYSKELETON_ERROR_MSG + ' Error splitting the minimum '
-                        'counterclockwise subpolygon:\n{}'.format(
-                         [n.pt for n in poly_graph.vertices]))
+        print(POLYSKELETON_ERROR_MSG + ' Error splitting the minimum '
+              'counterclockwise subpolygon:\n{}'.format(
+                  [n.pt for n in poly_graph.vertices]))
 
     return split_poly_nodes
 
@@ -244,9 +243,9 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol=1e-10):
     exterior = dg.exterior_cycle(dg.node(root_key))
 
     if exterior is None:
-        raise Exception(POLYSKELETON_ERROR_MSG + ' Error traversing the '
-                        'skeleton for the following polygon:\n{}'.format(
-                         [n.pt.to_array() for n in exterior]))
+        raise RuntimeError(POLYSKELETON_ERROR_MSG + ' Error traversing the skeleton '
+                           'for the following polygon:\n{}'.format(
+                               [n.pt.to_array() for n in exterior]))
 
     # Cycle through exterior nodes and split polygons by distance
     for exterior_node in exterior:
@@ -258,9 +257,9 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol=1e-10):
             min_ccw_poly_graph = PolygonDirectedGraph.min_ccw_cycle(
                 exterior_node, next_node)
         except RuntimeError:
-            raise Exception(POLYSKELETON_ERROR_MSG + ' Error calculating the '
-                            'minimum counterclockwise subpolygon for the following '
-                            'polygon:\n{}'.format([n.pt for n in exterior]))
+            print(POLYSKELETON_ERROR_MSG + ' Error calculating the minimum '
+                  'counterclockwise subpolygon for the following polygon:\n{}'.format(
+                      [n.pt for n in exterior]))
 
         # Offset edge from specified distance, and cut a perimeter polygon
         split_poly_graph = _split_polygon_graph(
