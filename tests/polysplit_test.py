@@ -55,7 +55,7 @@ def test_perimeter_core_subpolygons_hole_error():
     holes = [Polygon2D.from_array([[2, 2], [4, 2], [4, 6], [2, 6]])]
 
     # Run method
-    with pytest.raises(Exception):
+    with pytest.raises(RuntimeError):
         _ = polysplit.perimeter_core_subpolygons(poly, 1, holes)
 
 
