@@ -90,7 +90,7 @@ class PolygonDirectedGraph(object):
         * exterior_cycles: A list of unidirectional edge arrays.
     """
 
-    def __init__(self, tol=1e-5):
+    def __init__(self, tol):
         """Initialize a PolygonDirectedGraph."""
         self._directed_graph = {}
         self._tol = tol
@@ -106,24 +106,25 @@ class PolygonDirectedGraph(object):
         return s
 
     @classmethod
-    def from_polygon(cls, polygon):
+    def from_polygon(cls, polygon, tol):
         """Generate a directed graph from a polygon.
 
         Args:
             polygon: A Polygon2D object.
         """
-        return cls.from_point_array(polygon.vertices, loop=True)
+        return cls.from_point_array(polygon.vertices, tol, loop=True)
 
     @classmethod
-    def from_point_array(cls, point_array, loop=True):
+    def from_point_array(cls, point_array, tol, loop=True):
         """Generate a directed graph from a 1-dimensional array of points.
 
         Args:
             point_array: Array of Point2D objects.
             loop: Optional parameter to connect 1d array
+            tol: Tolerance for point equivalence.
         """
 
-        dg = cls()
+        dg = cls(tol)
         for i in range(len(point_array) - 1):
             dg.add_node(point_array[i], [point_array[i+1]], exterior=True)
 
@@ -205,15 +206,6 @@ class PolygonDirectedGraph(object):
         except KeyError:
             return None
 
-    def _check_and_make_node(self, key, val, exterior=None):
-        """If key doesn't exist, add to dg.
-
-        Helper function for add_node.
-        """
-        if key not in self._directed_graph:
-            self._directed_graph[key] = _Node(key, val, self.num_nodes, [], exterior)
-        return self._directed_graph[key]
-
     def add_adj(self, node, adj_val_lst):
         """Adds nodes to node.adj_lst.
 
@@ -230,7 +222,7 @@ class PolygonDirectedGraph(object):
             if adj_key in adj_keys:
                 continue
 
-            self._check_and_make_node(adj_key, adj_val, exterior=None)
+            self._add_node(adj_key, adj_val, exterior=None)
             adj_keys[adj_key] = None
             node.adj_lst.append(self.node(adj_key))
 
@@ -242,6 +234,15 @@ class PolygonDirectedGraph(object):
             adj_val_lst: List of adjacency keys to remove as adjacent nodes.
         """
         node.adj_lst = [n for n in node.adj_lst if n.key not in set(adj_key_lst)]
+
+    def _add_node(self, key, val, exterior=None):
+        """If key doesn't exist, add to dg.
+
+        Helper function for add_node.
+        """
+        if key not in self._directed_graph:
+            self._directed_graph[key] = _Node(key, val, self.num_nodes, [], exterior)
+        return self._directed_graph[key]
 
     def add_node(self, val, adj_lst, exterior=None):
         """Consumes a polygon point, and computes its key value, and adds it in the
@@ -259,7 +260,7 @@ class PolygonDirectedGraph(object):
         key = _vector2hash(val, self._tol)
 
         # Get node if it exists
-        self._check_and_make_node(key, val, exterior)
+        self._add_node(key, val, exterior)
 
         node = self._directed_graph[key]
 
@@ -412,37 +413,6 @@ class PolygonDirectedGraph(object):
                 self.add_node(n1.pt, [n2.pt], exterior=False)
                 self.add_node(n2.pt, [n1.pt], exterior=False)
 
-    def smallest_closed_cycles(self, recurse_limit=None):
-        """Gets a list of the smallest individual polygons defined by the edges.
-
-        This is achieved by looping through the exterior edges of the directed graph, and
-        identifying the closed loop with the smallest counter-clockwise angle of rotation
-        between edges. Since the exterior edges of a polygon split by a straight skeleton
-        will always result in either a split or edge event, of the interior skeleton,
-        this will identify the smallest polygon nested in the directed graph.
-
-        Returns:
-            A list of polygon point arrays.
-        """
-
-        polygon_node_lst = []
-
-        # Get continous exterior nodes list.
-        for node in self.ordered_nodes:
-            ext_nodes = self.exterior_cycle(node)
-            if ext_nodes is not None:
-                break
-
-        # Add first node to ensure complete cycle
-        ext_nodes += [ext_nodes[0]]
-        for i, ext_node in enumerate(ext_nodes[:-1]):
-            next_node = ext_nodes[i + 1]
-            cycle = self.min_ccw_cycle(ext_node, next_node,
-                                       recurse_limit=recurse_limit, count=0)
-            polygon_node_lst.append(cycle)
-
-        return polygon_node_lst
-
     @staticmethod
     def is_edge_bidirect(node1, node2):
         """Are two nodes bidirectional.
@@ -536,39 +506,21 @@ class PolygonDirectedGraph(object):
         return ext_cycle
 
     @staticmethod
-    def min_ccw_cycle(ref_node, next_node, cycle=None, recurse_limit=None, count=0):
-        """Recursively identifes most counter-clockwise adjacent node and returns closed loop.
+    def _min_ccw_cycle(curr_node, next_node, cycle):
+        """Identify the counter-clockwise adjacent node with the minimum angle.
 
         Args:
-            ref_node: The first node, for first edge.
-            next_node: The node next to ref_node that constitues a polygon edge.
+            curr_node: A node that defines first point of a counter-clockwise polygon edge.
+            next_node: A node connected to the curr_node that defines the second point of a
+                counter-clockwise polygon edge.
             cycle: Current list of nodes that will form a polygon.
-            recurse_limit: optional parameter to limit recursion for debugging.
-            count: optional paramter to limit recursion for debugging.
-
         Returns:
-            A list of nodes that form a polygon if the cycle exists, else None.
+            The next connected node that contains the minimum counter-clockwise angle
+            by the edge defined by the curr_node and next_node.
         """
-
-        if recurse_limit and count >= recurse_limit:
-            # Base case 1: recursion limit is hit
-            raise RecursionError
-        elif next_node is None:
-            # Base case 2: No node exists in adjacency list
-            raise Exception('Error finding the minimum counterclockwise cycle '
-                            'in this polygon')
-        elif cycle and (next_node.key == cycle[0].key):
-            # Base case 3: loop is completed
-            return cycle
-
-        # Set parameters
-        if cycle is None:
-            cycle = [ref_node]
-
-        cycle.append(next_node)
         # Get current edge direction vector
         # N.B point subtraction or addition results in Vector2D
-        edge_dir = next_node.pt - ref_node.pt
+        edge_dir = next_node.pt - curr_node.pt
 
         # Initialize values for comparison
         min_theta = float("inf")
@@ -589,6 +541,49 @@ class PolygonDirectedGraph(object):
                 min_theta = theta
                 min_node = adj_node
 
-        return PolygonDirectedGraph.min_ccw_cycle(
-            next_node, min_node, cycle, recurse_limit=recurse_limit, count=count+1)
+        return min_node
 
+    @staticmethod
+    def min_ccw_cycle(curr_node, next_node, recurse_limit=3000):
+        """Recursively identifies most counter-clockwise adjacent node and returns closed loop.
+
+        Args:
+            curr_node: The first node, for first edge.
+            next_node: The node next to ref_node that constitutes a polygon edge.
+            recurse_limit: optional parameter to limit the number of while loop cycles.
+                Default: 3000.
+        Returns:
+            A list of nodes that form a polygon if the cycle exists, else None.
+        """
+
+        # Set parameters
+        count = 0
+        cycle = [curr_node, next_node]
+
+        while next_node.key != cycle[0].key:
+
+            # Checks to ensure not trapped in while loop by degenerate skeleton.
+            if recurse_limit and count >= recurse_limit:
+                # Base case 1: recursion limit is hit
+                raise RuntimeError('Error finding the minimum counterclockwise cycle '
+                                   'in this polygon. Recursion limit of {} is '
+                                   'exceeded.'.format(recurse_limit))
+            elif next_node is None:
+                # Base case 2: No node exists in adjacency list
+                raise RuntimeError('Error finding the minimum counterclockwise cycle '
+                                   'in this polygon')
+
+            # Calculate minimum counter-clockwise cycle
+            min_ccw_node = PolygonDirectedGraph._min_ccw_cycle(
+                curr_node, next_node, cycle)
+
+            # Update parameter names
+            curr_node = next_node
+            next_node = min_ccw_node
+            cycle.append(next_node)
+            count += 1
+
+        # Remove final node which is duplicate of first node
+        cycle.pop(0)
+
+        return cycle

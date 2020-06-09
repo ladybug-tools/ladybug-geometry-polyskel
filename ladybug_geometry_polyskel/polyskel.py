@@ -732,9 +732,14 @@ def _skeletonize(slav):
             v = vertex.next_event()
             prioque.put(v)
 
+    # While the priority queue or SLAV is not empty, compute the intersection of
+    # bisectors at edge. The 'handle_edge_event' method computes the next event
+    # from the new intersection via the next_event method. Thus, this while loop
+    # iteratively adds new events without recursion.
     while not (prioque.empty() or slav.empty()):
         log.debug('SLAV is %s', [repr(lav) for lav in slav])
         i = prioque.get()  # vertex a, b is self or next vertex
+
         # Handle edge or split events.
         # arc: subtree(event.intersection_point, event.distance, sinks)
         # events: updated events with new vertex
