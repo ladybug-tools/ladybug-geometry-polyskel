@@ -12,7 +12,8 @@ POLYSKELETON_ERROR_MSG = \
     'The straight skeleton topology calculated for this geometry is incorrect.'
 
 
-def skeleton_subpolygons(polygon, holes=None, tol=1e-10, recurse_limit=3000):
+def skeleton_subpolygons(polygon, holes=None, tol=1e-8, recurse_limit=3000,
+                         print_recurse=False):
     """Compute the polygon straight skeleton as a list of polygon point arrays.
 
     Args:
@@ -25,13 +26,14 @@ def skeleton_subpolygons(polygon, holes=None, tol=1e-10, recurse_limit=3000):
     """
 
     subs1, subs2 = perimeter_core_subpolygons(
-        polygon, float('inf'), holes=holes, tol=tol, recurse_limit=recurse_limit)
+        polygon, float('inf'), holes=holes, tol=tol, recurse_limit=recurse_limit,
+        print_recurse=print_recurse)
 
     return subs1 + subs2
 
 
-def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-10,
-                               recurse_limit=3000):
+def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-8,
+                               recurse_limit=3000, print_recurse=False):
     """Compute the perimeter and core sub-polygons from the polygon straight skeleton.
 
     Args:
@@ -42,6 +44,8 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-10,
         tol: Tolerance for point equivalence. Default: 1e-10.
         recurse_limit: optional parameter to limit the number of cycles looking for
             polygons in skeleton graph. Default: 3000.
+        print_recurse: optional boolean to print cycle loop cycles, for debugging.
+            Default: False.
     Returns:
         A tuple with two lists:
 
@@ -54,8 +58,7 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-10,
     perimeter_sub_polys, core_sub_polys, hole_sub_polys = [], [], []
 
     # Compute the straight skeleton of the polygon and get exterior edges
-    dg = _skeleton_as_directed_graph(
-        polygon, holes, tol, recurse_limit=recurse_limit)
+    dg = _skeleton_as_directed_graph(polygon, holes, tol)
 
     if holes is not None:
         holes_exist = all([_hole_exists_in_skeleton(hole, dg) for hole in holes])
@@ -70,7 +73,8 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-10,
     for i, root_key in enumerate(root_keys):
         # Compute the polygons on the perimeter of the polygon
         _perimeter_sub_polys, _perimeter_sub_dg = \
-            _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit)
+            _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit,
+            print_recurse)
 
         # Add perimeter subpolygons
         perimeter_sub_polys.extend(_perimeter_sub_polys)
@@ -96,7 +100,7 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-10,
     return perimeter_sub_polys, core_sub_polys
 
 
-def _skeleton_as_directed_graph(_polygon, holes, tol, recurse_limit=3000):
+def _skeleton_as_directed_graph(_polygon, holes, tol):
     """
     Compute the straight skeleton of a polygon as a PolygonDirectedGraph.
 
@@ -104,8 +108,6 @@ def _skeleton_as_directed_graph(_polygon, holes, tol, recurse_limit=3000):
         polygon: polygon as Polygon2D.
         holes: holes as list of Polygon2Ds.
         tol: Tolerance for point equivalence. Default: 1e-10.
-        recurse_limit: optional parameter to limit the number of while loop cycles.
-            Default: 3000.
 
     Returns:
         A PolygonDirectedGraph object.
@@ -170,7 +172,8 @@ def _skeleton_as_directed_graph(_polygon, holes, tol, recurse_limit=3000):
     return dg
 
 
-def _split_polygon_graph(node1, node2, distance, poly_graph, tol, recurse_limit=3000):
+def _split_polygon_graph(node1, node2, distance, poly_graph, tol, recurse_limit=3000,
+                         print_recurse=False):
     """Split the PolygonDirectedGraph by an edge offset at a distance.
 
     Args:
@@ -185,6 +188,8 @@ def _split_polygon_graph(node1, node2, distance, poly_graph, tol, recurse_limit=
         tol: Tolerance for point equivalence.
         recurse_limit: optional parameter to limit the number of cycles looking for
             polygons in skeleton graph. Default: 3000.
+        print_recurse: optional boolean to print cycle loop cycles, for debugging.
+            Default: False.
     Returns:
         A list of nodes representing the split polygon adjacent to the exterior
         edge defined by node1 and node2.
@@ -213,12 +218,13 @@ def _split_polygon_graph(node1, node2, distance, poly_graph, tol, recurse_limit=
     next_node = root_node.adj_lst[0]
 
     split_poly_nodes = poly_graph.min_ccw_cycle(
-        root_node, next_node, recurse_limit=recurse_limit)
+        root_node, next_node, recurse_limit=recurse_limit, print_recurse=print_recurse)
 
     return split_poly_nodes
 
 
-def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000):
+def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000,
+                                 print_recurse=False):
     """
     Split polygons in the PolygonDirectedGraph into perimeter subpolygons.
 
@@ -230,6 +236,7 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000
         tol: A number representing the tolerance for point equivalence.
         recurse_limit: optional parameter to limit the number of cycles looking for
             polygons in skeleton graph. Default: 3000.
+        print_recurse: Flag to print loop cycles. Default: False.
 
     Returns:
         A tuple with two lists:
@@ -259,7 +266,8 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000
 
         # Find the smallest polygon defined by the exterior node
         min_ccw_poly_graph = PolygonDirectedGraph.min_ccw_cycle(
-            exterior_node, next_node, recurse_limit=recurse_limit)
+            exterior_node, next_node, recurse_limit=recurse_limit,
+            print_recurse=print_recurse)
 
 
         # Offset edge from specified distance, and cut a perimeter polygon

@@ -544,7 +544,7 @@ class PolygonDirectedGraph(object):
         return min_node
 
     @staticmethod
-    def min_ccw_cycle(curr_node, next_node, recurse_limit=3000):
+    def min_ccw_cycle(curr_node, next_node, recurse_limit=3000, print_recurse=False):
         """Recursively identifies most counter-clockwise adjacent node and returns closed loop.
 
         Args:
@@ -552,6 +552,8 @@ class PolygonDirectedGraph(object):
             next_node: The node next to ref_node that constitutes a polygon edge.
             recurse_limit: optional parameter to limit the number of while loop cycles.
                 Default: 3000.
+            print_recurse: optional boolean to print cycle loop cycles, for debugging.
+                Default: False.
         Returns:
             A list of nodes that form a polygon if the cycle exists, else None.
         """
@@ -561,7 +563,8 @@ class PolygonDirectedGraph(object):
         cycle = [curr_node, next_node]
 
         while next_node.key != cycle[0].key:
-
+            if print_recurse:
+                print('"recursion" cycle: {}'.format(count))
             # Checks to ensure not trapped in while loop by degenerate skeleton.
             if recurse_limit and count >= recurse_limit:
                 # Base case 1: recursion limit is hit
