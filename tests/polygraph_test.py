@@ -33,7 +33,7 @@ def test_dg_noskel():
     chk_pt_lst = [Point2D.from_array(p) for p in pt_array]
 
     # Inititalize a dg object
-    d = PolygonDirectedGraph()
+    d = PolygonDirectedGraph(1e-10)
     vertices = polygon.vertices
 
     # Add edges to dg
@@ -193,7 +193,7 @@ def test_edge_direction():
     pt_array = poly.vertices
 
     # Make unidirect graph
-    dg = PolygonDirectedGraph()
+    dg = PolygonDirectedGraph(1e-10)
 
     for i in range(len(pt_array)-1):
         k = dg.add_node(pt_array[i], [pt_array[i+1]])
@@ -282,36 +282,6 @@ def test_min_ccw_cycle():
     assert cycle_poly.is_equivalent(chk_poly, 1e-2)
 
 
-def test_smallest_closed_cycles():
-    """Test method to define closed loops representing nested polygons"""
-
-    # Make the polygon
-    polygon = Polygon2D.from_array([[0, 0], [6, 0], [6, 6], [3, 4], [0, 6]])
-
-    # Make the test cases
-    chk_poly_lst = [
-        [[0, 0], [6, 0], [3.91, 2.09], [3, 1.82], [2.09, 2.09]],
-        [[6, 0], [6, 6], [3.91, 2.09]],
-        [[6, 6], [3, 4], [3, 1.82], [3.91, 2.09]],
-        [[3, 4], [0, 6], [2.09, 2.09], [3, 1.82]],
-        [[0, 6], [0, 0], [2.09, 2.09]]]
-
-    chk_poly_lst = [Polygon2D.from_array(ptlst) for ptlst in chk_poly_lst]
-
-    # Skeletonize
-    dg = polysplit._skeleton_as_directed_graph(polygon, [], 1e-10)
-
-    poly_lst = dg.smallest_closed_cycles()
-
-    assert len(poly_lst) == len(chk_poly_lst)
-    assert isinstance(poly_lst[0][0].pt, Point2D)
-
-    poly_lst = [Polygon2D.from_array([n.pt for n in nodes]) for nodes in poly_lst]
-
-    for poly, chk_poly in zip(poly_lst, chk_poly_lst):
-        assert poly.is_equivalent(chk_poly, 1e-2)
-
-
 def test_vector2hash():
     """Test the vector hash method"""
 
@@ -340,6 +310,21 @@ def test_vector2hash():
     hash = _vector2hash(vec, tol=10)
     assert hash == '(120.0, 120.0)', hash
 
+    # 10 digit tolerance w/o rounding
+    vec = Vector2D(1.0123456789, 1.0123456789)
+    hash = _vector2hash(vec, tol=1e-10)
+    assert hash == '(1.0123456789, 1.0123456789)', hash
+
+    # 10 digit tolerance w/ rounding
+    vec = Vector2D(1.01234567888, 1.01234567888)
+    hash = _vector2hash(vec, tol=1e-10)
+    assert hash == '(1.0123456789, 1.0123456789)', hash
+
+    # 7 digit tolerance w/ rounding
+    vec = Vector2D(1.01234567888, 1.01234567888)
+    hash = _vector2hash(vec, tol=1e-7)
+    assert hash == '(1.0123457, 1.0123457)', hash
+
 
 def test_sub_polygon_traversal():
     # Graph methods to retrieve subpolygons
@@ -364,3 +349,5 @@ def test_sub_polygon_traversal():
     assert len(chk_nodes) == len(exterior)
     for i, n in enumerate(exterior):
         assert n.pt.is_equivalent(Point2D.from_array(chk_nodes[i]), tol)
+
+

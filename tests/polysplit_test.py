@@ -4,7 +4,7 @@ from pprint import pprint as pp
 import pytest
 
 from ladybug_geometry.geometry2d.polygon import Polygon2D
-from ladybug_geometry_polyskel import polysplit
+from ladybug_geometry_polyskel import polysplit, polygraph
 
 
 def test_skeleton_subpolygons():
@@ -97,3 +97,44 @@ def test_complex_perimeter_core_subpolygons():
     assert len(p) == 13
     assert len(c) == 1
 
+
+def test_polysplit_hashing():
+    """Test that tolerance sets hashing correctly from parent functions."""
+
+    poly = Polygon2D.from_array(
+        [[1.0123456789, 3.0123456789],
+         [3.0123456789, 5.0123456789],
+         [1.0123456789, 5.0123456789]])
+
+    # 7 digit tolerance w/ rounding
+    tol = 1e-7
+    g = polysplit._skeleton_as_directed_graph(poly, holes=None, tol=tol)
+    k = g.ordered_nodes[0].key
+    assert k == '(1.0123457, 3.0123457)', k
+
+    # 10 digit tolerance w/o rounding
+    tol = 1e-10
+    g = polysplit._skeleton_as_directed_graph(poly, holes=None, tol=tol)
+    k = g.ordered_nodes[0].key
+    assert k == '(1.0123456789, 3.0123456789)', k
+
+    # Test with number x 100
+    poly = Polygon2D.from_array(
+        [[100.0123456789, 300.0123456789],
+         [300.0123456789, 500.0123456789],
+         [100.0123456789, 500.0123456789]])
+
+    # 10 digit tolerance
+    tol = 1e-7
+    g = polysplit._skeleton_as_directed_graph(poly, holes=None, tol=tol)
+    k = g.ordered_nodes[0].key
+    assert k == '(100.0123457, 300.0123457)', k
+
+    # 10 digit tolerance w/o rounding
+    tol = 1e-10
+    g = polysplit._skeleton_as_directed_graph(poly, holes=None, tol=tol)
+    k = g.ordered_nodes[0].key
+    assert k == '(100.0123456789, 300.0123456789)', k
+
+if __name__ == "__main__":
+    test_polysplit_hashing()
