@@ -135,6 +135,14 @@ class _LAVertex:
     def bisector(self):
         return self._bisector
 
+    def __eq__(self, other):
+        """Equality of this _LAvertex with another."""
+        return (self.point.is_equivalent(other.point, self.tol) and
+                self.edge_left.is_equivalent(other.edge_left, self.tol) and
+                self.edge_right.is_equivalent(other.edge_right, self.tol) and
+                self.next.point.is_equivalent(other.next.point, self.tol) and
+                self.prev.point.is_equivalent(other.prev.point, self.tol))
+
     @property
     def is_reflex(self):
         return self._is_reflex
@@ -159,7 +167,8 @@ class _LAVertex:
             # splitting the polygon in two.
             log.debug("looking for split candidates for vertex %s", self)
             for edge in self.original_edges:
-                if edge.edge == self.edge_left or edge.edge == self.edge_right:
+                if (edge.edge.is_equivalent(self.edge_left, self.tol) or
+                    edge.edge.is_equivalent(self.edge_right, self.tol)):
                     continue
 
                 log.debug('\tconsidering EDGE %s', edge)
@@ -198,7 +207,7 @@ class _LAVertex:
                         edvec = -edvec
 
                     bisecvec = edvec + linvec
-                    if abs(bisecvec) == 0:
+                    if abs(bisecvec.magnitude) < self.tol:
                         continue
                     bisector = LineSegment2D(i, bisecvec)
                     b = intersection2d.intersect_line2d(self.bisector, bisector)
@@ -391,8 +400,7 @@ class _SLAV:
             event.intersection_point,
             event.vertex,
             event.opposite_edge,
-            lav
-            )
+            lav)
 
         sinks = [event.vertex.point]
         vertices = []
@@ -401,14 +409,16 @@ class _SLAV:
         norm = event.opposite_edge.v.normalize()
         for v in chain.from_iterable(self._lavs):
             log.debug('%s in %s', v, v.lav)
-            equal_to_edge_left_p = event.opposite_edge.p.is_equivalent(v.edge_left.p,
-                                                                       self.tol)
-            equal_to_edge_right_p = event.opposite_edge.p.is_equivalent(v.edge_right.p,
-                                                                        self.tol)
-            if norm == v.edge_left.v.normalize() and equal_to_edge_left_p:
+            equal_to_edge_left_p = event.opposite_edge.p.is_equivalent(
+                v.edge_left.p, self.tol)
+            equal_to_edge_right_p = event.opposite_edge.p.is_equivalent(
+                v.edge_right.p, self.tol)
+
+            _pnorm = Point2D(norm.x, norm.y)
+            if _pnorm.is_equivalent(v.edge_left.v.normalize(), self.tol) and equal_to_edge_left_p:
                 x = v
                 y = x.prev
-            elif norm == v.edge_right.v.normalize() and equal_to_edge_right_p:
+            elif _pnorm.is_equivalent(v.edge_right.v.normalize(), self.tol) and equal_to_edge_right_p:
                 y = v
                 x = y.next
 
@@ -420,12 +430,8 @@ class _SLAV:
                     (event.intersection_point - x.point).normalize()) <= 0
 
                 log.debug(
-                    'Vertex %s holds edge as %s edge (%s, %s)',
-                    v,
-                    ('left' if x == v else 'right'),
-                    xleft,
-                    xright
-                    )
+                    'Vertex %s holds edge as %s edge (%s, %s)', v,
+                    ('left' if x == v else 'right'), xleft, xright)
 
                 if xleft and xright:
                     break
