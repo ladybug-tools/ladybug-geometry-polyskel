@@ -5,14 +5,16 @@
 
 # ladybug-geometry-polyskel
 
-A library with poly skeleton methods using ladybug-geometry
+A library with straight skeleton methods using ladybug-geometry.
 
 ## Installation
+
 ```console
-pip install ladybug-geometry-polyskel
+pip install -U ladybug-geometry-polyskel
 ```
 
 ## QuickStart
+
 ```python
 import ladybug_geometry_polyskel
 

@@ -1,5 +1,17 @@
-Welcome to ladybug-geometry-polyskel's documentation!
+Welcome to Ladybug Geometry Polyskel's documentation!
 ===================================
+
+.. image:: http://www.ladybug.tools/assets/img/ladybug.png
+
+A library with straight skeleton methods using ladybug-geometry.
+
+Installation
+============
+
+``pip install -U ladybug-geometry-polyskel``
+
+Documentation
+=============
 
 .. toctree::
    :maxdepth: 2
