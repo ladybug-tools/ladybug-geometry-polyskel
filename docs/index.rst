@@ -10,9 +10,6 @@ Installation
 
 ``pip install -U ladybug-geometry-polyskel``
 
-Documentation
-=============
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
