@@ -18,13 +18,16 @@ def skeleton_subpolygons(polygon, holes=None, tol=1e-8, recurse_limit=3000,
 
     Args:
         polygon: list of Polygon2D objects.
-        holes: list of Polygon2D objects representing holes in cw order. Default: None.
-        tol: Tolerance for point equivalence. Default: 1e-10.
+        holes: list of Polygon2D objects representing holes in cw order. (Default: None).
+        tol: Tolerance for point equivalence. (Default: 1e-10).
+        recurse_limit: optional parameter to limit the number of cycles looking for
+            polygons in skeleton graph. (Default: 3000).
+        print_recurse: optional boolean to print cycle loop cycles, for
+            debugging. (Default: False).
 
     Returns:
         A list of the straight skeleton subpolygons as Polygon2D objects.
     """
-
     subs1, subs2 = perimeter_core_subpolygons(
         polygon, float('inf'), holes=holes, tol=tol, recurse_limit=recurse_limit,
         print_recurse=print_recurse)
@@ -39,21 +42,23 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-8,
     Args:
         polygon: A Polygon2D to split into perimeter and core subpolygons.
         distance: Distance in model units to offset perimeter subpolygon.
-        holes: A list of Polygon2D objects representing holes in the polygon.
-            Default: None.
-        tol: Tolerance for point equivalence. Default: 1e-10.
+        holes: A list of Polygon2D objects representing holes in the
+            polygon. (Default: None).
+        tol: Tolerance for point equivalence. (Default: 1e-10).
         recurse_limit: optional parameter to limit the number of cycles looking for
-            polygons in skeleton graph. Default: 3000.
-        print_recurse: optional boolean to print cycle loop cycles, for debugging.
-            Default: False.
+            polygons in skeleton graph. (Default: 3000).
+        print_recurse: optional boolean to print cycle loop cycles, for
+            debugging. (Default: False).
+
     Returns:
         A tuple with two lists:
 
-        A list of perimeter subpolygons as Polygon2D objects.
+        * perimeter_sub_polys -- A list of perimeter subpolygons as Polygon2D objects.
 
-        A list of core subpolygons as Polygon2D objects.
+        * core_sub_polys -- A list of core subpolygons as Polygon2D objects. In the
+            event of a core sub-polygon with a hole, a list with be returned with
+            the first item being a boundary and successive items as hole polygons.
     """
-
     # Initialize sub polygon lists
     perimeter_sub_polys, core_sub_polys, hole_sub_polys = [], [], []
 
@@ -101,13 +106,12 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-8,
 
 
 def _skeleton_as_directed_graph(_polygon, holes, tol):
-    """
-    Compute the straight skeleton of a polygon as a PolygonDirectedGraph.
+    """Compute the straight skeleton of a polygon as a PolygonDirectedGraph.
 
     Args:
         polygon: polygon as Polygon2D.
         holes: holes as list of Polygon2Ds.
-        tol: Tolerance for point equivalence. Default: 1e-10.
+        tol: Tolerance for point equivalence.
 
     Returns:
         A PolygonDirectedGraph object.
@@ -172,8 +176,8 @@ def _skeleton_as_directed_graph(_polygon, holes, tol):
     return dg
 
 
-def _split_polygon_graph(node1, node2, distance, poly_graph, tol, recurse_limit=3000,
-                         print_recurse=False):
+def _split_polygon_graph(node1, node2, distance, poly_graph, tol,
+                         recurse_limit=3000, print_recurse=False):
     """Split the PolygonDirectedGraph by an edge offset at a distance.
 
     Args:
@@ -187,9 +191,10 @@ def _split_polygon_graph(node1, node2, distance, poly_graph, tol, recurse_limit=
         poly_graph: A PolygonDirectedGraph representing a single polygon.
         tol: Tolerance for point equivalence.
         recurse_limit: optional parameter to limit the number of cycles looking for
-            polygons in skeleton graph. Default: 3000.
-        print_recurse: optional boolean to print cycle loop cycles, for debugging.
-            Default: False.
+            polygons in skeleton graph. (Default: 3000).
+        print_recurse: optional boolean to print cycle loop cycles, for
+            debugging. (Default: False).
+
     Returns:
         A list of nodes representing the split polygon adjacent to the exterior
         edge defined by node1 and node2.
@@ -235,8 +240,8 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000
             This will be used as the starting point for the graph traversal.
         tol: A number representing the tolerance for point equivalence.
         recurse_limit: optional parameter to limit the number of cycles looking for
-            polygons in skeleton graph. Default: 3000.
-        print_recurse: Flag to print loop cycles. Default: False.
+            polygons in skeleton graph. (Default: 3000).
+        print_recurse: Flag to print loop cycles. (Default: False).
 
     Returns:
         A tuple with two lists:
@@ -272,7 +277,8 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000
 
         # Offset edge from specified distance, and cut a perimeter polygon
         split_poly_graph = _split_polygon_graph(
-            exterior_node, next_node, distance, min_ccw_poly_graph, tol)
+            exterior_node, next_node, distance, min_ccw_poly_graph, tol,
+            recurse_limit=recurse_limit, print_recurse=print_recurse)
 
         # Store perimeter nodes in DG
         pts = [node.pt for node in split_poly_graph]
@@ -317,10 +323,8 @@ def _add_holes_to_polygons(polys, hole_polys):
     Returns:
         A list of the Polygon2D polygons with holes.
     """
-
     holed_polys = []
     for poly in polys:
-
         # Check to see if hole is not outside of core
         # Often, the hole is only partially inside the core, so
         # we can't check if it's inside
@@ -330,10 +334,7 @@ def _add_holes_to_polygons(polys, hole_polys):
         if len(inside_holes) == 0:
             holed_polys.append(poly)
         else:
-            inside_hole_points = [list(hole.vertices) for hole in inside_holes]
-            holed_poly = Polygon2D.from_shape_with_holes(
-                list(poly.vertices), inside_hole_points)
-            holed_polys.append(holed_poly)
+            holed_polys.append([poly] + inside_holes)
 
     return holed_polys
 

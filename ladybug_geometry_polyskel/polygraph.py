@@ -12,7 +12,7 @@ from math import log10
 
 
 def _vector2hash(vector, tol):
-    """ Hashes spatial coordinates for use in dictionary.
+    """Hashes spatial coordinates for use in dictionary.
 
     Args:
         vector: A Vector2D object.
@@ -545,7 +545,7 @@ class PolygonDirectedGraph(object):
 
     @staticmethod
     def min_ccw_cycle(curr_node, next_node, recurse_limit=3000, print_recurse=False):
-        """Recursively identifies most counter-clockwise adjacent node and returns closed loop.
+        """Recursively identify most counter-clockwise adjacent node and get closed loop.
 
         Args:
             curr_node: The first node, for first edge.
@@ -554,14 +554,13 @@ class PolygonDirectedGraph(object):
                 Default: 3000.
             print_recurse: optional boolean to print cycle loop cycles, for debugging.
                 Default: False.
+
         Returns:
             A list of nodes that form a polygon if the cycle exists, else None.
         """
-
         # Set parameters
         count = 0
         cycle = [curr_node, next_node]
-
         while next_node.key != cycle[0].key:
             if print_recurse:
                 print('"recursion" cycle: {}'.format(count))
