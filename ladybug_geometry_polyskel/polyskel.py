@@ -123,7 +123,7 @@ class _LAVertex:
         self._bisector = Ray2D(
             self.point,
             operator.add(*creator_vectors) * (-1 if self.is_reflex else 1)
-            )
+        )
         log.info("Created vertex %s", self.__repr__())
         _debug.line(
             (self.bisector.p.x, self.bisector.p.y,
@@ -137,11 +137,11 @@ class _LAVertex:
 
     def __eq__(self, other):
         """Equality of this _LAvertex with another."""
-        return (self.point.is_equivalent(other.point, self.tol) and
-                self.edge_left.is_equivalent(other.edge_left, self.tol) and
-                self.edge_right.is_equivalent(other.edge_right, self.tol) and
-                self.next.point.is_equivalent(other.next.point, self.tol) and
-                self.prev.point.is_equivalent(other.prev.point, self.tol))
+        return self.point.is_equivalent(other.point, self.tol) and \
+            self.edge_left.is_equivalent(other.edge_left, self.tol) and \
+            self.edge_right.is_equivalent(other.edge_right, self.tol) and \
+            self.next.point.is_equivalent(other.next.point, self.tol) and \
+            self.prev.point.is_equivalent(other.prev.point, self.tol)
 
     @property
     def is_reflex(self):
@@ -167,8 +167,8 @@ class _LAVertex:
             # splitting the polygon in two.
             log.debug("looking for split candidates for vertex %s", self)
             for edge in self.original_edges:
-                if (edge.edge.is_equivalent(self.edge_left, self.tol) or
-                    edge.edge.is_equivalent(self.edge_right, self.tol)):
+                cond_1 = edge.edge.is_equivalent(self.edge_left, self.tol)
+                if cond_1 or edge.edge.is_equivalent(self.edge_right, self.tol):
                     continue
 
                 log.debug('\tconsidering EDGE %s', edge)
@@ -309,7 +309,7 @@ class _SLAV:
     """ A SLAV is a set of circular lists of active vertices.
 
     It stores a loop of vertices for the outer boundary, and for all holes and
-    sub-polyons created during the straight skeleton computation
+    sub-polygons created during the straight skeleton computation
     (Felkel and Obdrzalek 1998, 2).
     """
 
@@ -326,8 +326,8 @@ class _SLAV:
                 LineSegment2D.from_end_points(vertex.prev.point, vertex.point),
                 vertex.prev.bisector,
                 vertex.bisector
-                ) for vertex in chain.from_iterable(self._lavs)
-            ]
+            ) for vertex in chain.from_iterable(self._lavs)
+        ]
 
     def __iter__(self):
         for lav in self._lavs:
@@ -415,10 +415,12 @@ class _SLAV:
                 v.edge_right.p, self.tol)
 
             _pnorm = Point2D(norm.x, norm.y)
-            if _pnorm.is_equivalent(v.edge_left.v.normalize(), self.tol) and equal_to_edge_left_p:
+            if _pnorm.is_equivalent(v.edge_left.v.normalize(), self.tol) \
+                    and equal_to_edge_left_p:
                 x = v
                 y = x.prev
-            elif _pnorm.is_equivalent(v.edge_right.v.normalize(), self.tol) and equal_to_edge_right_p:
+            elif _pnorm.is_equivalent(v.edge_right.v.normalize(), self.tol) \
+                    and equal_to_edge_right_p:
                 y = v
                 x = y.next
 
@@ -443,7 +445,7 @@ class _SLAV:
             log.info(
                 'Failed split event %s (equivalent edge event is expected to follow)',
                 event
-                )
+            )
             return (None, [])
 
         v1 = _LAVertex(
@@ -451,13 +453,13 @@ class _SLAV:
             event.vertex.edge_left,
             event.opposite_edge,
             tol=self.tol
-            )
+        )
         v2 = _LAVertex(
             event.intersection_point,
             event.opposite_edge,
             event.vertex.edge_right,
             tol=self.tol
-            )
+        )
 
         v1.prev = event.vertex.prev
         v1.next = x
@@ -478,18 +480,18 @@ class _SLAV:
         else:
             new_lavs = [_LAV.from_chain(v1, self), _LAV.from_chain(v2, self)]
 
-        for l in new_lavs:
-            log.debug(l)
-            if len(l) > 2:
-                self._lavs.append(l)
-                vertices.append(l.head)
+        for lv in new_lavs:
+            log.debug(lv)
+            if len(lv) > 2:
+                self._lavs.append(lv)
+                vertices.append(lv.head)
             else:
                 log.info(
                     'LAV %s has collapsed into the line %s--%s',
-                    l, l.head.point, l.head.next.point
-                    )
-                sinks.append(l.head.next.point)
-                for v in list(l):
+                    lv, lv.head.point, lv.head.next.point
+                )
+                sinks.append(lv.head.next.point)
+                for v in list(lv):
                     v.invalidate()
 
         events = []
@@ -535,7 +537,7 @@ class _LAV:
                 LineSegment2D.from_end_points(prev, point),
                 LineSegment2D.from_end_points(point, next),
                 tol=slav.tol
-                )
+            )
             vertex.lav = lav
             if lav.head is None:
                 lav.head = vertex
@@ -597,7 +599,7 @@ class _LAV:
             vertex_b.edge_right,
             (normed_b_bisector, normed_a_bisector),
             tol=vertex_a.tol,
-            )
+        )
         replacement.lav = self
 
         if self.head in [vertex_a, vertex_b]:
@@ -719,10 +721,10 @@ def _normalize_contour(contour, tol):
 
 def _skeletonize(slav):
     """
-    Compute polygon straight skeleton from a Set of List of Active vertice (SLAV).
+    Compute polygon straight skeleton from a Set of List of Active vertex (SLAV).
 
     The SLAV will represent the polygon as a double linked list of vertices in
-    counter-clockwise order. Holes is a similiar list with the vertices of which
+    counter-clockwise order. Holes is a similar list with the vertices of which
     should be in clockwise order.
 
     Args:
