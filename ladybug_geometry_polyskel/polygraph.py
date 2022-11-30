@@ -86,7 +86,7 @@ class PolygonDirectedGraph(object):
         * hole_root_keys: List of root keys for inside exterior boundary (holes).
         * num_nodes: Number of nodes in graph.
         * nodes: An iterable of nodes in graph.
-        * ordered_nodes: An interable of nodes in graph in order they were added.
+        * ordered_nodes: An iterable of nodes in graph in order they were added.
         * exterior_cycles: A list of unidirectional edge arrays.
     """
 
@@ -126,7 +126,7 @@ class PolygonDirectedGraph(object):
 
         dg = cls(tol)
         for i in range(len(point_array) - 1):
-            dg.add_node(point_array[i], [point_array[i+1]], exterior=True)
+            dg.add_node(point_array[i], [point_array[i + 1]], exterior=True)
 
         if loop:
             dg.add_node(point_array[-1], [point_array[0]], exterior=True)
@@ -405,8 +405,8 @@ class PolygonDirectedGraph(object):
 
             distances = sorted(distances, key=lambda t: t[1])
 
-            for i in range(len(distances)-1):
-                k1, k2 = distances[i][0], distances[i+1][0]
+            for i in range(len(distances) - 1):
+                k1, k2 = distances[i][0], distances[i + 1][0]
                 n1, n2 = self.node(int_key_lst[k1]), self.node(int_key_lst[k2])
 
                 # Add bidirection so the min cycle works
@@ -510,9 +510,10 @@ class PolygonDirectedGraph(object):
         """Identify the counter-clockwise adjacent node with the minimum angle.
 
         Args:
-            curr_node: A node that defines first point of a counter-clockwise polygon edge.
-            next_node: A node connected to the curr_node that defines the second point of a
-                counter-clockwise polygon edge.
+            curr_node: A node that defines first point of a counter-clockwise
+                polygon edge.
+            next_node: A node connected to the curr_node that defines the second
+                point of a counter-clockwise polygon edge.
             cycle: Current list of nodes that will form a polygon.
         Returns:
             The next connected node that contains the minimum counter-clockwise angle

@@ -2,10 +2,12 @@
 """Functions for splitting a polygon into subpolygons based on skeleton topology."""
 from __future__ import division
 
-from ladybug_geometry_polyskel import polyskel
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug_geometry.geometry2d.line import LineSegment2D
 from ladybug_geometry.geometry3d.pointvector import Vector3D
+from ladybug_geometry.intersection2d import does_intersection_exist_line2d
+
+from ladybug_geometry_polyskel import polyskel
 from ladybug_geometry_polyskel.polygraph import PolygonDirectedGraph, _vector2hash
 
 POLYSKELETON_ERROR_MSG = \
@@ -51,7 +53,7 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-8,
             debugging. (Default: False).
 
     Returns:
-        A tuple with two lists:
+        A tuple with two lists.
 
         * perimeter_sub_polys -- A list of perimeter subpolygons as Polygon2D objects.
 
@@ -68,18 +70,35 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-8,
     if holes is not None:
         holes_exist = all([_hole_exists_in_skeleton(hole, dg) for hole in holes])
         if not holes_exist:
-            raise RuntimeError(POLYSKELETON_ERROR_MSG + ' Error calculating the '
-                               'holes for the polygon. Try changing the geometry '
-                               'of the hole.')
+            # try to get the polygons simply by offsetting (works for shallow offsets)
+            perimeter_sub_polys, core_sub_poly = \
+                perimeter_core_by_offset(polygon, distance, holes)
+            if core_sub_poly is not None:
+                return perimeter_sub_polys, core_sub_poly
+            else:  # the offset distance was too deep
+                raise RuntimeError(
+                    POLYSKELETON_ERROR_MSG + ' Error calculating the '
+                    'holes for the polygon. Try changing the geometry '
+                    'of the hole.')
 
     # Make list of roots for graph traversal of just the exterior cycles
     root_keys = [dg.outer_root_key] + dg.hole_root_keys
 
     for i, root_key in enumerate(root_keys):
-        # Compute the polygons on the perimeter of the polygon
-        _perimeter_sub_polys, _perimeter_sub_dg = \
-            _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit,
-            print_recurse)
+        try:
+            # Compute the polygons on the perimeter of the polygon
+            _perimeter_sub_polys, _perimeter_sub_dg = \
+                _split_perimeter_subpolygons(
+                    dg, distance, root_key, tol, recurse_limit, print_recurse)
+        except (RuntimeError, TypeError) as e:  # self-intersecting skeleton
+            # try to get the polygons simply by offsetting (works for shallow offsets)
+            perimeter_sub_polys, core_sub_poly = \
+                perimeter_core_by_offset(polygon, distance, holes)
+            if core_sub_poly is not None:
+                return perimeter_sub_polys, core_sub_poly
+            else:  # the offset distance was too deep
+                raise RuntimeError(
+                    'Generating perimeter_core_subpolygons failed.\n{}'.format(e))
 
         # Add perimeter subpolygons
         perimeter_sub_polys.extend(_perimeter_sub_polys)
@@ -103,6 +122,80 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-8,
         core_sub_polys = _add_holes_to_polygons(core_sub_polys, hole_sub_polys)
 
     return perimeter_sub_polys, core_sub_polys
+
+
+def perimeter_core_by_offset(polygon, distance, holes=None):
+    """Compute perimeter and core sub-polygons using a simple offset method.
+
+    This method will only return polygons when the distance is shallow enough
+    that the perimeter offset does not intersect itself or turn inward on itself.
+    Otherwise, the method will simple return None. This means that there will
+    only ever be one core polygon.
+
+    Args:
+        polygon: A Polygon2D to split into perimeter and core subpolygons.
+        distance: Distance in model units to offset perimeter subpolygon.
+        holes: A list of Polygon2D objects representing holes in the
+            polygon. (Default: None).
+
+    Returns:
+        A tuple with two items.
+
+        * perimeter_sub_polys -- A list of perimeter subpolygons as Polygon2D
+            objects. Will be None if the offset distance is too deep.
+
+        * core_sub_polys -- A list of core subpolygons as Polygon2D objects. In the
+            event of a core sub-polygon with a hole, a list with be returned with
+            the first item being a boundary and successive items as hole polygons.
+            Will be None if the offset distance is too deep.
+    """
+    # extract the core polygon and make sure it doesn't intersect itself
+    core_sub_poly = polygon.offset(distance, check_intersection=True)
+    if core_sub_poly is None:
+        return None, None
+    # generate the perimeter polygons
+    if holes is None:
+        perimeter_sub_polys = []
+        for out_seg, in_seg in zip(polygon.segments, core_sub_poly.segments):
+            pts = (out_seg.p1, out_seg.p2, in_seg.p2, in_seg.p1)
+            perimeter_sub_polys.append(Polygon2D(pts))
+        return perimeter_sub_polys, [core_sub_poly]
+    else:
+        # offset all of the holes into the shape
+        core_sub_polys = [core_sub_poly]
+        for hole in holes:
+            hole_sub_poly = hole.offset(-distance, check_intersection=True)
+            if hole_sub_poly is None:
+                return None, None
+            core_sub_polys.append(hole_sub_poly)
+        # check that None of the holes intersect one another
+        for i, c_pgon in enumerate(core_sub_polys):
+            for other_pgon in core_sub_polys[i + 1:]:
+                if _do_polygons_intersect(c_pgon, other_pgon):
+                    return None, None
+        # if nothing intersects, we can build the perimeter polygons
+        out_polys = [polygon] + list(holes)
+        perimeter_sub_polys = []
+        for p_count, (out_poly, in_poly) in enumerate(zip(out_polys, core_sub_polys)):
+            for out_seg, in_seg in zip(out_poly.segments, in_poly.segments):
+                if p_count == 0:
+                    pts = (out_seg.p1, out_seg.p2, in_seg.p2, in_seg.p1)
+                else:
+                    if not out_poly.is_clockwise:
+                        pts = (out_seg.p1, in_seg.p1, in_seg.p2, out_seg.p2)
+                    else:
+                        (out_seg.p1, out_seg.p2, in_seg.p2, in_seg.p1)
+                perimeter_sub_polys.append(Polygon2D(pts))
+        return perimeter_sub_polys, core_sub_polys
+
+
+def _do_polygons_intersect(polygon_1, polygon_2):
+    """Test to see if two polygons intersect one another."""
+    for seg in polygon_1.segments:
+        for _s in polygon_2.segments:
+            if does_intersection_exist_line2d(seg, _s):
+                return True
+    return False
 
 
 def _skeleton_as_directed_graph(_polygon, holes, tol):
@@ -248,7 +341,7 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000
 
         A list of perimeter subpolygons as Polygon2D objects.
 
-        A PolygonDirectedGraph of just the perimer subpolygons. The edges of
+        A PolygonDirectedGraph of just the perimeter subpolygons. The edges of
             this graph that are not bidirectional (exterior edges) define the
             exterior of the polygon and it's core subpolygons.
     """
@@ -273,7 +366,6 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, recurse_limit=3000
         min_ccw_poly_graph = PolygonDirectedGraph.min_ccw_cycle(
             exterior_node, next_node, recurse_limit=recurse_limit,
             print_recurse=print_recurse)
-
 
         # Offset edge from specified distance, and cut a perimeter polygon
         split_poly_graph = _split_polygon_graph(
