@@ -581,7 +581,7 @@ class _LAV:
         vertex.lav = None
 
     def unify(self, vertex_a, vertex_b, point):
-        """Generate a new _LAVertex from input Point2D and then resolves adjacency to old edges.
+        """Generate a new _LAVertex from input Point2D and resolve adjacency to old edges
 
         Args:
             vertex_a = _LAVertex
@@ -813,7 +813,7 @@ def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
     edge_lst = []
 
     # Reverse order to ensure cw order for input
-    holes = [] if holes is None else[hole[::-1] for hole in holes]
+    holes = [] if holes is None else [hole[::-1] for hole in holes]
     slav = _SLAV(polygon[::-1], holes, tol)
     subtree_list = _skeletonize(slav)
 
