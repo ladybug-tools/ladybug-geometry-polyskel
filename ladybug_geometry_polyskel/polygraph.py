@@ -182,10 +182,16 @@ class PolygonDirectedGraph(object):
             # Add to dict to prevent repetition
             exterior_check[next_node.key] = None
 
+            # CWM: hard-code a max iteration count to avoid endless loops
+            MAX_ITER_COUNT = 10000
+            iter_i = 0
             while next_node.key != root_node.key:
                 exterior_poly.append(next_node)
                 exterior_check[next_node.key] = None
                 next_node = self.next_exterior_node(next_node)
+                iter_i += 1
+                if iter_i > MAX_ITER_COUNT:
+                    return []
 
             exterior_poly_lst.append(exterior_poly)
 
