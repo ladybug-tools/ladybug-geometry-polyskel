@@ -105,6 +105,8 @@ def perimeter_core_subpolygons(polygon, distance, holes=None, tol=1e-8,
 
         # Compute the polygons on the core of the polygon
         _core_sub_polys = _exterior_cycles_as_polygons(_perimeter_sub_dg)
+        if len(_core_sub_polys) == 0:
+            raise RuntimeError('Generating perimeter_core_subpolygons failed.')
 
         # Reverse polygons b/c graph traversals will put interior polys as cw
         _core_sub_polys = [p.reverse() for p in _core_sub_polys]
@@ -395,8 +397,9 @@ def _exterior_cycles_as_polygons(dg):
     """
 
     # Get all exterior cycles as polygons
+    ext_cycles = dg.exterior_cycles
     exterior_polys = [Polygon2D([node.pt for node in cycle])
-                      for cycle in dg.exterior_cycles]
+                      for cycle in ext_cycles]
 
     # Sort by area and return
     return sorted(exterior_polys, key=lambda p: p.area)
