@@ -1,13 +1,15 @@
 # coding=utf-8
-"""
-Implementation of the straight skeleton algorithm by Felkel and Obdrzalek[1].
+"""Implementation of the straight skeleton algorithm by Felkel and Obdrzalek[1].
+
+The functions and classes here here are derived directly from the polyskel python
+library by Armin Scipiades (@Bottfy), which is available at:
+https://github.com/Botffy/polyskel
+
 [1] Felkel, Petr and Stepan Obdrzalek. 1998. "Straight Skeleton Implementation." In
 Proceedings of Spring Conference on Computer Graphics, Budmerice, Slovakia. 210 - 218.
 """
-
 from __future__ import division
 
-import logging
 import heapq
 from itertools import tee, islice, cycle, chain
 from collections import namedtuple
@@ -22,126 +24,112 @@ from ladybug_geometry import intersection2d
 # Polygon sorting classes
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
 Subtree = namedtuple('Subtree', 'source, height, sinks')
-_SplitEventSubClass = namedtuple('_SplitEvent',
-                                 'distance, intersection_point, vertex, opposite_edge')
-_EdgeEventSubClass = namedtuple('_EdgeEvent',
-                                'distance intersection_point vertex_a vertex_b')
-
-log = logging.getLogger("__name__")
-# logging.basicConfig(filename='dg.log',level=logging.DEBUG)
+_SplitEventSubClass = namedtuple(
+    '_SplitEvent', 'distance, intersection_point, vertex, opposite_edge')
+_EdgeEventSubClass = namedtuple(
+    '_EdgeEvent', 'distance intersection_point vertex_a vertex_b')
 
 
-class _Debug:
-    """The _Debug class stores the bisectors for each edge event."""
+def _window(lst):
+    """Window operator for lists.
 
-    def __init__(self, image):
-        if image is not None:
-            self.im = image[0]
-            self.draw = image[1]
-            self.do = True
-        else:
-            self.do = False
+    Consumes a list of items, and returns a zipped list of the previous,
+    current and next items in the list, accessible by the same index.
 
-    def line(self, *args, **kwargs):
-        if self.do:
-            self.draw.line(*args, **kwargs)
+    Args:
+        lst: list
 
-    def rectangle(self, *args, **kwargs):
-        if self.do:
-            self.draw.rectangle(*args, **kwargs)
-
-    def show(self):
-        if self.do:
-            self.im.show()
+    Returns:
+        Zipped list of previous, current and next items in list.
+    """
+    prevs, items, nexts = tee(lst, 3)
+    prevs = islice(cycle(prevs), len(lst) - 1, None)
+    nexts = islice(cycle(nexts), 1, None)
+    return zip(prevs, items, nexts)
 
 
-_debug = _Debug(None)
+def _cross(a, b):
+    """Get the determinant between two Vector2Ds and/or Point2Ds."""
+    return a.x * b.y - b.x * a.y
 
 
-# Debug set function
-def set_debug(image):
-    global _debug
-    _debug = _Debug(image)
+def _approximately_equals(a, b):
+    """Determine whether two Point2Ds or Vector2Ds are equal within a relative tolerance.
+    """
+    return a == b or (abs(a - b) <= max(abs(a), abs(b)) * 0.001)
+
+
+def _normalize_contour(contour):
+    """Consumes list of x,y coordinate tuples and returns list of Point2Ds.
+
+    Args:
+        contour: list of x,y tuples from contour.
+
+    Return:
+         list of Point2Ds of contour.
+    """
+    contour = [Point2D(float(x), float(y)) for (x, y) in contour]
+    return [point for prev, point, next in _window(contour) if not
+            (point == next or (point - prev).normalize() == (next - point).normalize())]
 
 
 class _SplitEvent(_SplitEventSubClass):
-    """A Split Event is a reflex vertex that splits an Edge Event.
+    """A SplitEvent is a reflex vertex that splits an Edge Event.
 
-    They therefore split the entire polygon and create new adjacencies between the split
-    edge and each of the two edges incident to the reflex vertex
-    (Felkel and Obdrzalek 1998, 1).
+    They therefore split the entire polygon and create new adjacencies between
+    the split edge and each of the two edges incident to the reflex
+    vertex (Felkel and Obdrzalek 1998, 1).
     """
-
     __slots__ = ()
+
+    def __lt__(self, other):
+        return self.distance < other.distance
 
     def __str__(self):
         return "{} Split event @ {} from {} to {}".format(
-            self.distance,
-            self.intersection_point,
-            self.vertex,
-            self.opposite_edge)
+            self.distance, self.intersection_point, self.vertex, self.opposite_edge)
 
 
 class _EdgeEvent(_EdgeEventSubClass):
-    """
-    An Edge Event is an edge extended from a perimeter edge, that shrinks to zero.
+    """An EdgeEvent is an edge extended from a perimeter edge, that shrinks to zero.
 
-    This will make its neighoring edges adjacent (Felkel and Obdrzalek 1998, 2).
+    This will make its neighboring edges adjacent (Felkel and Obdrzalek 1998, 2).
     """
     __slots__ = ()
 
+    def __lt__(self, other):
+        return self.distance < other.distance
+
     def __str__(self):
         return "{} Edge event @ {} between {} and {}".format(
-            self.distance,
-            self.intersection_point,
-            self.vertex_a,
-            self.vertex_b)
+            self.distance, self.intersection_point, self.vertex_a, self.vertex_b)
 
 
 class _LAVertex:
-    """A LAVertex is a vertex in a double connected circular list of active vertices."""
 
-    def __init__(self, point, edge_left, edge_right, direction_vectors=None, tol=1e-10):
+    def __init__(self, point, edge_left, edge_right, direction_vectors=None, tol=1e-5):
+        """A vertex in a double connected circular list of active vertices."""
+        self.tol = tol
         self.point = point
         self.edge_left = edge_left
         self.edge_right = edge_right
         self.prev = None
         self.next = None
         self.lav = None
-        self.tol = tol
-        self.id = None
-        # this should be handled better. Maybe membership in lav implies validity?
+        # TODO this might be handled better. Maybe membership in lav implies validity?
         self._valid = True
+
         creator_vectors = (edge_left.v.normalize() * -1, edge_right.v.normalize())
         if direction_vectors is None:
             direction_vectors = creator_vectors
-        # The determinant of two 2d vectors equals the sign of their cross product
-        # If second vector is to left, then sign of det is pos, else neg
-        # So if cw polygon, convex angle will be neg (since second vector to right)
-        # In this case, since we flip first vector, concave will be neg
-        self._is_reflex = direction_vectors[0].determinant(direction_vectors[1]) < 0.0
+
+        self._is_reflex = (_cross(*direction_vectors)) < 0
         self._bisector = Ray2D(
-            self.point,
-            operator.add(*creator_vectors) * (-1 if self.is_reflex else 1)
-        )
-        log.info("Created vertex %s", self.__repr__())
-        _debug.line(
-            (self.bisector.p.x, self.bisector.p.y,
-             self.bisector.p.x + self.bisector.v.x * 100,
-             self.bisector.p.y + self.bisector.v.y * 100),
-            fill="blue")
+            self.point, operator.add(*creator_vectors) * (-1 if self.is_reflex else 1))
 
     @property
     def bisector(self):
         return self._bisector
-
-    def __eq__(self, other):
-        """Equality of this _LAvertex with another."""
-        return self.point.is_equivalent(other.point, self.tol) and \
-            self.edge_left.is_equivalent(other.edge_left, self.tol) and \
-            self.edge_right.is_equivalent(other.edge_right, self.tol) and \
-            self.next.point.is_equivalent(other.next.point, self.tol) and \
-            self.prev.point.is_equivalent(other.prev.point, self.tol)
 
     @property
     def is_reflex(self):
@@ -152,33 +140,19 @@ class _LAVertex:
         return self.lav._slav._original_edges
 
     def next_event(self):
-        """ Computes the event (change to edge) associated with each polygon vertex.
-
-        Reflex vertices can result in split or edge events, while non-reflex vertices
-        will result in only edge events.
-
-        Returns:
-            EdgeEvent associated with self.
-        """
         events = []
         if self.is_reflex:
-            # a reflex vertex may generate a split event
-            # split events happen when a vertex hits an opposite edge,
-            # splitting the polygon in two.
-            log.debug("looking for split candidates for vertex %s", self)
+            # A reflex vertex may generate a split event.
+            # Split events happen when a vertex hits an opposite edge,
+            # thereby splitting the polygon in two.
             for edge in self.original_edges:
-                cond_1 = edge.edge.is_equivalent(self.edge_left, self.tol)
-                if cond_1 or edge.edge.is_equivalent(self.edge_right, self.tol):
+                if edge.edge == self.edge_left or edge.edge == self.edge_right:
                     continue
 
-                log.debug('\tconsidering EDGE %s', edge)
-
-                # A potential b is at the intersection of between our own bisector and
+                # A potential b is at the intersection between our own bisector and
                 # the bisector of the angle between the tested edge and any one of our
                 # own edges.
-
-                # We choose the 'less parallel' edge (in order to exclude a
-                # potentially parallel edge)
+                # We choose 'less parallel' edge (to exclude a potentially parallel edge)
 
                 # Make normalized copies of vectors
                 norm_edge_left_v = self.edge_left.v.normalize()
@@ -189,17 +163,13 @@ class _LAVertex:
                 leftdot = abs(norm_edge_left_v.dot(norm_edge_v))
                 rightdot = abs(norm_edge_right_v.dot(norm_edge_v))
                 selfedge = self.edge_left if leftdot < rightdot else self.edge_right
-                # otheredge = self.edge_left if leftdot > rightdot else self.edge_right
 
                 # Make copies of edges and compute intersection
-                self_edge_copy = LineSegment2D(selfedge.p, selfedge.v)
-                edge_edge_copy = LineSegment2D(edge.edge.p, edge.edge.v)
-                # Ray line intersection
-                i = intersection2d.intersect_line2d_infinite(
-                    edge_edge_copy,
-                    self_edge_copy)
+                self_copy = LineSegment2D(selfedge.p, selfedge.v)
+                edge_copy = LineSegment2D(edge.edge.p, edge.edge.v)
+                i = intersection2d.intersect_line_segment2d(edge_copy, self_copy)
 
-                if (i is not None) and (not i.is_equivalent(self.point, self.tol)):
+                if i is not None and not _approximately_equals(i, self.point):
                     # locate candidate b
                     linvec = (self.point - i).normalize()
                     edvec = edge.edge.v.normalize()
@@ -207,78 +177,56 @@ class _LAVertex:
                         edvec = -edvec
 
                     bisecvec = edvec + linvec
-                    if abs(bisecvec.magnitude) < self.tol:
+                    if abs(bisecvec) == 0:
                         continue
                     bisector = LineSegment2D(i, bisecvec)
                     b = intersection2d.intersect_line2d(self.bisector, bisector)
+
                     if b is None:
                         continue
 
-                    # check eligibility of b
-                    # a valid b should lie within the area limited by the edge and the
-                    # bisectors of its two vertices:
+                    # Check eligibility of b.
+                    # A valid b should lie within the area limited by the edge
+                    # and the bisectors of its two vertices.
                     _left_bisector_norm = edge.bisector_left.v.normalize()
                     _left_to_b_norm = (b - edge.bisector_left.p).normalize()
-                    xleft = _left_bisector_norm.determinant(_left_to_b_norm) > 0
+                    xleft = _left_bisector_norm.determinant(_left_to_b_norm) > -self.tol
 
                     _right_bisector_norm = edge.bisector_right.v.normalize()
                     _right_to_b_norm = (b - edge.bisector_right.p).normalize()
-                    xright = _right_bisector_norm.determinant(_right_to_b_norm) < 0
+                    xright = _right_bisector_norm.determinant(_right_to_b_norm) < self.tol
 
                     _edge_edge_norm = edge.edge.v.normalize()
                     _b_to_edge_norm = (b - edge.edge.p).normalize()
-                    xedge = _edge_edge_norm.determinant(_b_to_edge_norm) < 0
+                    xedge = _edge_edge_norm.determinant(_b_to_edge_norm) < self.tol
 
                     if not (xleft and xright and xedge):
-                        log.debug(
-                            '\t\tDiscarded candidate %s (%s-%s-%s)',
-                            b, xleft, xright, xedge)
-                        continue
-
-                    log.debug('\t\tFound valid candidate %s', b)
-                    _dist_line_to_b = LineSegment2D(
-                        edge.edge.p,
-                        edge.edge.v).distance_to_point(b)
-                    if _dist_line_to_b < self.tol:
-                        _dist_line_to_b = 0.0
-                    _new_split_event = _SplitEvent(_dist_line_to_b, b, self, edge.edge)
+                        continue  # discarded candidate
+                    # found valid candidate
+                    _d2b = LineSegment2D(edge.edge.p, edge.edge.v).distance_to_point(b)
+                    _new_split_event = _SplitEvent(_d2b, b, self, edge.edge)
                     events.append(_new_split_event)
 
-        # Intersect line2d with line2d (does not assume lines are infinite)
-        i_prev = intersection2d.intersect_line2d_infinite(
-            self.prev.bisector, self.bisector)
-        i_next = intersection2d.intersect_line2d_infinite(
-            self.next.bisector, self.bisector)
-        # Make EdgeEvent and append to events
-        if i_prev is not None:
-            dist_to_i_prev = LineSegment2D(
-                self.edge_left.p.duplicate(),
-                self.edge_left.v.duplicate()).distance_to_point(i_prev)
-            if dist_to_i_prev < self.tol:
-                dist_to_i_prev = 0.0
-            events.append(_EdgeEvent(dist_to_i_prev, i_prev, self.prev, self))
+        i_prev = self.bisector.intersect_line_ray(self.prev.bisector)
+        i_next = self.bisector.intersect_line_ray(self.next.bisector)
 
+        if i_prev is not None:
+            left_seg = LineSegment2D(self.edge_left.p, self.edge_left.v)
+            dist_to_i_prev  = left_seg.distance_to_point(i_prev)
+            events.append(_EdgeEvent(dist_to_i_prev, i_prev, self.prev, self))
         if i_next is not None:
-            dist_to_i_next = LineSegment2D(
-                self.edge_right.p.duplicate(),
-                self.edge_right.v.duplicate()).distance_to_point(i_next)
-            if dist_to_i_next < self.tol:
-                dist_to_i_next = 0.0
+            right_seg = LineSegment2D(self.edge_right.p, self.edge_right.v)
+            dist_to_i_next = right_seg.distance_to_point(i_next)
             events.append(_EdgeEvent(dist_to_i_next, i_next, self, self.next))
 
         if not events:
             return None
 
-        ev = min(events,
-                 key=lambda event:
+        ev = min(events, key=lambda event:
                  self.point.distance_to_point(event.intersection_point))
-
-        log.info('Generated new event for %s: %s', self, ev)
         return ev
 
     def invalidate(self):
-        """Mutates invalidate attribute of self.
-        """
         if self.lav is not None:
             self.lav.invalidate(self)
         else:
@@ -289,43 +237,35 @@ class _LAVertex:
         return self._valid
 
     def __str__(self):
-        return 'Vertex ({:.2f};{:.2f})'.format(self.point.x, self.point.y)
-
-    def __lt__(self, other):
-        if isinstance(other, _LAVertex):
-            return self.point.x < other.point.x
+        return "Vertex ({:.2f};{:.2f})".format(self.point.x, self.point.y)
 
     def __repr__(self):
         return 'Vertex ({}) ({:.2f};{:.2f}), bisector {}, edges {} {}'.format(
             'reflex' if self.is_reflex else 'convex',
-            self.point.x,
-            self.point.y,
-            self.bisector,
-            self.edge_left,
-            self.edge_right)
+            self.point.x, self.point.y, self.bisector,
+            self.edge_left, self.edge_right)
 
 
 class _SLAV:
-    """ A SLAV is a set of circular lists of active vertices.
 
-    It stores a loop of vertices for the outer boundary, and for all holes and
-    sub-polygons created during the straight skeleton computation
-    (Felkel and Obdrzalek 1998, 2).
-    """
+    def __init__(self, polygon, holes, tol=1e-5):
+        """ A set of circular lists of active vertices.
 
-    def __init__(self, polygon, holes, tol):
+        It stores a loop of vertices for the outer boundary, and for all holes and
+        sub-polygons created during the straight skeleton computation (Felkel
+        and Obdrzalek 1998).
+        """
         self.tol = tol
-        contours = [_normalize_contour(polygon, tol)]
-        contours.extend([_normalize_contour(hole, tol) for hole in holes])
+        contours = [_normalize_contour(polygon)]
+        contours.extend([_normalize_contour(hole) for hole in holes])
 
         self._lavs = [_LAV.from_polygon(contour, self) for contour in contours]
 
-        # Store original polygon edges for calculating split events
+        # store original polygon edges for calculating split events
         self._original_edges = [
             _OriginalEdge(
-                LineSegment2D.from_end_points(vertex.prev.point, vertex.point),
-                vertex.prev.bisector,
-                vertex.bisector
+                LineSegment2D(vertex.prev.point, vertex.point),
+                vertex.prev.bisector, vertex.bisector
             ) for vertex in chain.from_iterable(self._lavs)
         ]
 
@@ -355,25 +295,17 @@ class _SLAV:
         events = []
 
         lav = event.vertex_a.lav
-        # Triangle, one sink point
-        if event.vertex_a.prev.point.is_equivalent(event.vertex_b.next.point, self.tol):
-            log.info('%.2f Peak event at intersection %s from <%s,%s,%s> in %s',
-                     event.distance, event.intersection_point, event.vertex_a,
-                     event.vertex_b, event.vertex_a.prev, lav)
+        # triangle; one sink point
+        if event.vertex_a.prev == event.vertex_b.next:
             self._lavs.remove(lav)
-            lst_lav = list(lav)
-            for vi, vertex in enumerate(lst_lav):
+            for vertex in list(lav):
                 sinks.append(vertex.point)
                 vertex.invalidate()
         else:
-            log.info('%.2f Edge event at intersection %s from <%s,%s> in %s',
-                     event.distance, event.intersection_point, event.vertex_a,
-                     event.vertex_b, lav)
-            new_vertex = lav.unify(event.vertex_a,
-                                   event.vertex_b, event.intersection_point)
+            new_vertex = lav.unify(event.vertex_a, event.vertex_b,
+                                   event.intersection_point)
             if lav.head in (event.vertex_a, event.vertex_b):
                 lav.head = new_vertex
-
             sinks.extend((event.vertex_a.point, event.vertex_b.point))
             next_event = new_vertex.next_event()
             if next_event is not None:
@@ -394,46 +326,27 @@ class _SLAV:
             Subtree namedTuple
         """
         lav = event.vertex.lav
-        log.info(
-            '%.2f Split event at intersection %s from vertex %s, for edge %s in %s',
-            event.distance,
-            event.intersection_point,
-            event.vertex,
-            event.opposite_edge,
-            lav)
-
         sinks = [event.vertex.point]
         vertices = []
         x = None  # right vertex
         y = None  # left vertex
         norm = event.opposite_edge.v.normalize()
         for v in chain.from_iterable(self._lavs):
-            log.debug('%s in %s', v, v.lav)
-            equal_to_edge_left_p = event.opposite_edge.p.is_equivalent(
-                v.edge_left.p, self.tol)
-            equal_to_edge_right_p = event.opposite_edge.p.is_equivalent(
-                v.edge_right.p, self.tol)
-
-            _pnorm = Point2D(norm.x, norm.y)
-            if _pnorm.is_equivalent(v.edge_left.v.normalize(), self.tol) \
-                    and equal_to_edge_left_p:
+            if norm == v.edge_left.v.normalize() and \
+                    event.opposite_edge.p == v.edge_left.p:
                 x = v
                 y = x.prev
-            elif _pnorm.is_equivalent(v.edge_right.v.normalize(), self.tol) \
-                    and equal_to_edge_right_p:
+            elif norm == v.edge_right.v.normalize() and \
+                    event.opposite_edge.p == v.edge_right.p:
                 y = v
                 x = y.next
 
             if x:
                 xleft = y.bisector.v.normalize().determinant(
-                    (event.intersection_point - y.point).normalize()) >= 0
+                    (event.intersection_point - y.point).normalize()) >= -self.tol
 
                 xright = x.bisector.v.normalize().determinant(
-                    (event.intersection_point - x.point).normalize()) <= 0
-
-                log.debug(
-                    'Vertex %s holds edge as %s edge (%s, %s)', v,
-                    ('left' if x == v else 'right'), xleft, xright)
+                    (event.intersection_point - x.point).normalize()) <= self.tol
 
                 if xleft and xright:
                     break
@@ -442,24 +355,12 @@ class _SLAV:
                     y = None
 
         if x is None:
-            log.info(
-                'Failed split event %s (equivalent edge event is expected to follow)',
-                event
-            )
             return (None, [])
 
-        v1 = _LAVertex(
-            event.intersection_point,
-            event.vertex.edge_left,
-            event.opposite_edge,
-            tol=self.tol
-        )
-        v2 = _LAVertex(
-            event.intersection_point,
-            event.opposite_edge,
-            event.vertex.edge_right,
-            tol=self.tol
-        )
+        v1 = _LAVertex(event.intersection_point, event.vertex.edge_left,
+                       event.opposite_edge, tol=self.tol)
+        v2 = _LAVertex(event.intersection_point, event.opposite_edge,
+                       event.vertex.edge_right, tol=self.tol)
 
         v1.prev = event.vertex.prev
         v1.next = x
@@ -480,18 +381,13 @@ class _SLAV:
         else:
             new_lavs = [_LAV.from_chain(v1, self), _LAV.from_chain(v2, self)]
 
-        for lv in new_lavs:
-            log.debug(lv)
-            if len(lv) > 2:
-                self._lavs.append(lv)
-                vertices.append(lv.head)
+        for l in new_lavs:
+            if len(l) > 2:
+                self._lavs.append(l)
+                vertices.append(l.head)
             else:
-                log.info(
-                    'LAV %s has collapsed into the line %s--%s',
-                    lv, lv.head.point, lv.head.next.point
-                )
-                sinks.append(lv.head.next.point)
-                for v in list(lv):
+                sinks.append(l.head.next.point)
+                for v in list(l):
                     v.invalidate()
 
         events = []
@@ -505,17 +401,16 @@ class _SLAV:
 
 
 class _LAV:
-    """A single circular list of active vertices.
-
-    Stored in a SLAV (Felkel and Obdrzalek 1998, 2).
-    """
 
     def __init__(self, slav):
+        """A single circular list of active vertices.
+
+        Stored in a SLAV (Felkel and Obdrzalek 1998, 2).
+        """
         self.head = None
         self._slav = slav
         self._len = 0
         self.tol = slav.tol
-        log.debug('Created LAV %s', self)
 
     @classmethod
     def from_polygon(cls, polygon, slav):
@@ -524,7 +419,6 @@ class _LAV:
         Args:
             polygon: list of points (tuple of x,y coordinates).
             slav: SLAV (a set of circular lists of active vertices).
-            tol: tolerance for point equality.
 
         Returns:
             LAV (single circular list of active vertices).
@@ -573,32 +467,28 @@ class _LAV:
         Args:
             vertex: _LAVertex to be invalidated.
         """
-        assert vertex.lav is self, 'Tried to invalidate a vertex thats not mine'
-        log.debug('Invalidating %s', vertex)
+        assert vertex.lav is self, 'Tried to invalidate a vertex that is not mine'
         vertex._valid = False
         if self.head == vertex:
             self.head = self.head.next
         vertex.lav = None
 
     def unify(self, vertex_a, vertex_b, point):
-        """Generate a new _LAVertex from input Point2D and resolve adjacency to old edges
+        """Generate new _LAVertex from input Point2D and resolve adjacency to old edges.
 
         Args:
-            vertex_a = _LAVertex
-            vertex_b = _LAVertex
-            point = intersection point from angle bisectors from vertex_a
-                and vertex_b as a Point2D.
+            vertex_a: _LAVertex
+            vertex_b: _LAVertex
+            point: Intersection point from angle bisectors from vertex_a and
+                vertex_b as a Point2D.
+
         Returns:
             _LAVertex of intersection point.
         """
-        normed_b_bisector = vertex_b.bisector.v.normalize()
-        normed_a_bisector = vertex_a.bisector.v.normalize()
         replacement = _LAVertex(
-            point,
-            vertex_a.edge_left,
-            vertex_b.edge_right,
-            (normed_b_bisector, normed_a_bisector),
-            tol=vertex_a.tol,
+            point, vertex_a.edge_left, vertex_b.edge_right,
+            (vertex_b.bisector.v.normalize(), vertex_a.bisector.v.normalize()),
+            tol=vertex_a.tol
         )
         replacement.lav = self
 
@@ -617,10 +507,10 @@ class _LAV:
         return replacement
 
     def __str__(self):
-        return 'LAV {}'.format(id(self))
+        return "LAV {}".format(id(self))
 
     def __repr__(self):
-        return '{} = {}'.format(str(self), [vertex for vertex in self])
+        return "{} = {}".format(str(self), [vertex for vertex in self])
 
     def __len__(self):
         return self._len
@@ -629,15 +519,11 @@ class _LAV:
         cur = self.head
         while True:
             yield cur
-            try:
-                cur = cur.next
-                if cur == self.head:
-                    raise StopIteration
-            except StopIteration:
+            cur = cur.next
+            if cur == self.head:
                 return
 
     def _show(self):
-        """ Iterates through _LAV linked list and prints _LAVertex."""
         cur = self.head
         while True:
             print(cur.__repr__())
@@ -647,11 +533,9 @@ class _LAV:
 
 
 class _EventQueue:
-    """
-    An EventQueue is a priority queue that stores vertices of the polygon.
-    """
 
     def __init__(self):
+        """A priority queue that stores vertices of the polygon."""
         self.__data = []
 
     def put(self, item):
@@ -676,62 +560,48 @@ class _EventQueue:
             print(item)
 
 
-# Skeleton Code
-def _window(lst):
-    """
-    Window operator for lists.
+def _merge_sources(skeleton):
+    """Merge the sources of a straight skeleton.
 
-    Consume a list of items, and returns a zipped list of the previous, current and next
-    items in the list, accessible by the same index.
+    In highly symmetrical shapes with reflex vertices, multiple sources may share
+    the same  location. This function merges those sources.
+    """
+    sources = {}
+    to_remove = []
+    for i, p in enumerate(skeleton):
+        source = tuple(i for i in p.source)
+        if source in sources:
+            source_index = sources[source]
+            # source exists, merge sinks
+            for sink in p.sinks:
+                if sink not in skeleton[source_index].sinks:
+                    skeleton[source_index].sinks.append(sink)
+            to_remove.append(i)
+        else:
+            sources[source] = i
+    for i in reversed(to_remove):
+        skeleton.pop(i)
+
+            
+def _skeletonize(polygon, holes=None, tol=1e-5):
+    """Compute the straight skeleton of a Polygonal Straight-Line Graph (PSLG).
 
     Args:
-        lst: list
+        polygon: A list of 2D vertices in clockwise order (when viewed from
+            above the XY plane). For example, a square can be represented with
+            the following: [[0,1], [1,1], [0,0], [1,0]]
+        holes: A list of lists where each sub-list is the contour of a hole.
+            The vertices of each hole should be in counter-clockwise order (when
+            viewed from above the XY plane). For example, this input could be
+            the following: [[[.25,.25], [.75,.25], [.75,.75], [.25,.75]]]
+        tol: Tolerance for point equivalence. (Default: 1e-5).
 
     Returns:
-        Zipped list of previous, current and next items in list.
+        The straight skeleton as a list of "subtrees", which are in the form of
+        (source, height, sinks). Source is the highest points, height is its
+        height, and sinks are the point connected to the source.
     """
-    prevs, items, nexts = tee(lst, 3)
-    prevs = islice(cycle(prevs), len(lst) - 1, None)
-    nexts = islice(cycle(nexts), 1, None)
-    return zip(prevs, items, nexts)
-
-
-def _normalize_contour(contour, tol):
-    """
-    Consumes list of x,y coordinate tuples and returns list of Point2Ds.
-
-    Args:
-        contour: list of x,y tuples from contour.
-        tol: Number for point equivalence tolerance.
-    Return:
-         list of Point2Ds of contour.
-    """
-    contour = [Point2D(float(x), float(y)) for (x, y) in contour]
-    normed_contour = []
-    for prev, point, next in _window(contour):
-        normed_prev = (point - prev).normalize()
-        normed_next = (next - point).normalize()
-
-        if not point.is_equivalent(next, tol) or \
-                normed_prev.is_equivalent(normed_next, tol):
-            normed_contour.append(point)
-
-    return normed_contour
-
-
-def _skeletonize(slav):
-    """
-    Compute polygon straight skeleton from a Set of List of Active vertex (SLAV).
-
-    The SLAV will represent the polygon as a double linked list of vertices in
-    counter-clockwise order. Holes is a similar list with the vertices of which
-    should be in clockwise order.
-
-    Args:
-        slav: SLAV object.
-    Returns:
-        List of subtrees.
-    """
+    slav = _SLAV(polygon, holes, tol=tol)
     output = []
     prioque = _EventQueue()
 
@@ -745,82 +615,90 @@ def _skeletonize(slav):
     # from the new intersection via the next_event method. Thus, this while loop
     # iteratively adds new events without recursion.
     while not (prioque.empty() or slav.empty()):
-        log.debug('SLAV is %s', [repr(lav) for lav in slav])
         i = prioque.get()  # vertex a, b is self or next vertex
-
         # Handle edge or split events.
         # arc: subtree(event.intersection_point, event.distance, sinks)
         # events: updated events with new vertex
         if isinstance(i, _EdgeEvent):
             if not i.vertex_a.is_valid or not i.vertex_b.is_valid:
-                log.info('%.2f Discarded outdated edge event %s', i.distance, i)
                 continue
             (arc, events) = slav.handle_edge_event(i)
         elif isinstance(i, _SplitEvent):
             if not i.vertex.is_valid:
-                log.info('%.2f Discarded outdated split event %s', i.distance, i)
                 continue
             (arc, events) = slav.handle_split_event(i)
         prioque.put_all(events)
+
         # As we traverse priorque, output list of "subtrees", which are in the form
         # of (source, height, sinks) where source is the highest points, height is
         # its distance to an edge, and sinks are the point connected to the source.
         if arc is not None:
             output.append(arc)
-            for sink in arc.sinks:
-                _debug.line((arc.source.x, arc.source.y, sink.x, sink.y), fill='red')
-            _debug.show()
-
+    # merge the sources in the result
+    _merge_sources(output)
     return output
 
 
-def skeleton_as_subtree_list(polygon, holes=None, tol=1e-10):
-    """Compute polygon straight skeleton as a list of subtree source and sink points.
+def skeleton_as_subtree_list(boundary, holes=None, tolerance=1e-5):
+    """Get a straight skeleton as a list of Subtree source and sink points.
 
     Args:
-        polygon: nested list of endpoint coordinates in counter-clockwise order.
-            Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in clockwise order.
-            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]]
-        tol: Tolerance for point equivalence. (Default: 1e-10).
+        boundary: A ladybug-geometry Polygon2D for the boundary around the Polygonal
+            Straight-Line Graph (PSLG).
+        holes: An optional list of ladybug-geometry Polygon2D for the holes within
+            the Polygonal Straight-Line Graph (PSLG). If None, it will be assumed
+            that no holes exist in the shape. (Default: None).
+        tolerance: Tolerance for point equivalence. (Default: 1e-5).
 
     Returns:
-        List of subtrees.
+        A list of Subtree objects that represent the straight skeleton.
     """
+    # pre-process the boundary and holes to be sure they are in the right order
+    boundary = boundary.remove_duplicate_vertices(tolerance)
+    if not boundary.is_clockwise:
+        boundary = boundary.reverse()
+    if holes is not None:
+        clean_holes = []
+        for hole in holes:
+            hole = hole.remove_duplicate_vertices(tolerance)
+            if hole.is_clockwise:
+                hole = hole.reverse()
+            clean_holes.append(hole)
+        holes = clean_holes
+    else:
+        holes = []
 
-    # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [reversed(hole) for hole in holes]
-    slav = _SLAV(reversed(polygon), holes, tol)
-
-    subtree_list = _skeletonize(slav)
-
+    # skeletonize the objects
+    skel_tol = tolerance / 100  # use a finer tolerance for actual skeleton
+    subtree_list = _skeletonize(
+        boundary.to_array(), [h.to_array() for h in holes], skel_tol
+    )
     return subtree_list
 
 
-def skeleton_as_edge_list(polygon, holes=None, tol=1e-10):
-    """Compute the straight skeleton of a polygon and returns skeleton as list of edges.
+def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5):
+    """Get a straight skeleton as list of LineSegment2D.
 
     Args:
-        polygon: list of list of point coordinates in counter-clockwise order.
-            Example square: [[0,0], [1,0], [1,1], [0,1]]
-        holes: list of polygons representing holes in clockwise order.
-            Example hole: [[.25,.75], [.75,.75], [.75,.25], [.25,.25]].
-        tol: Tolerance for point equivalence. (Default: 1e-10).
+        boundary: A ladybug-geometry Polygon2D for the boundary around the Polygonal
+            Straight-Line Graph (PSLG).
+        holes: An optional list of ladybug-geometry Polygon2D for the holes within
+            the Polygonal Straight-Line Graph (PSLG). If None, it will be assumed
+            that no holes exist in the shape. (Default: None).
+        tolerance: Tolerance for point equivalence. (Default: 1e-5).
 
     Returns:
-        list of lines as coordinate tuples.
+        A list of LineSegment2D that represent the straight skeleton.
     """
-    edge_lst = []
+    # get the Subtree representation of the straight skeleton
+    subtree_list = skeleton_as_subtree_list(boundary, holes, tolerance)
 
-    # Reverse order to ensure cw order for input
-    holes = [] if holes is None else [hole[::-1] for hole in holes]
-    slav = _SLAV(polygon[::-1], holes, tol)
-    subtree_list = _skeletonize(slav)
-
+    # extract the LineSegment2D from the Subtree representation
+    edge_list = []
     for subtree in subtree_list:
         source_pt = subtree.source
         for sink_pt in subtree.sinks:
-            edge_arr = ((source_pt.x, source_pt.y), (sink_pt.x, sink_pt.y))
-            edge_lst.append(edge_arr)
-
-    return edge_lst
+            edge_seg = LineSegment2D.from_end_points(
+                Point2D(source_pt.x, source_pt.y), Point2D(sink_pt.x, sink_pt.y))
+            edge_list.append(edge_seg)
+    return edge_list
