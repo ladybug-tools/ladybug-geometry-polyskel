@@ -16,9 +16,7 @@ from collections import namedtuple
 import operator
 
 # Geometry classes
-from ladybug_geometry.geometry2d.pointvector import Point2D
-from ladybug_geometry.geometry2d.line import LineSegment2D
-from ladybug_geometry.geometry2d.ray import Ray2D
+from ladybug_geometry.geometry2d import Point2D, Ray2D, LineSegment2D, Polygon2D
 from ladybug_geometry import intersection2d
 
 # Polygon sorting classes
@@ -59,18 +57,27 @@ def _approximately_equals(a, b):
     return a == b or (abs(a - b) <= max(abs(a), abs(b)) * 0.001)
 
 
-def _normalize_contour(contour):
+def _normalize_contour(contour, tol):
     """Consumes list of x,y coordinate tuples and returns list of Point2Ds.
 
     Args:
         contour: list of x,y tuples from contour.
+        tol: Number for point equivalence tolerance.
 
     Return:
          list of Point2Ds of contour.
     """
     contour = [Point2D(float(x), float(y)) for (x, y) in contour]
-    return [point for prev, point, next in _window(contour) if not
-            (point == next or (point - prev).normalize() == (next - point).normalize())]
+    normed_contour = []
+    for prev, point, next in _window(contour):
+        normed_prev = (point - prev).normalize()
+        normed_next = (next - point).normalize()
+
+        if not point.is_equivalent(next, tol) or \
+                normed_prev.is_equivalent(normed_next, tol):
+            normed_contour.append(point)
+
+    return normed_contour
 
 
 class _SplitEvent(_SplitEventSubClass):
@@ -189,12 +196,12 @@ class _LAVertex:
                     # A valid b should lie within the area limited by the edge
                     # and the bisectors of its two vertices.
                     _left_bisector_norm = edge.bisector_left.v.normalize()
-                    _left_to_b_norm = (b - edge.bisector_left.p).normalize()
-                    xleft = _left_bisector_norm.determinant(_left_to_b_norm) > -self.tol
+                    _left_b_norm = (b - edge.bisector_left.p).normalize()
+                    xleft = _left_bisector_norm.determinant(_left_b_norm) > -self.tol
 
                     _right_bisector_norm = edge.bisector_right.v.normalize()
-                    _right_to_b_norm = (b - edge.bisector_right.p).normalize()
-                    xright = _right_bisector_norm.determinant(_right_to_b_norm) < self.tol
+                    _right_b_norm = (b - edge.bisector_right.p).normalize()
+                    xright = _right_bisector_norm.determinant(_right_b_norm) < self.tol
 
                     _edge_edge_norm = edge.edge.v.normalize()
                     _b_to_edge_norm = (b - edge.edge.p).normalize()
@@ -212,7 +219,7 @@ class _LAVertex:
 
         if i_prev is not None:
             left_seg = LineSegment2D(self.edge_left.p, self.edge_left.v)
-            dist_to_i_prev  = left_seg.distance_to_point(i_prev)
+            dist_to_i_prev = left_seg.distance_to_point(i_prev)
             events.append(_EdgeEvent(dist_to_i_prev, i_prev, self.prev, self))
         if i_next is not None:
             right_seg = LineSegment2D(self.edge_right.p, self.edge_right.v)
@@ -248,17 +255,14 @@ class _LAVertex:
 
 class _SLAV:
 
-    def __init__(self, polygon, holes, tol=1e-5):
+    def __init__(self, polygon, tol=1e-5):
         """ A set of circular lists of active vertices.
 
-        It stores a loop of vertices for the outer boundary, and for all holes and
-        sub-polygons created during the straight skeleton computation (Felkel
-        and Obdrzalek 1998).
+        It stores a loop of vertices for the polygon created during the straight
+        skeleton computation (Felkel and Obdrzalek 1998).
         """
         self.tol = tol
-        contours = [_normalize_contour(polygon)]
-        contours.extend([_normalize_contour(hole) for hole in holes])
-
+        contours = [_normalize_contour(polygon, tol)]
         self._lavs = [_LAV.from_polygon(contour, self) for contour in contours]
 
         # store original polygon edges for calculating split events
@@ -381,13 +385,13 @@ class _SLAV:
         else:
             new_lavs = [_LAV.from_chain(v1, self), _LAV.from_chain(v2, self)]
 
-        for l in new_lavs:
-            if len(l) > 2:
-                self._lavs.append(l)
-                vertices.append(l.head)
+        for lv in new_lavs:
+            if len(lv) > 2:
+                self._lavs.append(lv)
+                vertices.append(lv.head)
             else:
-                sinks.append(l.head.next.point)
-                for v in list(l):
+                sinks.append(lv.head.next.point)
+                for v in list(lv):
                     v.invalidate()
 
         events = []
@@ -582,18 +586,14 @@ def _merge_sources(skeleton):
     for i in reversed(to_remove):
         skeleton.pop(i)
 
-            
-def _skeletonize(polygon, holes=None, tol=1e-5):
-    """Compute the straight skeleton of a Polygonal Straight-Line Graph (PSLG).
+
+def _skeletonize(polygon, tol=1e-5):
+    """Compute the straight skeleton of a Polygon.
 
     Args:
         polygon: A list of 2D vertices in clockwise order (when viewed from
             above the XY plane). For example, a square can be represented with
             the following: [[0,1], [1,1], [0,0], [1,0]]
-        holes: A list of lists where each sub-list is the contour of a hole.
-            The vertices of each hole should be in counter-clockwise order (when
-            viewed from above the XY plane). For example, this input could be
-            the following: [[[.25,.25], [.75,.25], [.75,.75], [.25,.75]]]
         tol: Tolerance for point equivalence. (Default: 1e-5).
 
     Returns:
@@ -601,7 +601,7 @@ def _skeletonize(polygon, holes=None, tol=1e-5):
         (source, height, sinks). Source is the highest points, height is its
         height, and sinks are the point connected to the source.
     """
-    slav = _SLAV(polygon, holes, tol=tol)
+    slav = _SLAV(polygon, tol=tol)
     output = []
     prioque = _EventQueue()
 
@@ -643,36 +643,65 @@ def skeleton_as_subtree_list(boundary, holes=None, tolerance=1e-5):
     """Get a straight skeleton as a list of Subtree source and sink points.
 
     Args:
-        boundary: A ladybug-geometry Polygon2D for the boundary around the Polygonal
-            Straight-Line Graph (PSLG).
+        boundary: A ladybug-geometry Polygon2D for the boundary around the shape
+            for which the straight skeleton will be computed.
         holes: An optional list of ladybug-geometry Polygon2D for the holes within
-            the Polygonal Straight-Line Graph (PSLG). If None, it will be assumed
-            that no holes exist in the shape. (Default: None).
+            the shape for which a straight skeleton will be computed. If None,
+            it will be assumed that no holes exist in the shape. (Default: None).
         tolerance: Tolerance for point equivalence. (Default: 1e-5).
 
     Returns:
         A list of Subtree objects that represent the straight skeleton.
     """
-    # pre-process the boundary and holes to be sure they are in the right order
+    # merge the holes into the boundary if they are specified
+    if holes is not None and len(holes) != 0:
+        bound_pts = list(boundary.vertices)
+        hole_pts = [list(h.vertices) for h in holes]
+        boundary = Polygon2D.from_shape_with_holes(bound_pts, hole_pts)
+
+    # pre-process the boundary to be sure it is in the right order
     boundary = boundary.remove_duplicate_vertices(tolerance)
     if not boundary.is_clockwise:
         boundary = boundary.reverse()
-    if holes is not None:
-        clean_holes = []
-        for hole in holes:
-            hole = hole.remove_duplicate_vertices(tolerance)
-            if hole.is_clockwise:
-                hole = hole.reverse()
-            clean_holes.append(hole)
-        holes = clean_holes
-    else:
-        holes = []
 
     # skeletonize the objects
     skel_tol = tolerance / 100  # use a finer tolerance for actual skeleton
-    subtree_list = _skeletonize(
-        boundary.to_array(), [h.to_array() for h in holes], skel_tol
-    )
+    subtree_list = _skeletonize(boundary.to_array(), skel_tol)
+
+    # if holes were merged into the boundary, try to clean up the merge seams
+    if holes is not None and len(holes) != 0:
+        # gather the seams along which holes were merged
+        all_segs, seam_segs = boundary.segments, []
+        for i, seg in enumerate(all_segs):
+            try:
+                for o_seg in all_segs[i + 1:]:
+                    if seg.p1.is_equivalent(o_seg.p2, tolerance) and \
+                            seg.p2.is_equivalent(o_seg.p1, tolerance):
+                        seam_segs.append(seg)
+                        break
+            except IndexError:
+                pass  # we have reached the end of the list
+        # replace the subtrees along the seam with the seam itself
+        for seam in seam_segs:
+            s_p1, s_p2 = seam.p1, seam.p2
+            new_subtrees, connecting_pts, new_height = [], [], 0
+            for sub_tree in subtree_list:
+                sink_pts = sub_tree.sinks
+                replace_sub = False
+                if len(sink_pts) == 2:
+                    if s_p1.is_equivalent(sink_pts[0], tolerance) or \
+                            s_p1.is_equivalent(sink_pts[1], tolerance):
+                        if s_p2.is_equivalent(sink_pts[0], tolerance) or \
+                                s_p2.is_equivalent(sink_pts[1], tolerance):
+                            new_height = sub_tree.height
+                            replace_sub = True
+                            connecting_pts.append(sub_tree.source)
+                if not replace_sub:
+                    new_subtrees.append(sub_tree)
+            subtree_list = new_subtrees
+            seam_sub = Subtree(seam.midpoint, new_height, connecting_pts + [s_p1, s_p2])
+            subtree_list.append(seam_sub)
+
     return subtree_list
 
 
@@ -680,11 +709,11 @@ def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5):
     """Get a straight skeleton as list of LineSegment2D.
 
     Args:
-        boundary: A ladybug-geometry Polygon2D for the boundary around the Polygonal
-            Straight-Line Graph (PSLG).
+        boundary: A ladybug-geometry Polygon2D for the boundary around the shape
+            for which the straight skeleton will be computed.
         holes: An optional list of ladybug-geometry Polygon2D for the holes within
-            the Polygonal Straight-Line Graph (PSLG). If None, it will be assumed
-            that no holes exist in the shape. (Default: None).
+            the shape for which a straight skeleton will be computed. If None,
+            it will be assumed that no holes exist in the shape. (Default: None).
         tolerance: Tolerance for point equivalence. (Default: 1e-5).
 
     Returns:
