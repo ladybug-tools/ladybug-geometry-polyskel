@@ -17,7 +17,8 @@ import operator
 
 # Geometry classes
 from ladybug_geometry.geometry2d import Point2D, Ray2D, LineSegment2D, Polygon2D
-from ladybug_geometry import intersection2d
+from ladybug_geometry.intersection2d import intersect_line_segment2d, \
+    intersect_line2d
 
 # Polygon sorting classes
 _OriginalEdge = namedtuple('_OriginalEdge', 'edge bisector_left, bisector_right')
@@ -174,7 +175,7 @@ class _LAVertex:
                 # Make copies of edges and compute intersection
                 self_copy = LineSegment2D(selfedge.p, selfedge.v)
                 edge_copy = LineSegment2D(edge.edge.p, edge.edge.v)
-                i = intersection2d.intersect_line_segment2d(edge_copy, self_copy)
+                i = intersect_line_segment2d(edge_copy, self_copy)
 
                 if i is not None and not _approximately_equals(i, self.point):
                     # locate candidate b
@@ -187,7 +188,7 @@ class _LAVertex:
                     if abs(bisecvec) == 0:
                         continue
                     bisector = LineSegment2D(i, bisecvec)
-                    b = intersection2d.intersect_line2d(self.bisector, bisector)
+                    b = intersect_line2d(self.bisector, bisector)
 
                     if b is None:
                         continue
@@ -726,7 +727,7 @@ def skeleton_as_subtree_list(boundary, holes=None, tolerance=1e-5):
     return subtree_list
 
 
-def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5):
+def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5, intersect=False):
     """Get a straight skeleton as list of LineSegment2D.
 
     Args:
@@ -736,6 +737,10 @@ def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5):
             the shape for which a straight skeleton will be computed. If None,
             it will be assumed that no holes exist in the shape. (Default: None).
         tolerance: Tolerance for point equivalence. (Default: 1e-5).
+        intersect: A boolean to note whether the segments of the skeleton should
+            be intersected with one another before being returned. This can
+            help make the skeleton more usable in the event that its topology
+            is not correct. (Default: False).
 
     Returns:
         A list of LineSegment2D that represent the straight skeleton.
@@ -744,11 +749,46 @@ def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5):
     subtree_list = skeleton_as_subtree_list(boundary, holes, tolerance)
 
     # extract the LineSegment2D from the Subtree representation
-    edge_list = []
+    skeleton = []
     for subtree in subtree_list:
         source_pt = subtree.source
         for sink_pt in subtree.sinks:
             edge_seg = LineSegment2D.from_end_points(
                 Point2D(source_pt.x, source_pt.y), Point2D(sink_pt.x, sink_pt.y))
-            edge_list.append(edge_seg)
-    return edge_list
+            skeleton.append(edge_seg)
+
+    if intersect:  # intersect skeleton segments and split them
+        skel_tol = tolerance / 100  # use a finer tolerance for actual skeleton
+        intersect_pts = [[] for seg in skeleton]
+        for i, seg in enumerate(skeleton):
+            try:
+                for other_seg in skeleton[:i] + skeleton[i + 1:]:
+                    int_pt = intersect_line_segment2d(seg, other_seg)
+                    if int_pt is None or int_pt.is_equivalent(seg.p1, skel_tol) or \
+                            int_pt.is_equivalent(seg.p2, skel_tol):
+                        continue
+                    # we have found an intersection point where segments should be split
+                    intersect_pts[i].append(int_pt)
+            except IndexError:
+                pass  # we have reached the end of the list
+        split_skeleton = []
+        for seg, split_pts in zip(skeleton, intersect_pts):
+            if len(split_pts) == 0:
+                split_skeleton.append(seg)
+            elif len(split_pts) == 1:  # split the segment in two
+                int_pt = split_pts[0]
+                split_skeleton.append(LineSegment2D.from_end_points(seg.p1, int_pt))
+                split_skeleton.append(LineSegment2D.from_end_points(int_pt, seg.p2))
+            else:  # sort the points along the segment to split it
+                pt_dists = [(ipt, seg.p1.distance_to_point(ipt)) for ipt in split_pts]
+                sort_obj = sorted(zip(pt_dists, split_pts), key=lambda pair: pair[0])
+                sort_pts = [x for _, x in sort_obj]
+                sort_pts.append(seg.p2)
+                pr_pt = seg.p1
+                for s_pt in sort_pts:
+                    if not pr_pt.is_equivalent(s_pt, skel_tol):
+                        split_skeleton.append(LineSegment2D.from_end_points(pr_pt, s_pt))
+                    pr_pt = s_pt
+        skeleton = split_skeleton
+
+    return skeleton

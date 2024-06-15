@@ -4,9 +4,9 @@ from __future__ import division
 import math
 
 from ladybug_geometry.geometry2d import LineSegment2D, Polygon2D
-from ladybug_geometry import intersection2d
+from ladybug_geometry.intersection2d import intersect_line2d_infinite
 
-from .polyskel import skeleton_as_subtree_list
+from .polyskel import skeleton_as_edge_list
 
 
 def _vector2hash(vector, tol):
@@ -341,7 +341,7 @@ class PolygonDirectedGraph(object):
             # Convert graph edge to trimming segment
             next_node = node.adj_lst[0]
             trim_seg = LineSegment2D.from_end_points(node.pt, next_node.pt)
-            int_pt = intersection2d.intersect_line2d_infinite(trim_seg, segment)
+            int_pt = intersect_line2d_infinite(trim_seg, segment)
 
             # Add intersection point as new node in graph
             if int_pt:
@@ -549,8 +549,8 @@ def skeleton_as_directed_graph(boundary, holes=None, tolerance=1e-5):
         always to the left of each exterior edge. The nodes at the boundary
         and the holes have the exterior property set to True.
     """
-    # get the Subtree representation of the straight skeleton
-    subtree_list = skeleton_as_subtree_list(boundary, holes, tolerance)
+    # get the segments representing the straight skeleton
+    skeleton = skeleton_as_edge_list(boundary, holes, tolerance, intersect=True)
 
     # ensure the boundary and holes are oriented correctly for the graph
     if boundary.is_clockwise:
@@ -578,12 +578,10 @@ def skeleton_as_directed_graph(boundary, holes=None, tolerance=1e-5):
         dg.add_node(vertices[-1], [vertices[0]], exterior=True)  # close loop
 
     # add the straight skelton to the graph
-    for subtree in subtree_list:
-        event_pt = subtree.source
-        for sink_pt in subtree.sinks:
-            # Add a bidirectional edge to represent skeleton edges
-            dg.add_node(sink_pt, [event_pt])
-            dg.add_node(event_pt, [sink_pt], exterior=False)
+    for seg in skeleton:
+        # add a bidirectional edge to represent skeleton edges
+        dg.add_node(seg.p2, [seg.p1])
+        dg.add_node(seg.p1, [seg.p2], exterior=False)
     return dg
 
 
@@ -608,26 +606,26 @@ def skeleton_as_cycle_polygons(boundary, holes=None, tolerance=1e-5):
     # get the straight skeleton as a PolygonDirectedGraph
     dg = skeleton_as_directed_graph(boundary, holes, tolerance)
 
-    # convert the edge cycles to Polygon2D
+    # function to add cycles to the list of polygons to be returned
     cycle_polys = []
+
+    def _add_cycle_polygon(min_cycle):
+        """Add a cycle of Nodes to the list of polygons."""
+        if min_cycle is not None:
+            cycle_poly = Polygon2D([node.pt for node in min_cycle])
+            cycle_polys.append(cycle_poly)
+
+    # convert the edge cycles to Polygon2D
     exter_cycle = dg.exterior_cycle(dg.outer_root_node)
     for i, base_node in enumerate(exter_cycle[:-1]):
         next_node = exter_cycle[i + 1]
-        min_cycle = dg.min_cycle(next_node, base_node)
-        cycle_poly = Polygon2D([node.pt for node in min_cycle])
-        cycle_polys.append(cycle_poly)
-    min_cycle = dg.min_cycle(exter_cycle[0], exter_cycle[-1])
-    cycle_poly = Polygon2D([node.pt for node in min_cycle])
-    cycle_polys.append(cycle_poly)
+        _add_cycle_polygon(dg.min_cycle(next_node, base_node))
+    _add_cycle_polygon(dg.min_cycle(exter_cycle[0], exter_cycle[-1]))
     if holes is not None:
         for hole_root in dg.hole_root_nodes:
             exter_cycle = dg.exterior_cycle(hole_root)
             for i, base_node in enumerate(exter_cycle[:-1]):
                 next_node = exter_cycle[i + 1]
-                min_cycle = dg.min_cycle(next_node, base_node)
-                cycle_poly = Polygon2D([node.pt for node in min_cycle])
-                cycle_polys.append(cycle_poly)
-            min_cycle = dg.min_cycle(exter_cycle[0], exter_cycle[-1])
-            cycle_poly = Polygon2D([node.pt for node in min_cycle])
-            cycle_polys.append(cycle_poly)
+                _add_cycle_polygon(dg.min_cycle(next_node, base_node))
+            _add_cycle_polygon(dg.min_cycle(exter_cycle[0], exter_cycle[-1]))
     return cycle_polys

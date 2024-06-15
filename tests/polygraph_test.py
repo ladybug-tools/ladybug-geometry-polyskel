@@ -177,7 +177,7 @@ def test_skeleton_as_directed_graph_one_hole():
         assert len(poly.vertices) == 4 or len(poly.vertices) == 5
 
 
-def test_polyskel_concave_two_holes():
+def test_skeleton_as_directed_graph_concave_two_holes():
     """Test concave with two holes."""
     polygon_verts = [
         [0.7, 0.2],
@@ -208,3 +208,23 @@ def test_polyskel_concave_two_holes():
     for poly in cycle_polys:
         assert isinstance(poly, Polygon2D)
         assert 4 <= len(poly.vertices) <= 7
+
+
+def test_skeleton_as_directed_graph_bad_topology():
+    """Test a known case where polyskel returns bad topology"""
+    polygon_verts = [
+        [-3.10661836926, 21.3923815366],
+        [-3.10661836926, 19.7597225480],
+        [-7.59797976254, 19.7597225480],
+        [-7.59797976254, 21.3923815366],
+        [-6.59662650790, 21.3923815366],
+        [-6.59662650790, 21.8240139474],
+        [-4.11444320173, 21.8240139474],
+        [-4.11444320173, 21.3923815366]
+    ]
+    polygon = Polygon2D.from_array(polygon_verts)
+    cycle_polys = skeleton_as_cycle_polygons(polygon, tolerance=0.01)
+    assert len(cycle_polys) == 8
+    for poly in cycle_polys:
+        assert isinstance(poly, Polygon2D)
+        assert 3 <= len(poly.vertices) <= 7
