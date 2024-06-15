@@ -587,6 +587,26 @@ def _merge_sources(skeleton):
         skeleton.pop(i)
 
 
+def _clean_sinks(skeleton, tol=1e-5):
+    """Remove cases where the source and sink point are the same.
+
+    This can occur as an unintended effect of merging sources.
+    """
+    clean_subtrees = []
+    for s_tree in skeleton:
+        source, clean_sinks, is_invalid = s_tree.source, [], False
+        for sink in s_tree.sinks:
+            if source.is_equivalent(sink, tol):
+                is_invalid = True
+            else:
+                clean_sinks.append(sink)
+        if is_invalid:  # create a new Subtree
+            clean_subtrees.append(Subtree(source, s_tree.height, clean_sinks))
+        else:
+            clean_subtrees.append(s_tree)
+    return clean_subtrees
+
+
 def _skeletonize(polygon, tol=1e-5):
     """Compute the straight skeleton of a Polygon.
 
@@ -634,8 +654,9 @@ def _skeletonize(polygon, tol=1e-5):
         # its distance to an edge, and sinks are the point connected to the source.
         if arc is not None:
             output.append(arc)
-    # merge the sources in the result
+    # merge the sources and clean the result
     _merge_sources(output)
+    output = _clean_sinks(output, tol=1e-5)
     return output
 
 
