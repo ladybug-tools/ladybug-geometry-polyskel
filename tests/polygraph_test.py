@@ -170,6 +170,7 @@ def test_skeleton_as_directed_graph_one_hole():
     assert min_cycle[-1].pt.y == pytest.approx(0., rel=1e-3)
     assert min_cycle[0].pt.x == pytest.approx(3., rel=1e-3)
     assert min_cycle[0].pt.y == pytest.approx(0., rel=1e-3)
+    assert not dg.is_intersect_topology
 
     cycle_polys = skeleton_as_cycle_polygons(polygon, [hole], tolerance=1e-5)
     for poly in cycle_polys:
@@ -228,3 +229,23 @@ def test_skeleton_as_directed_graph_bad_topology():
     for poly in cycle_polys:
         assert isinstance(poly, Polygon2D)
         assert 3 <= len(poly.vertices) <= 7
+
+
+def test_skeleton_as_directed_graph_bad_topology_v2():
+    """Test another known case where polyskel returns bad topology"""
+    polygon_verts = [
+        [-3.69996219119, 17.0824478496],
+        [-3.69996219119, 15.9029877055],
+        [-8.19132358447, 15.9029877055],
+        [-8.19132358447, 17.5356466941],
+        [-7.18997032982, 17.5356466941],
+        [-7.18997032982, 17.9672791049],
+        [-4.70778702366, 17.9672791049],
+        [-4.70778702366, 17.0824478496]
+    ]
+    polygon = Polygon2D.from_array(polygon_verts)
+    cycle_polys = skeleton_as_cycle_polygons(polygon, tolerance=0.01)
+    assert len(cycle_polys) == 8
+    for poly in cycle_polys:
+        assert isinstance(poly, Polygon2D)
+        assert 3 <= len(poly.vertices) <= 8

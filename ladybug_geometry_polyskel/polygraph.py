@@ -6,7 +6,7 @@ import math
 from ladybug_geometry.geometry2d import LineSegment2D, Polygon2D
 from ladybug_geometry.intersection2d import intersect_line2d_infinite
 
-from .polyskel import skeleton_as_edge_list
+from .polyskel import skeleton_as_edge_list, _intersect_skeleton_segments
 
 
 def _vector2hash(vector, tol):
@@ -95,14 +95,16 @@ class PolygonDirectedGraph(object):
         * connection_segments: List of LineSegment2D for the node connections
         * outer_root_node: A node for the outer root key
         * hole_root_nodes: A list of nodes for the hole root keys
+        * is_intersect_topology: A boolean for whether the skeleton self-intersects
     """
 
     def __init__(self, tol):
         """Initialize a PolygonDirectedGraph."""
         self._directed_graph = {}
         self._tol = tol
-        self.outer_root_key = None
-        self.hole_root_keys = []
+        self.outer_root_key = None  # will be set during skeleton creation
+        self.hole_root_keys = []  # will be set during skeleton creation
+        self.is_intersect_topology = None  # will be set during skeleton creation
 
     @classmethod
     def from_polygon(cls, polygon, tol):
@@ -550,7 +552,8 @@ def skeleton_as_directed_graph(boundary, holes=None, tolerance=1e-5):
         and the holes have the exterior property set to True.
     """
     # get the segments representing the straight skeleton
-    skeleton = skeleton_as_edge_list(boundary, holes, tolerance, intersect=True)
+    skeleton = skeleton_as_edge_list(boundary, holes, tolerance)
+    skeleton, is_intersect_topology = _intersect_skeleton_segments(skeleton, tolerance)
 
     # ensure the boundary and holes are oriented correctly for the graph
     if boundary.is_clockwise:
@@ -582,6 +585,9 @@ def skeleton_as_directed_graph(boundary, holes=None, tolerance=1e-5):
         # add a bidirectional edge to represent skeleton edges
         dg.add_node(seg.p2, [seg.p1])
         dg.add_node(seg.p1, [seg.p2], exterior=False)
+
+    # set the property to track whether the graph is self-intersecting
+    dg.is_intersect_topology = is_intersect_topology
     return dg
 
 

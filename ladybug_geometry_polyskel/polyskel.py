@@ -661,6 +661,64 @@ def _skeletonize(polygon, tol=1e-5):
     return output
 
 
+def _intersect_skeleton_segments(skeleton, tolerance=1e-5):
+    """Intersect all of the LineSegment2D of the skeleton and split them.
+
+    Args:
+        skeleton: A list of ladybug-geometry LineSegment2D for the segments
+            of the straight skeleton.
+        tolerance: The tolerance at which the intersection will be computed.
+
+    Returns:
+        A tuple with two items.
+
+        * split_skeleton -- A list of LineSegment2D objects for the skeleton
+            split through self-intersection.
+
+        * is_intersect_topology -- A boolean value for whether the topology of the
+            input skeleton is self-intersecting. This value is True whenever
+            there are segments that were split as part of this operation.
+    """
+    skel_tol = tolerance / 100  # use a finer tolerance for actual skeleton
+    # compute all of the intersection points across the skeleton
+    intersect_pts = [[] for _ in skeleton]
+    for i, seg in enumerate(skeleton):
+        try:
+            for other_seg in skeleton[:i] + skeleton[i + 1:]:
+                int_pt = intersect_line_segment2d(seg, other_seg)
+                if int_pt is None or int_pt.is_equivalent(seg.p1, skel_tol) or \
+                        int_pt.is_equivalent(seg.p2, skel_tol):
+                    continue
+                # we have found an intersection point where segments should be split
+                intersect_pts[i].append(int_pt)
+        except IndexError:
+            pass  # we have reached the end of the list
+
+    # loop through the segments and split them at the intersection points
+    split_skeleton, is_intersect_topology = [], False
+    for seg, split_pts in zip(skeleton, intersect_pts):
+        if len(split_pts) == 0:
+            split_skeleton.append(seg)
+        elif len(split_pts) == 1:  # split the segment in two
+            is_intersect_topology = True
+            int_pt = split_pts[0]
+            split_skeleton.append(LineSegment2D.from_end_points(seg.p1, int_pt))
+            split_skeleton.append(LineSegment2D.from_end_points(int_pt, seg.p2))
+        else:  # sort the points along the segment to split it
+            is_intersect_topology = True
+            pt_dists = [seg.p1.distance_to_point(ipt) for ipt in split_pts]
+            sort_obj = sorted(zip(pt_dists, split_pts), key=lambda pair: pair[0])
+            sort_pts = [x for _, x in sort_obj]
+            sort_pts.append(seg.p2)
+            pr_pt = seg.p1
+            for s_pt in sort_pts:
+                if not pr_pt.is_equivalent(s_pt, skel_tol):
+                    split_skeleton.append(LineSegment2D.from_end_points(pr_pt, s_pt))
+                pr_pt = s_pt
+
+    return split_skeleton, is_intersect_topology
+
+
 def skeleton_as_subtree_list(boundary, holes=None, tolerance=1e-5):
     """Get a straight skeleton as a list of Subtree source and sink points.
 
@@ -757,38 +815,6 @@ def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5, intersect=False)
                 Point2D(source_pt.x, source_pt.y), Point2D(sink_pt.x, sink_pt.y))
             skeleton.append(edge_seg)
 
-    if intersect:  # intersect skeleton segments and split them
-        skel_tol = tolerance / 100  # use a finer tolerance for actual skeleton
-        intersect_pts = [[] for seg in skeleton]
-        for i, seg in enumerate(skeleton):
-            try:
-                for other_seg in skeleton[:i] + skeleton[i + 1:]:
-                    int_pt = intersect_line_segment2d(seg, other_seg)
-                    if int_pt is None or int_pt.is_equivalent(seg.p1, skel_tol) or \
-                            int_pt.is_equivalent(seg.p2, skel_tol):
-                        continue
-                    # we have found an intersection point where segments should be split
-                    intersect_pts[i].append(int_pt)
-            except IndexError:
-                pass  # we have reached the end of the list
-        split_skeleton = []
-        for seg, split_pts in zip(skeleton, intersect_pts):
-            if len(split_pts) == 0:
-                split_skeleton.append(seg)
-            elif len(split_pts) == 1:  # split the segment in two
-                int_pt = split_pts[0]
-                split_skeleton.append(LineSegment2D.from_end_points(seg.p1, int_pt))
-                split_skeleton.append(LineSegment2D.from_end_points(int_pt, seg.p2))
-            else:  # sort the points along the segment to split it
-                pt_dists = [(ipt, seg.p1.distance_to_point(ipt)) for ipt in split_pts]
-                sort_obj = sorted(zip(pt_dists, split_pts), key=lambda pair: pair[0])
-                sort_pts = [x for _, x in sort_obj]
-                sort_pts.append(seg.p2)
-                pr_pt = seg.p1
-                for s_pt in sort_pts:
-                    if not pr_pt.is_equivalent(s_pt, skel_tol):
-                        split_skeleton.append(LineSegment2D.from_end_points(pr_pt, s_pt))
-                    pr_pt = s_pt
-        skeleton = split_skeleton
-
+    if intersect:  # intersect skeleton segments to split them
+        skeleton, _ = _intersect_skeleton_segments(skeleton, tolerance)
     return skeleton
