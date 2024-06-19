@@ -1,5 +1,5 @@
 # coding=utf-8
-"""Classes for computing straight skeleton for 2D polygons."""
+"""Test the class for handling pathways through the straight skeleton network."""
 from __future__ import division
 import pytest
 
@@ -7,8 +7,6 @@ from ladybug_geometry_polyskel.polygraph import PolygonDirectedGraph, \
     skeleton_as_directed_graph, skeleton_as_cycle_polygons, _vector2hash
 from ladybug_geometry.geometry2d.polygon import Polygon2D
 from ladybug_geometry.geometry2d.pointvector import Point2D, Vector2D
-
-TOL = 1e-5
 
 
 def _cmpstr(item1, item2):
@@ -90,7 +88,7 @@ def test_dg_noskel():
     # Test adjacencies are correct
     curr_node = d.node(d.outer_root_key)
     for chk_pt in chk_pt_lst:
-        assert chk_pt.is_equivalent(curr_node.pt, TOL), _cmpstr(chk_pt, curr_node.pt)
+        assert chk_pt.is_equivalent(curr_node.pt, 1e-5), _cmpstr(chk_pt, curr_node.pt)
 
         # Increment
         curr_node = curr_node.adj_lst[0]
