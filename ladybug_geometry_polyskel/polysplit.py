@@ -5,7 +5,7 @@ from __future__ import division
 from ladybug_geometry.geometry2d import LineSegment2D, Polygon2D
 from ladybug_geometry.geometry3d import Vector3D, Face3D
 
-from ladybug_geometry_polyskel.polygraph import PolygonDirectedGraph, \
+from .polygraph import PolygonDirectedGraph, \
     skeleton_as_directed_graph
 
 
@@ -219,6 +219,9 @@ def group_boundaries_and_holes(polygons):
             sub-list. The first item in the list will be the outer boundary of
             the geometry and successive items represent hole polygons.
     """
+    # first check to be sure that there isn't just one polygon
+    if len(polygons) == 1:
+        return [polygons]
     # sort the polygons by area and separate base polygon from the remaining
     polygons = sorted(polygons, key=lambda x: x.area, reverse=True)
     base_poly = polygons[0]

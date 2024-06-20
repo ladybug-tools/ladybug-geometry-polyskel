@@ -3,8 +3,11 @@
 from __future__ import division
 import pytest
 
-from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons
 from ladybug_geometry.geometry2d import Polygon2D
+from ladybug_geometry.geometry3d import Face3D
+
+from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons, \
+    perimeter_core_subfaces
 
 
 def test_perimeter_core_subpolygons_triangle():
@@ -137,5 +140,41 @@ def test_perimeter_core_subpolygons_two_holes():
 
     perim_polys, core_polys = perimeter_core_subpolygons(
         polygon, 0.1, [hole1, hole2], tolerance=1e-5)
+    print(perim_polys)
+    print(core_polys)
+
+
+def test_perimeter_core_subfaces_square():
+    """Test the perimeter_core_subpolygons function with a square."""
+    polygon_verts = [[
+        [0.,  0., 0.],
+        [10., 0., 0.],
+        [10., 10., 0.],
+        [0., 10., 0.]
+    ]]
+    face = Face3D.from_array(polygon_verts)
+
+    perim_faces, core_faces = perimeter_core_subfaces(face, 2.0, tolerance=1e-5)
+    assert len(perim_faces) == 4
+    for face in perim_faces:
+        assert len(face) == 4
+        assert face.area == pytest.approx(16., rel=1e-3)
+    assert len(core_faces) == 1
+    assert len(core_faces[0]) == 4
+    assert core_faces[0].area == pytest.approx(36., rel=1e-3)
+
+
+def test_perimeter_core_subpolygons_negative():
+    """Test a case with negative values that was failing."""
+    polygon_verts = [
+        (0.0, -0.0),
+        (-66.365025351950564, -64.111893276245013),
+        (30.121656801816368, -64.111893276245013),
+        (83.372463222004896, 3.5354591123066541),
+        (22.759770196994474, -23.559633773719245)
+    ]
+    polygon = Polygon2D.from_array(polygon_verts)
+
+    perim_polys, core_polys = perimeter_core_subpolygons(polygon, 5.0, tolerance=1e-5)
     print(perim_polys)
     print(core_polys)

@@ -23,7 +23,10 @@ def _vector2hash(vector, tol):
         rtol = (int(math.log10(tol)) * -1)
     except ValueError:
         rtol = 0
-    return str((round(vector.x, rtol), round(vector.y, rtol)))
+    # avoid cases of signed zeros messing with keys
+    x_val = 0.0 if vector.x == 0 else vector.x
+    y_val = 0.0 if vector.y == 0 else vector.y
+    return str((round(x_val, rtol), round(y_val, rtol)))
 
 
 class _Node(object):
