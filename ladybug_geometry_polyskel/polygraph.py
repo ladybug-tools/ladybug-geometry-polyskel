@@ -353,8 +353,7 @@ class PolygonDirectedGraph(object):
 
             # add intersection point as new node in graph
             if int_pt:
-                int_key = self.insert_node(
-                    node, int_pt, next_node, exterior=False)
+                int_key = self.insert_node(node, int_pt, next_node, exterior=False)
                 int_key_lst.append(int_key)
 
         # add intersection edges between the newly-found nodes
@@ -380,7 +379,6 @@ class PolygonDirectedGraph(object):
             for i in range(len(distances) - 1):
                 k1, k2 = distances[i][0], distances[i + 1][0]
                 n1, n2 = self.node(int_key_lst[k1]), self.node(int_key_lst[k2])
-
                 # add bi-direction so the min cycle works
                 self.add_node(n1.pt, [n2.pt], exterior=False)
                 self.add_node(n2.pt, [n1.pt], exterior=False)
@@ -510,13 +508,15 @@ class PolygonDirectedGraph(object):
         return ext_cycle
 
     @staticmethod
-    def min_cycle(base_node, goal_node):
+    def min_cycle(base_node, goal_node, ccw_only=False):
         """Identify the shortest interior cycle between two exterior nodes.
 
         Args:
             base_node: The first exterior node of the edge.
             goal_node: The end exterior node of the cycle that, together with
                 the base_node, constitutes an exterior edge.
+            ccw_only: A boolean to note whether the search should be limited
+                to the counter-clockwise direction only. (Default: False).
 
         Returns:
             A list of nodes that form a polygon if the cycle exists, else None.
@@ -542,8 +542,8 @@ class PolygonDirectedGraph(object):
                         continue  # don't traverse the graph exterior
                     edge_dir = neighbor.pt - node.pt
                     cw_angle = prev_dir.angle_clockwise(edge_dir * -1)
-                    if cw_angle < 1e-5:  # prevent back-tracking along the search
-                        continue
+                    if not (1e-5 < cw_angle < (2 * math.pi) - 1e-5):
+                        continue  # prevent back-tracking along the search
                     rel_neighbors.append(neighbor)
                     rel_angles.append(cw_angle)
                 # sort the neighbors by clockwise angle
@@ -551,10 +551,15 @@ class PolygonDirectedGraph(object):
                     rel_neighbors = [n for _, n in sorted(zip(rel_angles, rel_neighbors),
                                                           key=lambda pair: pair[0])]
                 # add the relevant neighbors to the path and the queue
-                for neighbor in rel_neighbors:
+                if ccw_only:
                     new_path = list(path)
-                    new_path.append(neighbor)
+                    new_path.append(rel_neighbors[0])
                     queue.append(new_path)
+                else:  # add all neighbors to the search
+                    for neighbor in rel_neighbors:
+                        new_path = list(path)
+                        new_path.append(neighbor)
+                        queue.append(new_path)
                 explored.append(node)
         # if we reached the end of the queue, then no path was found
         return None

@@ -156,16 +156,18 @@ def test_perimeter_core_subfaces_square():
 
     perim_faces, core_faces = perimeter_core_subfaces(face, 2.0, tolerance=1e-5)
     assert len(perim_faces) == 4
-    for face in perim_faces:
+    for f in perim_faces:
         assert len(face) == 4
-        assert face.area == pytest.approx(16., rel=1e-3)
+        assert f.area == pytest.approx(16., rel=1e-3)
     assert len(core_faces) == 1
     assert len(core_faces[0]) == 4
     assert core_faces[0].area == pytest.approx(36., rel=1e-3)
+    assert sum(f.area for f in perim_faces + core_faces) == \
+        pytest.approx(face.area, rel=1e-3)
 
 
-def test_perimeter_core_subpolygons_negative():
-    """Test a case with negative values that was failing."""
+def test_perimeter_core_subpolygons_signed_zero():
+    """Test a case with a signed zero that was failing."""
     polygon_verts = [
         (0.0, -0.0),
         (-66.365025351950564, -64.111893276245013),
@@ -176,5 +178,32 @@ def test_perimeter_core_subpolygons_negative():
     polygon = Polygon2D.from_array(polygon_verts)
 
     perim_polys, core_polys = perimeter_core_subpolygons(polygon, 5.0, tolerance=1e-5)
-    print(perim_polys)
-    print(core_polys)
+    assert len(perim_polys) == 5
+    for poly in perim_polys:
+        assert len(poly) == 4
+    assert len(core_polys) == 1
+    assert len(core_polys[0]) == 5
+    assert sum(poly.area for poly in perim_polys + core_polys) == \
+        pytest.approx(polygon.area, rel=1e-3)
+
+
+def test_perimeter_core_concave_intersect():
+    """Test a case where an offset depth creates 3 intersections."""
+    polygon_verts = [
+        (342.55419132538884, -10.017859160602118),
+        (315.77976924081884, 15.204009322638644),
+        (304.52663639962361, 49.624331671429445),
+        (323.99843057415865, 59.584601981416057),
+        (330.48830165015289, 35.040359098751637),
+        (345.50412057008964, 17.152954528454099),
+        (377.18511138328233, 73.378466870092268),
+        (396.15898612775987, 53.204057854261976),
+        (351.58292353598546, -18.52304727135888)
+    ]
+    polygon = Polygon2D.from_array(polygon_verts)
+
+    perim_polys, core_polys = perimeter_core_subpolygons(polygon, 11.0, tolerance=1e-5)
+    assert len(perim_polys) == 9
+    assert len(core_polys) == 2
+    assert sum(poly.area for poly in perim_polys + core_polys) == \
+        pytest.approx(polygon.area, rel=1e-3)

@@ -186,7 +186,7 @@ def _split_polygon_graph(node1, node2, distance, poly_graph, tol):
 
     # get the minimum cycle through the graph connecting the nodes
     # since we start at the exterior edge, this will include the perimeter offset
-    split_poly_nodes = poly_graph.min_cycle(root_node, goal_node)
+    split_poly_nodes = poly_graph.min_cycle(root_node, goal_node, ccw_only=True)
 
     return split_poly_nodes
 
