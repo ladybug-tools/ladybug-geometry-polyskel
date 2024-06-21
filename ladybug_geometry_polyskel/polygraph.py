@@ -383,132 +383,7 @@ class PolygonDirectedGraph(object):
                 self.add_node(n1.pt, [n2.pt], exterior=False)
                 self.add_node(n2.pt, [n1.pt], exterior=False)
 
-    def exterior_cycles(self):
-        """Get a list of lists where each sub-list is an exterior cycle of Nodes."""
-        exterior_poly_lst = []  # list to store cycles
-        exterior_check = {}  # dictionary to note explored exterior nodes
-
-        # loop through all of the nodes of the graph and find cycles
-        for root_node in self.ordered_nodes:
-            # make a note that the current node has been explored
-            exterior_check[root_node.key] = None
-            # get next exterior adjacent node and check that it's valid
-            next_node = self.next_exterior_node(root_node)
-            is_valid = (next_node is not None) and (next_node.key not in exterior_check)
-            if not is_valid:
-                continue
-            # make a note that the next node has been explored
-            exterior_check[next_node.key] = None
-
-            # traverse the loop of points until we get back to start or hit a dead end
-            exterior_poly = [root_node]
-            prev_node = root_node
-            while next_node.key != root_node.key:
-                exterior_poly.append(next_node)
-                exterior_check[next_node.key] = None  # mark the node as explored
-                following_node = self.next_exterior_node(next_node, prev_node)
-                prev_node = next_node  # set as the previous node for the next step
-                next_node = following_node
-                if next_node is None:
-                    break  # we have hit a dead end in the cycle
-            exterior_poly_lst.append(exterior_poly)
-
-        # return all of the exterior loops that were found
-        return exterior_poly_lst
-
-    @staticmethod
-    def is_edge_bidirect(node1, node2):
-        """Are two nodes bidirectional.
-
-        Args:
-            node1: _Node object
-            node2: _Node object
-
-        Returns:
-            True if node1 and node2 are in each other's adjacency list,
-            else False.
-        """
-        return node1.key in (n.key for n in node2.adj_lst) and \
-            node2.key in (n.key for n in node1.adj_lst)
-
-    @staticmethod
-    def next_exterior_node(node, previous_node=None):
-        """Get the next exterior node adjacent to consumed node.
-
-        If there are adjacent nodes that are labeled as exterior, with True or
-        False defining the _Node.exterior property, the first of such nodes in
-        the adjacency list will be returned as the next one. Otherwise, the
-        bi-directionality will be used to determine whether the next node is
-        exterior.
-
-        Args:
-            node: A _Node object for which the next node will be returned.
-            previous_node: An optional _Node object for the node that came before
-                the current one in the loop. This will be used in the event that
-                multiple exterior nodes are found connecting to the input node.
-                In this case, the exterior node with the smallest angle difference
-                with the previous direction will be returned. This leads the
-                result towards minimal polygons and away from self-intersecting
-                exterior loops like a bowtie.
-
-        Returns:
-            Next node that defines exterior edge, or None if all adjacencies are
-            bidirectional.
-        """
-        # loop through the all adjacent nodes and determine if they are exterior
-        next_nodes = []
-        for _next_node in node.adj_lst:
-            if _next_node.exterior:  # user has labeled it as exterior; we're done!
-                return _next_node
-            elif _next_node.exterior is None:  # don't know if it's interior or exterior
-                # if user-assigned attribute isn't defined, check bi-directionality
-                if not PolygonDirectedGraph.is_edge_bidirect(node, _next_node):
-                    if previous_node is None:
-                        return _next_node  # we don't need to check multiple nodes
-                    next_nodes.append(_next_node)
-        if len(next_nodes) <= 1:
-            return next_nodes[0] if len(next_nodes) == 1 else None
-
-        # if we have multiple exterior nodes, use the previous node to find the best one
-        prev_dir = previous_node.pt - node.pt  # yields a vector
-        next_angles = []
-        for next_node in next_nodes:
-            edge_dir = next_node.pt - node.pt  # yields a vector
-            next_angles.append(prev_dir.angle(edge_dir * -1))
-        sorted_nodes = [n for _, n in sorted(zip(next_angles, next_nodes),
-                                             key=lambda pair: pair[0])]
-        return sorted_nodes[0]  # return the node making the smallest angle
-
-    @staticmethod
-    def exterior_cycle(cycle_root):
-        """Computes exterior boundary from a given node.
-
-        This method assumes that exterior edges are naked (unidirectional) and
-        interior edges are bidirectional.
-
-        Args:
-            cycle_root: Starting _Node in exterior cycle.
-
-        Returns:
-            List of nodes on exterior if a cycle exists, else None.
-        """
-        # Get the first exterior edge
-        curr_node = cycle_root
-        next_node = PolygonDirectedGraph.next_exterior_node(curr_node)
-        if not next_node:
-            return None
-
-        ext_cycle = [curr_node]
-        while next_node.key != cycle_root.key:
-            ext_cycle.append(next_node)
-            next_node = PolygonDirectedGraph.next_exterior_node(next_node)
-            if not next_node:
-                return None
-
-        return ext_cycle
-
-    @staticmethod
-    def min_cycle(base_node, goal_node, ccw_only=False):
+    def min_cycle(self, base_node, goal_node, ccw_only=False):
         """Identify the shortest interior cycle between two exterior nodes.
 
         Args:
@@ -563,6 +438,175 @@ class PolygonDirectedGraph(object):
                 explored.append(node)
         # if we reached the end of the queue, then no path was found
         return None
+
+    def exterior_cycle(self, cycle_root):
+        """Computes exterior boundary from a given node.
+
+        This method assumes that exterior edges are naked (unidirectional) and
+        interior edges are bidirectional.
+
+        Args:
+            cycle_root: Starting _Node in exterior cycle.
+
+        Returns:
+            List of nodes on exterior if a cycle exists, else None.
+        """
+        # Get the first exterior edge
+        curr_node = cycle_root
+        next_node = PolygonDirectedGraph.next_exterior_node(curr_node)
+        if not next_node:
+            return None
+
+        # loop through the cycle until we get it all or run out of points
+        max_iter = self.node_count + 1  # maximum length a cycle can be
+        ext_cycle = [curr_node]
+        iter_count = 0
+        while next_node.key != cycle_root.key:
+            ext_cycle.append(next_node)
+            next_node = PolygonDirectedGraph.next_exterior_node(next_node)
+            if not next_node:
+                return None  # we have hit a dead end in the cycle
+            iter_count += 1
+            if iter_count > max_iter:
+                break  # we have gotten stuck in a loop
+
+        return ext_cycle
+
+    def exterior_cycles(self):
+        """Get a list of lists where each sub-list is an exterior cycle of Nodes."""
+        exterior_poly_lst = []  # list to store cycles
+        explored_nodes = set()  # set to note explored exterior nodes
+        max_iter = self.node_count + 1  # maximum length a cycle can be
+
+        # loop through all of the nodes of the graph and find cycles
+        for root_node in self.ordered_nodes:
+            # make a note that the current node has been explored
+            explored_nodes.add(root_node.key)  # mark the node as explored
+            # get next exterior adjacent node and check that it's valid
+            next_node = self.next_exterior_node(root_node)  # mark the node as explored
+            is_valid = (next_node is not None) and (next_node.key not in explored_nodes)
+            if not is_valid:
+                continue
+            # make a note that the next node has been explored
+            explored_nodes.add(next_node.key)
+
+            # traverse the loop of points until we get back to start or hit a dead end
+            exterior_poly = [root_node]
+            prev_node = root_node
+            iter_count = 0
+            while next_node.key != root_node.key:
+                exterior_poly.append(next_node)
+                explored_nodes.add(next_node.key)  # mark the node as explored
+                follow_node = self.next_exterior_node_no_backtrack(
+                    next_node, prev_node, explored_nodes)
+                prev_node = next_node  # set as the previous node for the next step
+                next_node = follow_node
+                if next_node is None:
+                    break  # we have hit a dead end in the cycle
+                iter_count += 1
+                if iter_count > max_iter:
+                    print('Extraction of core polygons hit an endless loop.')
+                    break  # we have gotten stuck in a loop
+            exterior_poly_lst.append(exterior_poly)
+
+        # return all of the exterior loops that were found
+        return exterior_poly_lst
+
+    @staticmethod
+    def next_exterior_node_no_backtrack(node, previous_node, explored_nodes):
+        """Get the next exterior node adjacent to the input node.
+
+        This method is similar to the next_exterior_node method but it includes
+        extra checks to handle intersections with 3 or more segments in the
+        graph exterior cycles. In these cases a set of previously explored_nodes
+        is used to ensure that no back-tracking happens over the search of the
+        network, which can lead to infinite looping through the graph. Furthermore,
+        the previous_node is used to select the pathway with the smallest angle
+        difference with the previous direction. This leads the result towards
+        minimal polygons with fewer self-intersecting loops.
+
+        Args:
+            node: A _Node object for which the next node will be returned.
+            previous_node: A _Node object for the node that came before
+                the current one in the loop. This will be used in the event that
+                multiple exterior nodes are found connecting to the input node.
+                In this case, the exterior node with the smallest angle difference
+                with the previous direction will be returned. This leads the
+                result towards minimal polygons and away from self-intersecting
+                exterior loops like a bowtie.
+
+        Returns:
+            Next node that defines exterior edge, or None if all adjacencies are
+            bidirectional.
+        """
+        # loop through the all adjacent nodes and determine if they are exterior
+        next_nodes = []
+        for _next_node in node.adj_lst:
+            if _next_node.exterior:  # user has labeled it as exterior; we're done!
+                return _next_node
+            elif _next_node.exterior is None:  # don't know if it's interior or exterior
+                # if user-assigned attribute isn't defined, check bi-directionality
+                if not PolygonDirectedGraph.is_edge_bidirect(node, _next_node):
+                    next_nodes.append(_next_node)
+
+        # evaluate whether there is one obvious choice for the next node
+        if len(next_nodes) <= 1:
+            return next_nodes[0] if len(next_nodes) == 1 else None
+        next_nodes = [nn for nn in next_nodes if nn.key not in explored_nodes]
+        if len(next_nodes) <= 1:
+            return next_nodes[0] if len(next_nodes) == 1 else None
+
+        # if we have multiple exterior nodes, use the previous node to find the best one
+        prev_dir = previous_node.pt - node.pt  # yields a vector
+        next_angles = []
+        for next_node in next_nodes:
+            edge_dir = next_node.pt - node.pt  # yields a vector
+            next_angles.append(prev_dir.angle(edge_dir * -1))
+        sorted_nodes = [n for _, n in sorted(zip(next_angles, next_nodes),
+                                             key=lambda pair: pair[0])]
+        return sorted_nodes[0]  # return the node making the smallest angle
+
+    @staticmethod
+    def next_exterior_node(node):
+        """Get the next exterior node adjacent to consumed node.
+
+        If there are adjacent nodes that are labeled as exterior, with True or
+        False defining the _Node.exterior property, the first of such nodes in
+        the adjacency list will be returned as the next one. Otherwise, the
+        bi-directionality will be used to determine whether the next node is
+        exterior.
+
+        Args:
+            node: A _Node object for which the next node will be returned.
+
+        Returns:
+            Next node that defines exterior edge, or None if all adjacencies are
+            bidirectional.
+        """
+        # loop through the adjacency and find an exterior node
+        for _next_node in node.adj_lst:
+            if _next_node.exterior:  # user has labeled it as exterior; we're done!
+                return _next_node
+            elif _next_node.exterior is None:  # don't know if it's interior or exterior
+                # if user-assigned attribute isn't defined, check bi-directionality
+                if not PolygonDirectedGraph.is_edge_bidirect(node, _next_node):
+                    return _next_node
+        return None
+
+    @staticmethod
+    def is_edge_bidirect(node1, node2):
+        """Are two nodes bidirectional.
+
+        Args:
+            node1: _Node object
+            node2: _Node object
+
+        Returns:
+            True if node1 and node2 are in each other's adjacency list,
+            else False.
+        """
+        return node1.key in (n.key for n in node2.adj_lst) and \
+            node2.key in (n.key for n in node1.adj_lst)
 
     def __repr__(self):
         """Represent PolygonDirectedGraph."""

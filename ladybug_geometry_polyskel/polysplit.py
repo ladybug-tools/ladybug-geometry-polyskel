@@ -87,9 +87,9 @@ def perimeter_core_subpolygons(
         perimeter_sub_polys.extend(_perimeter_sub_polys)  # collect perimeter sub-polys
 
     # compute the polygons on the core of the polygon
-    core_sub_polys = _exterior_cycles_as_polygons(_perimeter_sub_dg)
+    core_sub_polys = _exterior_cycles_as_polygons(_perimeter_sub_dg, tolerance)
     if not flat_core and len(core_sub_polys) != 0:  # remake cores w/ holes
-        core_sub_polys = group_boundaries_and_holes(core_sub_polys)
+        core_sub_polys = group_boundaries_and_holes(core_sub_polys, tolerance)
 
     return perimeter_sub_polys, core_sub_polys
 
@@ -132,7 +132,7 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, core_graph=None):
         except IndexError:  # the last edge of the polygon
             next_node = exter_cycle[0]
         # find the smallest polygon defined by the exterior node
-        min_ccw_poly_graph = PolygonDirectedGraph.min_cycle(next_node, base_node)
+        min_ccw_poly_graph = dg.min_cycle(next_node, base_node)
         # offset edge from specified distance, and cut a perimeter polygon
         split_poly_graph = _split_polygon_graph(
             base_node, next_node, distance, min_ccw_poly_graph, tol)
@@ -191,20 +191,29 @@ def _split_polygon_graph(node1, node2, distance, poly_graph, tol):
     return split_poly_nodes
 
 
-def _exterior_cycles_as_polygons(dg):
+def _exterior_cycles_as_polygons(dg, tol):
     """Convert and sort exterior cycles in a PolygonDirectedGraph to a list of polygons.
 
     Args:
         dg: A PolygonDirectedGraph.
+        tol: The tolerance at which point equivalence is set.
 
     Returns:
         A list of Polygon2D objects sorted by area.
     """
     ext_cycles = dg.exterior_cycles()
-    return [Polygon2D([node.pt for node in cycle]) for cycle in ext_cycles]
+    ext_polygons = []
+    for cycle in ext_cycles:
+        ext_poly = Polygon2D([node.pt for node in cycle])
+        ext_poly = ext_poly.remove_colinear_vertices(tol)
+        if ext_poly.is_self_intersecting:
+            ext_polygons.extend(ext_poly.split_through_self_intersection(tol))
+        else:
+            ext_polygons.append(ext_poly)
+    return ext_polygons
 
 
-def group_boundaries_and_holes(polygons):
+def group_boundaries_and_holes(polygons, tol):
     """Group polygons by whether they are contained within another.
 
     Args:
@@ -230,7 +239,7 @@ def group_boundaries_and_holes(polygons):
     # merge the smaller polygons into the larger polygons
     merged_polys = []
     while len(remain_polys) > 0:
-        merged_polys.append(_match_holes_to_poly(base_poly, remain_polys))
+        merged_polys.append(_match_holes_to_poly(base_poly, remain_polys, tol))
         if len(remain_polys) > 1:
             base_poly = remain_polys[0]
             del remain_polys[0]
@@ -240,7 +249,7 @@ def group_boundaries_and_holes(polygons):
     return merged_polys
 
 
-def _match_holes_to_poly(base_poly, other_polys):
+def _match_holes_to_poly(base_poly, other_polys, tol):
     """Attempt to merge other polygons into a base polygon as holes.
 
     Args:
@@ -257,7 +266,7 @@ def _match_holes_to_poly(base_poly, other_polys):
     more_to_check = True
     while more_to_check:
         for i, r_poly in enumerate(other_polys):
-            if base_poly.is_polygon_inside(r_poly):
+            if base_poly.polygon_relationship(r_poly, tol) == 1:
                 holes.append(r_poly)
                 del other_polys[i]
                 break
