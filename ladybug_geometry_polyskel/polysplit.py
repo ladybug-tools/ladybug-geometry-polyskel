@@ -3,10 +3,9 @@
 from __future__ import division
 
 from ladybug_geometry.geometry2d import LineSegment2D, Polygon2D
-from ladybug_geometry.geometry3d import Vector3D, Face3D
+from ladybug_geometry.geometry3d import Vector3D, LineSegment3D, Face3D
 
-from .polygraph import PolygonDirectedGraph, \
-    skeleton_as_directed_graph
+from .polygraph import PolygonDirectedGraph, skeleton_as_directed_graph
 
 
 def perimeter_core_subfaces(face, distance, tolerance=1e-5):
@@ -15,7 +14,7 @@ def perimeter_core_subfaces(face, distance, tolerance=1e-5):
     Args:
         face: A Face3D to split into perimeter and core sub-faces.
         distance: Distance to offset perimeter sub-faces.
-        tolerance: Tolerance for point equivalence. (Default: 1e-10).
+        tolerance: Tolerance for point equivalence. (Default: 1e-5).
 
     Returns:
         A tuple with two items.
@@ -25,23 +24,40 @@ def perimeter_core_subfaces(face, distance, tolerance=1e-5):
         * core_sub_faces -- A list of Face3D for core sub-faces.
     """
     # get core and perimeter sub-polygons
-    perimeter_sub_polys, core_sub_polys = perimeter_core_subpolygons(
+    perimeter, core = perimeter_core_subpolygons(
         face.boundary_polygon2d, distance, face.hole_polygon2d, tolerance, False)
-    # convert the perimeter polygons into Face3Ds
-    perimeter_sub_faces = []
-    for poly in perimeter_sub_polys:
-        verts_3d = tuple(face.plane.xy_to_xyz(pt) for pt in poly.vertices)
-        perimeter_sub_faces.append(Face3D(verts_3d, face.plane))
-    # convert the core polygons into Face3Ds
-    core_sub_faces = []
-    for poly_group in core_sub_polys:
-        all_verts_3d = [tuple(face.plane.xy_to_xyz(pt) for pt in poly.vertices)
-                        for poly in poly_group]
-        if len(all_verts_3d) == 1:  # no holes in the shape
-            core_sub_faces.append(Face3D(all_verts_3d[0], face.plane))
-        else:
-            core_sub_faces.append(Face3D(all_verts_3d[0], face.plane, all_verts_3d[1:]))
-    return perimeter_sub_faces, core_sub_faces
+    # convert the polygons into Face3Ds
+    return _polygons_to_face3d(face, perimeter, core)
+
+
+def perimeter_core_subfaces_and_skeleton(face, distance, tolerance=1e-5):
+    """Compute perimeter and core Face3Ds using the straight skeleton of an input Face3D.
+
+    Args:
+        face: A Face3D to split into perimeter and core sub-faces.
+        distance: Distance to offset perimeter sub-faces.
+        tolerance: Tolerance for point equivalence. (Default: 1e-5).
+
+    Returns:
+        A tuple with two items.
+
+        * skeleton -- A list of LineSegment3D for the segments of the straight
+            skeleton being used to generate core/perimeter polygons.
+
+        * perimeter_sub_faces -- A list of Face3Ds for perimeter sub-faces.
+
+        * core_sub_faces -- A list of Face3D for core sub-faces.
+    """
+    # get core and perimeter sub-polygons
+    skeleton_2d, perimeter, core = perimeter_core_subpolygons_and_skeleton(
+        face.boundary_polygon2d, distance, face.hole_polygon2d, tolerance)
+    perimeter_sub_faces, core_sub_faces = _polygons_to_face3d(face, perimeter, core)
+    # convert the skeleton segments into LineSegment3Ds
+    skeleton = []
+    for seg in skeleton_2d:
+        verts_3d = tuple(face.plane.xy_to_xyz(pt) for pt in seg.vertices)
+        skeleton.append(LineSegment3D.from_end_points(*verts_3d))
+    return skeleton, perimeter_sub_faces, core_sub_faces
 
 
 def perimeter_core_subpolygons(
@@ -53,7 +69,7 @@ def perimeter_core_subpolygons(
         distance: Distance to offset perimeter sub-polygons.
         holes: A list of Polygon2D objects representing holes in the
             polygon. (Default: None).
-        tolerance: Tolerance for point equivalence. (Default: 1e-10).
+        tolerance: Tolerance for point equivalence. (Default: 1e-5).
         flat_core: A boolean to note whether the core_sub_polys should be returned
             as a flat list or as a nested list of lists for boundaries and
             holes within each geometry.
@@ -76,7 +92,6 @@ def perimeter_core_subpolygons(
     perimeter_sub_polys, core_sub_polys = [], []
     # compute the straight skeleton of the polygon as a directed graph
     dg = skeleton_as_directed_graph(polygon, holes, tolerance)
-
     # traverse the directed graph to get all of the perimeter polygons
     _perimeter_sub_dg = None
     root_keys = [dg.outer_root_key] + dg.hole_root_keys
@@ -85,13 +100,57 @@ def perimeter_core_subpolygons(
         _perimeter_sub_polys, _perimeter_sub_dg = _split_perimeter_subpolygons(
             dg, distance, root_key, tolerance, _perimeter_sub_dg)
         perimeter_sub_polys.extend(_perimeter_sub_polys)  # collect perimeter sub-polys
-
     # compute the polygons on the core of the polygon
     core_sub_polys = _exterior_cycles_as_polygons(_perimeter_sub_dg, tolerance)
     if not flat_core and len(core_sub_polys) != 0:  # remake cores w/ holes
-        core_sub_polys = group_boundaries_and_holes(core_sub_polys, tolerance)
-
+        core_sub_polys = Polygon2D.group_boundaries_and_holes(core_sub_polys, tolerance)
     return perimeter_sub_polys, core_sub_polys
+
+
+def perimeter_core_subpolygons_and_skeleton(
+        polygon, distance, holes=None, tolerance=1e-5):
+    """Get perimeter and core sub-polygons with line segments for the straight skeleton.
+
+    Args:
+        polygon: A Polygon2D to split into perimeter and core sub-polygons.
+        distance: Distance to offset perimeter sub-polygons.
+        holes: A list of Polygon2D objects representing holes in the
+            polygon. (Default: None).
+        tolerance: Tolerance for point equivalence. (Default: 1e-5).
+
+    Returns:
+        A tuple with three items.
+
+        * skeleton -- A list of LineSegment2D for the segments of the straight
+            skeleton being used to generate core/perimeter polygons.
+
+        * perimeter_sub_polys -- A list of Polygon2Ds for perimeter sub-polygons.
+
+        * core_sub_polys -- A list of lists where each sub-list contains Polygon2Ds
+            and represents one core geometry. The sub-list will have has at
+            least one Polygon2D and, in the event that a core geometry has holes,
+            there will be multiple Polygon2Ds in the sub-list. The first item in
+            the list will be the outer boundary of the geometry and successive
+            items represent hole polygons.
+    """
+    # initialize sub polygon lists
+    perimeter_sub_polys, core_sub_polys = [], []
+    # compute the straight skeleton of the polygon as a directed graph
+    dg = skeleton_as_directed_graph(polygon, holes, tolerance)
+    skeleton = dg.connection_segments
+    # traverse the directed graph to get all of the perimeter polygons
+    _perimeter_sub_dg = None
+    root_keys = [dg.outer_root_key] + dg.hole_root_keys
+    for root_key in root_keys:
+        # compute the polygons on the perimeter of the polygon
+        _perimeter_sub_polys, _perimeter_sub_dg = _split_perimeter_subpolygons(
+            dg, distance, root_key, tolerance, _perimeter_sub_dg)
+        perimeter_sub_polys.extend(_perimeter_sub_polys)  # collect perimeter sub-polys
+    # compute the polygons on the core of the polygon
+    core_sub_polys = _exterior_cycles_as_polygons(_perimeter_sub_dg, tolerance)
+    if len(core_sub_polys) != 0:  # remake cores w/ holes
+        core_sub_polys = Polygon2D.group_boundaries_and_holes(core_sub_polys, tolerance)
+    return skeleton, perimeter_sub_polys, core_sub_polys
 
 
 def _split_perimeter_subpolygons(dg, distance, root_key, tol, core_graph=None):
@@ -213,63 +272,20 @@ def _exterior_cycles_as_polygons(dg, tol):
     return ext_polygons
 
 
-def group_boundaries_and_holes(polygons, tol):
-    """Group polygons by whether they are contained within another.
-
-    Args:
-        polygons: A list of Polygon2Ds to be grouped according to boundary and
-            holes within those boundaries.
-
-    Returns:
-        A list of lists where each sub-list
-            contains Polygon2Ds and represents one core geometry. The sub-list
-            will have has at least one Polygon2D in it and,, in the event that
-            a core geometry has holes, there will be multiple Polygon2Ds in the
-            sub-list. The first item in the list will be the outer boundary of
-            the geometry and successive items represent hole polygons.
-    """
-    # first check to be sure that there isn't just one polygon
-    if len(polygons) == 1:
-        return [polygons]
-    # sort the polygons by area and separate base polygon from the remaining
-    polygons = sorted(polygons, key=lambda x: x.area, reverse=True)
-    base_poly = polygons[0]
-    remain_polys = list(polygons[1:])
-
-    # merge the smaller polygons into the larger polygons
-    merged_polys = []
-    while len(remain_polys) > 0:
-        merged_polys.append(_match_holes_to_poly(base_poly, remain_polys, tol))
-        if len(remain_polys) > 1:
-            base_poly = remain_polys[0]
-            del remain_polys[0]
-        elif len(remain_polys) == 1:  # lone last Polygon2D
-            merged_polys.append([remain_polys[0]])
-            del remain_polys[0]
-    return merged_polys
-
-
-def _match_holes_to_poly(base_poly, other_polys, tol):
-    """Attempt to merge other polygons into a base polygon as holes.
-
-    Args:
-        base_poly: A Polygon2D to serve as the base.
-        other_polys: A list of other Polygon2D objects to attempt to merge into
-            the base_poly as a hole. This method will remove any Polygon2D
-            that are successfully merged into the output from this list.
-
-    Returns:
-        A list of Polygon2D where the first item is the base_poly and successive
-        items represent holes in this geometry.
-    """
-    holes = []
-    more_to_check = True
-    while more_to_check:
-        for i, r_poly in enumerate(other_polys):
-            if base_poly.polygon_relationship(r_poly, tol) == 1:
-                holes.append(r_poly)
-                del other_polys[i]
-                break
+def _polygons_to_face3d(face, perimeter, core):
+    """Convert lists of perimeter and core Polygon2D into Face3D."""
+    # convert the perimeter polygons into Face3Ds
+    perimeter_sub_faces = []
+    for poly in perimeter:
+        verts_3d = tuple(face.plane.xy_to_xyz(pt) for pt in poly.vertices)
+        perimeter_sub_faces.append(Face3D(verts_3d, face.plane))
+    # convert the core polygons into Face3Ds
+    core_sub_faces = []
+    for poly_group in core:
+        all_verts_3d = [tuple(face.plane.xy_to_xyz(pt) for pt in poly.vertices)
+                        for poly in poly_group]
+        if len(all_verts_3d) == 1:  # no holes in the shape
+            core_sub_faces.append(Face3D(all_verts_3d[0], face.plane))
         else:
-            more_to_check = False
-    return [base_poly] + holes
+            core_sub_faces.append(Face3D(all_verts_3d[0], face.plane, all_verts_3d[1:]))
+    return perimeter_sub_faces, core_sub_faces

@@ -4,10 +4,10 @@ from __future__ import division
 import pytest
 
 from ladybug_geometry.geometry2d import Polygon2D
-from ladybug_geometry.geometry3d import Face3D
+from ladybug_geometry.geometry3d import LineSegment3D, Face3D
 
 from ladybug_geometry_polyskel.polysplit import perimeter_core_subpolygons, \
-    perimeter_core_subfaces
+    perimeter_core_subfaces, perimeter_core_subfaces_and_skeleton
 
 
 def test_perimeter_core_subpolygons_triangle():
@@ -258,8 +258,8 @@ def test_perimeter_core_subpolygons_infinite_loop_in_core():
     assert core_polys[0].polygon_relationship(core_polys[1], 0.01) == 1
 
 
-def test_perimeter_core_subfaces_square():
-    """Test the perimeter_core_subfaces function with a square."""
+def test_perimeter_core_subfaces():
+    """Test the perimeter_core_subfaces function."""
     polygon_verts = [[
         [0.,  0., 0.],
         [10., 0., 0.],
@@ -278,3 +278,31 @@ def test_perimeter_core_subfaces_square():
     assert core_faces[0].area == pytest.approx(36., rel=1e-3)
     assert sum(f.area for f in perim_faces + core_faces) == \
         pytest.approx(face.area, rel=1e-3)
+
+
+def test_perimeter_core_subfaces_and_skeleton():
+    """Test the perimeter_core_subfaces_and_skeleton function"""
+    polygon_verts = [[
+        [0.,  0., 0.],
+        [10., 0., 0.],
+        [10., 10., 0.],
+        [0., 10., 0.]
+    ]]
+    face = Face3D.from_array(polygon_verts)
+
+    skeleton, perim_faces, core_faces = perimeter_core_subfaces_and_skeleton(
+        face, 2.0, tolerance=1e-5)
+    assert len(perim_faces) == 4
+    for f in perim_faces:
+        assert len(face) == 4
+        assert f.area == pytest.approx(16., rel=1e-3)
+    assert len(core_faces) == 1
+    assert len(core_faces[0]) == 4
+    assert core_faces[0].area == pytest.approx(36., rel=1e-3)
+    assert sum(f.area for f in perim_faces + core_faces) == \
+        pytest.approx(face.area, rel=1e-3)
+    assert len(skeleton) == 8
+    for seg in skeleton:
+        assert isinstance(seg, LineSegment3D)
+        assert seg.length == pytest.approx(10.0, rel=1e-3) or \
+            seg.length == pytest.approx(7.0710678, rel=1e-3)
