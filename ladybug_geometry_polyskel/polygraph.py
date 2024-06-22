@@ -166,15 +166,14 @@ class PolygonDirectedGraph(object):
     @property
     def connection_segments(self):
         """Get a list of LineSegment2D for the node connections in the graph."""
+        traversed = set()
         connections = []
         for node in self.nodes:
-            for conn_key in node.adj_lst:
-                try:
-                    conn_seg = LineSegment2D.from_end_points(
-                        node.pt, self._directed_graph[conn_key])
+            for conn_node in node.adj_lst:
+                if (conn_node.key, node.key) not in traversed:
+                    conn_seg = LineSegment2D.from_end_points(node.pt, conn_node.pt)
                     connections.append(conn_seg)
-                except KeyError:
-                    pass  # broken connection
+                    traversed.add((node.key, conn_node.key))
         return connections
 
     def node(self, key):
