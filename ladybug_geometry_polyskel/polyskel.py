@@ -719,6 +719,37 @@ def _intersect_skeleton_segments(skeleton, tolerance=1e-5):
     return split_skeleton, is_intersect_topology
 
 
+def _remove_segments_outside_boundary(skeleton, boundary, tolerance=1e-5):
+    """Remove LineSegment2D that are outside the boundary of the parent shape.
+
+    This can be used to clean up the result after intersection of segments
+    since the skeleton routines can sometimes fail to produce a result that
+    is completely within the parent shape.
+
+    Args:
+        skeleton: A list of ladybug-geometry LineSegment2D for the segments
+            of the straight skeleton.
+        boundary: A Polygon2D for the boundary of the shape. Segments that lie
+            outside of this boundary beyond the tolerance will be removed from
+            the result.
+        tolerance: The tolerance for distinguishing whether skeleton points lie
+            outside the boundary.
+
+    Returns:
+        A tuple with two items.
+
+        * clean_skeleton -- A list of LineSegment2D objects with segments removed
+            that outside of the boundary.
+    """
+    clean_skeleton = []
+    for seg in skeleton:
+        p1, p2 = seg.p1, seg.p2
+        if boundary.point_relationship(p2, tolerance) >= 0 and \
+                boundary.point_relationship(p1, tolerance) >= 0:
+            clean_skeleton.append(seg)
+    return clean_skeleton
+
+
 def skeleton_as_subtree_list(boundary, holes=None, tolerance=1e-5):
     """Get a straight skeleton as a list of Subtree source and sink points.
 
@@ -817,4 +848,5 @@ def skeleton_as_edge_list(boundary, holes=None, tolerance=1e-5, intersect=False)
 
     if intersect:  # intersect skeleton segments to split them
         skeleton, _ = _intersect_skeleton_segments(skeleton, tolerance)
+        skeleton = _remove_segments_outside_boundary(skeleton, boundary, tolerance)
     return skeleton
