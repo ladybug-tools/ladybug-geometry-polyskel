@@ -6,7 +6,8 @@ import math
 from ladybug_geometry.geometry2d import LineSegment2D, Polygon2D
 from ladybug_geometry.intersection2d import intersect_line2d_infinite
 
-from .polyskel import skeleton_as_edge_list, _intersect_skeleton_segments
+from .polyskel import skeleton_as_edge_list, _intersect_skeleton_segments, \
+    _remove_segments_outside_boundary
 
 
 def _vector2hash(vector, tol):
@@ -640,6 +641,7 @@ def skeleton_as_directed_graph(boundary, holes=None, tolerance=1e-5):
     # get the segments representing the straight skeleton
     skeleton = skeleton_as_edge_list(boundary, holes, tolerance)
     skeleton, is_intersect_topology = _intersect_skeleton_segments(skeleton, tolerance)
+    skeleton = _remove_segments_outside_boundary(skeleton, boundary, tolerance)
 
     # ensure the boundary and holes are oriented correctly for the graph
     if boundary.is_clockwise:
