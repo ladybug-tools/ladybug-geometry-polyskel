@@ -192,15 +192,47 @@ def _split_perimeter_subpolygons(dg, distance, root_key, tol, core_graph=None):
             next_node = exter_cycle[0]
         # find the smallest polygon defined by the exterior node
         min_ccw_poly_graph = dg.min_cycle(next_node, base_node)
-        # offset edge from specified distance, and cut a perimeter polygon
-        split_poly_graph = _split_polygon_graph(
-            base_node, next_node, distance, min_ccw_poly_graph, tol)
-        # store the perimeter nodes in the core_graph
-        pts = [node.pt for node in split_poly_graph]
-        for i in range(len(pts) - 1):
-            core_graph.add_node(pts[i], [pts[i + 1]])
-        # store perimeter points in list as polygon
-        perimeter_subpolygons.append(Polygon2D(pts))
+
+        # proceed to extract the polygon and build up the core graph
+        if min_ccw_poly_graph is not None:
+            # everything is good, offset edge by distance and cut a perimeter polygon
+            split_poly_graph = _split_polygon_graph(
+                base_node, next_node, distance, min_ccw_poly_graph, tol)
+            # store the perimeter nodes in the core_graph
+            pts = [node.pt for node in split_poly_graph]
+            for i in range(len(pts) - 1):
+                core_graph.add_node(pts[i], [pts[i + 1]])
+            # store perimeter points in list as polygon
+            perimeter_subpolygons.append(Polygon2D(pts))
+
+        else:  # handle the case of unsuccessful minimum cycle polygon extraction
+            # if we are just missing a skeleton segment, there may still be hope
+            if len(next_node.adj_lst) == 1:  # connect the node to the nearest interior
+                rel_nodes, node_dists = [], []
+                for node in dg.nodes:
+                    if not node.exterior:
+                        rel_nodes.append(node)
+                        node_dists.append(next_node.pt.distance_to_point(node.pt))
+                near_nodes = [n for _, n in sorted(zip(node_dists, rel_nodes),
+                                                   key=lambda pair: pair[0])]
+                dg.add_adj(next_node, [near_nodes[0].pt])
+                dg.add_adj(near_nodes[0], [next_node.pt])  # add node di-directionally
+                min_ccw_poly_graph = dg.min_cycle(next_node, base_node)
+
+            if min_ccw_poly_graph is not None:  # connecting the node worked!
+                split_poly_graph = _split_polygon_graph(
+                    base_node, next_node, distance, min_ccw_poly_graph, tol)
+                pts = [node.pt for node in split_poly_graph]
+                for i in range(len(pts) - 1):
+                    core_graph.add_node(pts[i], [pts[i + 1]])
+                perimeter_subpolygons.append(Polygon2D(pts))
+
+            else:  # no hope of extracting a perimeter sub-polygon here
+                msg = 'Failed to compute sub-polygons between ' \
+                    'Node {} and Node {}.'.format(base_node, next_node)
+                print(msg)
+                # close the core graph with the exterior segment and move on
+                core_graph.add_node(next_node.pt, [base_node.pt])
 
     return perimeter_subpolygons, core_graph
 
