@@ -28,7 +28,7 @@ def offset_polygon(polygon, distance, tolerance=1e-5):
             off_polys = sorted(off_polys, key=lambda x: x.area, reverse=True)
             offset_poly = off_polys[0]
         return [offset_poly]
-    # if the distance is positive, use the straight skeleton 
+    # if the distance is positive, use the straight skeleton
     _, offset_polygons = perimeter_core_subpolygons(
         polygon, distance, tolerance=tolerance, flat_core=True)
     return offset_polygons

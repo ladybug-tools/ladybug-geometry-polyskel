@@ -679,15 +679,22 @@ def _intersect_skeleton_segments(skeleton, tolerance=1e-5):
             input skeleton is self-intersecting. This value is True whenever
             there are segments that were split as part of this operation.
     """
-    skel_tol = tolerance / 100  # use a finer tolerance for actual skeleton
+    # extend skeleton segments a little to ensure intersections happen
+    half_tol = tolerance / 2
+    ext_skeleton = []
+    for seg in skeleton:
+        m_v = seg.v.normalize() * half_tol
+        ext_seg = LineSegment2D.from_end_points(seg.p1.move(-m_v), seg.p2.move(m_v))
+        ext_skeleton.append(ext_seg)
+
     # compute all of the intersection points across the skeleton
     intersect_pts = [[] for _ in skeleton]
     for i, seg in enumerate(skeleton):
         try:
-            for other_seg in skeleton[:i] + skeleton[i + 1:]:
+            for other_seg in ext_skeleton[:i] + ext_skeleton[i + 1:]:
                 int_pt = intersect_line_segment2d(seg, other_seg)
-                if int_pt is None or int_pt.is_equivalent(seg.p1, skel_tol) or \
-                        int_pt.is_equivalent(seg.p2, skel_tol):
+                if int_pt is None or int_pt.is_equivalent(seg.p1, tolerance) or \
+                        int_pt.is_equivalent(seg.p2, tolerance):
                     continue
                 # we have found an intersection point where segments should be split
                 intersect_pts[i].append(int_pt)
@@ -712,7 +719,7 @@ def _intersect_skeleton_segments(skeleton, tolerance=1e-5):
             sort_pts.append(seg.p2)
             pr_pt = seg.p1
             for s_pt in sort_pts:
-                if not pr_pt.is_equivalent(s_pt, skel_tol):
+                if not pr_pt.is_equivalent(s_pt, tolerance):
                     split_skeleton.append(LineSegment2D.from_end_points(pr_pt, s_pt))
                 pr_pt = s_pt
 
