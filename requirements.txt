@@ -1,1 +1,1 @@
-ladybug-geometry==1.32.7
+ladybug-geometry==1.32.8
