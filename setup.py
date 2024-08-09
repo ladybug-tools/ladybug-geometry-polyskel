@@ -6,6 +6,9 @@ with open("README.md", "r") as fh:
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
+with open('cli-requirements.txt') as f:
+    cli_requirements = f.read().splitlines()
+
 setuptools.setup(
     name="ladybug-geometry-polyskel",
     use_scm_version=True,
@@ -18,6 +21,10 @@ setuptools.setup(
     url="https://github.com/ladybug-tools/ladybug-geometry-polyskel",
     packages=setuptools.find_packages(exclude=["tests"]),
     install_requires=requirements,
+    extras_require={'cli': cli_requirements},
+    entry_points={
+        "console_scripts": ["ladybug-geometry-polyskel = ladybug_geometry_polyskel.cli:main"]
+    },
     classifiers=[
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3.6",
