@@ -20,14 +20,25 @@ def _vector2hash(vector, tol):
     Returns:
         Hash of vector as a string of rounded coordinates.
     """
+    # get the relative tolerance using a log function
     try:
-        rtol = (int(math.log10(tol)) * -1)
+        rtol = int(math.log10(tol)) * -1
     except ValueError:
-        rtol = 0
-    # avoid cases of signed zeros messing with keys
+        rtol = 0  # the tol is equal to 1 (out of range for log)
+    # account for the fact that the tolerance may not be base 10
+    base = int(tol * 10 ** (rtol + 1))
+    if base == 10 or base == 0:  # tolerance is base 10 (eg. 0.001)
+        base = 1
+    else:  # tolerance is not base 10 (eg. 0.003)
+        rtol += 1
+    # avoid cases of signed zeros messing with the hash
     x_val = 0.0 if vector.x == 0 else vector.x
     y_val = 0.0 if vector.y == 0 else vector.y
-    return str((round(x_val, rtol), round(y_val, rtol)))
+    # convert the coordinate values to a hash
+    return str((
+        base * round(x_val / base, rtol),
+        base * round(y_val / base, rtol)
+    ))
 
 
 class _Node(object):
@@ -655,7 +666,8 @@ def skeleton_as_directed_graph(boundary, holes=None, tolerance=1e-5):
                 loops.append(hole.reverse().vertices)
 
     # make the directed graph and add the nodes for the boundary + holes
-    dg = PolygonDirectedGraph(tol=tolerance)
+    dg_tol = 2 * tolerance  # use 2 times the tolerance to ensure hashing works
+    dg = PolygonDirectedGraph(tol=dg_tol)
     for loop_count, vertices in enumerate(loops):
         for j in range(len(vertices) - 1):
             curr_v = vertices[j]
