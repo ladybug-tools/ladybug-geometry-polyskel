@@ -15,46 +15,72 @@ def _cmpstr(item1, item2):
 
 def test_vector2hash():
     """Test the vector hash method"""
-
     # Integer vector
     vec = Vector2D(1, 1)
-    hash = _vector2hash(vec, tol=0)
-    assert hash == '(1.0, 1.0)', hash
+    hash_val = _vector2hash(vec, tol=0)
+    assert hash_val == '(1.0, 1.0)'
 
     # Float with 1e-4 points
     vec = Vector2D(1.1111, 1.1111)
-    hash = _vector2hash(vec, tol=1e-4)
-    assert hash == '(1.1111, 1.1111)', hash
+    hash_val = _vector2hash(vec, tol=1e-4)
+    assert hash_val == '(1.1111, 1.1111)'
 
     # Float with 1e-4 points w/ rounding
     vec = Vector2D(1.11116, 1.11116)
-    hash = _vector2hash(vec, tol=1e-4)
-    assert hash == '(1.1112, 1.1112)', hash
+    hash_val = _vector2hash(vec, tol=1e-4)
+    assert hash_val == '(1.1112, 1.1112)'
 
     # Round to the ones
     vec = Vector2D(115.11116, 115.11116)
-    hash = _vector2hash(vec, tol=1)
-    assert hash == '(115.0, 115.0)', hash
+    hash_val = _vector2hash(vec, tol=1)
+    assert hash_val == '(115.0, 115.0)'
 
     # Round to the tenths
     vec = Vector2D(116.11116, 116.11116)
-    hash = _vector2hash(vec, tol=10)
-    assert hash == '(120.0, 120.0)', hash
+    hash_val = _vector2hash(vec, tol=10)
+    assert hash_val == '(120.0, 120.0)'
 
     # 10 digit tolerance w/o rounding
     vec = Vector2D(1.0123456789, 1.0123456789)
-    hash = _vector2hash(vec, tol=1e-10)
-    assert hash == '(1.0123456789, 1.0123456789)', hash
+    hash_val = _vector2hash(vec, tol=1e-10)
+    assert hash_val == '(1.0123456789, 1.0123456789)'
 
     # 10 digit tolerance w/ rounding
     vec = Vector2D(1.01234567888, 1.01234567888)
-    hash = _vector2hash(vec, tol=1e-10)
-    assert hash == '(1.0123456789, 1.0123456789)', hash
+    hash_val = _vector2hash(vec, tol=1e-10)
+    assert hash_val == '(1.0123456789, 1.0123456789)'
 
     # 7 digit tolerance w/ rounding
     vec = Vector2D(1.01234567888, 1.01234567888)
-    hash = _vector2hash(vec, tol=1e-7)
-    assert hash == '(1.0123457, 1.0123457)', hash
+    hash_val = _vector2hash(vec, tol=1e-7)
+    assert hash_val == '(1.0123457, 1.0123457)'
+
+
+def test_vector2hash_non_unity():
+    """Test the vector hash method with tolerance that don't have a base of 1."""
+    vec = Vector2D(1.115, 1.115)
+    hash_val = _vector2hash(vec, tol=0.001)
+    assert hash_val == '(1.115, 1.115)'
+
+    vec = Vector2D(1.115, 1.115)
+    hash_val = _vector2hash(vec, tol=0.002)
+    assert hash_val == '(1.114, 1.114)'
+
+    hash_val = _vector2hash(vec, tol=0.003)
+    assert hash_val == '(1.116, 1.116)'
+
+    hash_val = _vector2hash(vec, tol=0.004)
+    assert hash_val == '(1.116, 1.116)'
+
+    hash_val = _vector2hash(vec, tol=0.005)
+    assert hash_val == '(1.115, 1.115)'
+
+    hash_val = _vector2hash(vec, tol=0.006)
+    assert hash_val == '(1.116, 1.116)'
+
+    vec = Vector2D(1.1156, 1.1157)
+    hash_val = _vector2hash(vec, tol=0.002)
+    assert hash_val == '(1.116, 1.116)'
 
 
 def test_dg_noskel():

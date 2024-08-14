@@ -680,10 +680,10 @@ def _intersect_skeleton_segments(skeleton, tolerance=1e-5):
             there are segments that were split as part of this operation.
     """
     # extend skeleton segments a little to ensure intersections happen
-    half_tol = tolerance / 2
+    under_tol = tolerance * 0.99
     ext_skeleton = []
     for seg in skeleton:
-        m_v = seg.v.normalize() * half_tol
+        m_v = seg.v.normalize() * under_tol
         ext_seg = LineSegment2D.from_end_points(seg.p1.move(-m_v), seg.p2.move(m_v))
         ext_skeleton.append(ext_seg)
 
