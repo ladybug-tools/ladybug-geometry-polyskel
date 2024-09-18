@@ -296,7 +296,10 @@ def _exterior_cycles_as_polygons(dg, tol):
     ext_polygons = []
     for cycle in ext_cycles:
         ext_poly = Polygon2D([node.pt for node in cycle])
-        ext_poly = ext_poly.remove_colinear_vertices(tol)
+        try:
+            ext_poly = ext_poly.remove_colinear_vertices(tol)
+        except AssertionError:  # degenerate geometry to ignore
+            continue
         if ext_poly.is_self_intersecting:
             ext_polygons.extend(ext_poly.split_through_self_intersection(tol))
         else:
