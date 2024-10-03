@@ -32,8 +32,9 @@ def _vector2hash(vector, tol):
     else:  # tolerance is not base 10 (eg. 0.003)
         rtol += 1
     # avoid cases of signed zeros messing with the hash
-    x_val = 0.0 if vector.x == 0 else vector.x
-    y_val = 0.0 if vector.y == 0 else vector.y
+    z_tol = tol / 2
+    x_val = 0.0 if abs(vector.x) < z_tol else vector.x
+    y_val = 0.0 if abs(vector.y) < z_tol else vector.y
     # convert the coordinate values to a hash
     return str((
         base * round(x_val / base, rtol),
