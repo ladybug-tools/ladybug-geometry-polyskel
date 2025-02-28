@@ -1,0 +1,7 @@
+main
+====
+
+.. click:: ladybug_geometry_polyskel.cli.__init__:main
+   :prog: ladybug-geometry-polyskel
+   :show-nested:
+   :commands: perimeter-core-subfaces
