@@ -1,0 +1,7 @@
+ladybug\_geometry\_polyskel.polyskel module
+===========================================
+
+.. automodule:: ladybug_geometry_polyskel.polyskel
+   :members:
+   :undoc-members:
+   :show-inheritance:
