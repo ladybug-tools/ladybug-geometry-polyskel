@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ladybug_geometry_polyskel.cli &#8212; ladybug-geometry-polyskel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=0bf093e7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=45cd8fae" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          ladybug-geometry-polyskel</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel">ladybug-geometry-polyskel</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel-perimeter-core-subfaces">perimeter-core-subfaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html">ladybug_geometry_polyskel.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#module-ladybug_geometry_polyskel.cli">Module contents</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#ladybug_geometry_polyskel.cli.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html">ladybug_geometry_polyskel.offset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_perimeter_polygons"><code class="docutils literal notranslate"><span class="pre">offset_perimeter_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_polygon"><code class="docutils literal notranslate"><span class="pre">offset_polygon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_skeleton"><code class="docutils literal notranslate"><span class="pre">offset_skeleton()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html">ladybug_geometry_polyskel.polygraph module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph"><code class="docutils literal notranslate"><span class="pre">PolygonDirectedGraph</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_adj"><code class="docutils literal notranslate"><span class="pre">add_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_node"><code class="docutils literal notranslate"><span class="pre">add_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix"><code class="docutils literal notranslate"><span class="pre">adj_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix_labels"><code class="docutils literal notranslate"><span class="pre">adj_matrix_labels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycle"><code class="docutils literal notranslate"><span class="pre">exterior_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycles"><code class="docutils literal notranslate"><span class="pre">exterior_cycles()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_point_array"><code class="docutils literal notranslate"><span class="pre">from_point_array()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_polygon"><code class="docutils literal notranslate"><span class="pre">from_polygon()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.insert_node"><code class="docutils literal notranslate"><span class="pre">insert_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.intersect_graph_with_segment"><code class="docutils literal notranslate"><span class="pre">intersect_graph_with_segment()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.is_edge_bidirect"><code class="docutils literal notranslate"><span class="pre">is_edge_bidirect()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.min_cycle"><code class="docutils literal notranslate"><span class="pre">min_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node"><code class="docutils literal notranslate"><span class="pre">next_exterior_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node_no_backtrack"><code class="docutils literal notranslate"><span class="pre">next_exterior_node_no_backtrack()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node"><code class="docutils literal notranslate"><span class="pre">node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_exists"><code class="docutils literal notranslate"><span class="pre">node_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.polygon_exists"><code class="docutils literal notranslate"><span class="pre">polygon_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.pt_exists"><code class="docutils literal notranslate"><span class="pre">pt_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.remove_adj"><code class="docutils literal notranslate"><span class="pre">remove_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.connection_segments"><code class="docutils literal notranslate"><span class="pre">connection_segments</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.hole_root_nodes"><code class="docutils literal notranslate"><span class="pre">hole_root_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_count"><code class="docutils literal notranslate"><span class="pre">node_count</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.nodes"><code class="docutils literal notranslate"><span class="pre">nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.ordered_nodes"><code class="docutils literal notranslate"><span class="pre">ordered_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.outer_root_node"><code class="docutils literal notranslate"><span class="pre">outer_root_node</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_cycle_polygons"><code class="docutils literal notranslate"><span class="pre">skeleton_as_cycle_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_directed_graph"><code class="docutils literal notranslate"><span class="pre">skeleton_as_directed_graph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html">ladybug_geometry_polyskel.polyskel module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree"><code class="docutils literal notranslate"><span class="pre">Subtree</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.count"><code class="docutils literal notranslate"><span class="pre">count()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.height"><code class="docutils literal notranslate"><span class="pre">height</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.sinks"><code class="docutils literal notranslate"><span class="pre">sinks</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.source"><code class="docutils literal notranslate"><span class="pre">source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_edge_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_edge_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_subtree_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_subtree_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html">ladybug_geometry_polyskel.polysplit module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces_and_skeleton()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons_and_skeleton()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#module-ladybug_geometry_polyskel">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for ladybug_geometry_polyskel.cli</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;ladybug-geometry-polyskel commands.&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">click</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Face3D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry_polyskel.polysplit</span><span class="w"> </span><span class="kn">import</span> <span class="n">perimeter_core_subfaces</span> <span class="k">as</span> \
+    <span class="n">lgp_perimeter_core_subfaces</span>
+
+<span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<span class="c1"># command group for all geometry extension commands.</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="n">help</span><span class="o">=</span><span class="s1">&#39;ladybug geometry polyskel commands.&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">version_option</span><span class="p">()</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+    <span class="k">pass</span>
+
+
+<span class="nd">@main</span><span class="o">.</span><span class="n">command</span><span class="p">(</span><span class="s1">&#39;perimeter-core-subfaces&#39;</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;face3d-file&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span>
+    <span class="n">exists</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">file_okay</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dir_okay</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">resolve_path</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">argument</span><span class="p">(</span><span class="s1">&#39;perimeter-offset&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s1">&#39;--tolerance&#39;</span><span class="p">,</span> <span class="s1">&#39;-t&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;The maximum difference between x, y, and z &#39;</span>
+    <span class="s1">&#39;values at which vertices are considered equivalent.&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+<span class="nd">@click</span><span class="o">.</span><span class="n">option</span><span class="p">(</span>
+    <span class="s1">&#39;--output-file&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Optional file to output the he string of the visualization &#39;</span>
+    <span class="s1">&#39;file contents. By default, it will be printed out to stdout&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="n">click</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">show_default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">perimeter_core_subfaces_cli</span><span class="p">(</span><span class="n">face3d_file</span><span class="p">,</span> <span class="n">perimeter_offset</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">output_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute perimeter and core Face3Ds using the straight skeleton of input Face3Ds.</span>
+
+<span class="sd">    \b</span>
+<span class="sd">    Args:</span>
+<span class="sd">        face3d_file: Full path to a JSON file containing an array of Face3D</span>
+<span class="sd">            objects for which core/perimeter Face3Ds will be computed.</span>
+<span class="sd">        perimeter_offset: Distance to offset perimeter sub-faces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">perimeter_core_subfaces</span><span class="p">(</span><span class="n">face3d_file</span><span class="p">,</span> <span class="n">perimeter_offset</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">exception</span><span class="p">(</span><span class="s1">&#39;Failed to compute core/perimeter Face3Ds.</span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="perimeter_core_subfaces">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.cli.html#ladybug_geometry_polyskel.cli.perimeter_core_subfaces">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">perimeter_core_subfaces</span><span class="p">(</span>
+        <span class="n">face3d_file</span><span class="p">,</span> <span class="n">perimeter_offset</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">output_file</span><span class="o">=</span><span class="kc">None</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute perimeter and core Face3Ds using the straight skeleton of input Face3Ds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        face3d_file: Full path to a JSON file containing an array of Face3D</span>
+<span class="sd">            objects for which core/perimeter Face3Ds will be computed.</span>
+<span class="sd">        perimeter_offset: Distance to offset perimeter sub-faces.</span>
+<span class="sd">        tolerance: The maximum difference between x, y, and z values at which</span>
+<span class="sd">            vertices are considered equivalent.</span>
+<span class="sd">        output_file: Optional file to output the string of the visualization</span>
+<span class="sd">            file contents. If None, the string will simply be returned from</span>
+<span class="sd">            this method.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># load the Face3D objects</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">face3d_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">inf</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">inf</span><span class="p">)</span>
+    <span class="n">face_3ds</span> <span class="o">=</span> <span class="p">[</span><span class="n">Face3D</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">geo</span><span class="p">)</span> <span class="k">for</span> <span class="n">geo</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
+
+    <span class="c1"># compute core/perimeter Face3Ds</span>
+    <span class="n">core_per_geos</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">geo_obj</span> <span class="ow">in</span> <span class="n">face_3ds</span><span class="p">:</span>
+        <span class="n">perimeter_sub_faces</span><span class="p">,</span> <span class="n">core_sub_faces</span> <span class="o">=</span> \
+            <span class="n">lgp_perimeter_core_subfaces</span><span class="p">(</span><span class="n">geo_obj</span><span class="p">,</span> <span class="n">perimeter_offset</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="n">core_per_geos</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">perimeter_sub_faces</span><span class="p">])</span>
+        <span class="n">core_per_geos</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">f</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">core_sub_faces</span><span class="p">])</span>
+
+    <span class="c1"># write the resulting geometries into the output</span>
+    <span class="k">if</span> <span class="n">output_file</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">core_per_geos</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">core_per_geos</span><span class="p">))</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2026, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

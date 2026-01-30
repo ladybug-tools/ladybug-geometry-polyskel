@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ladybug_geometry_polyskel.polyskel &#8212; ladybug-geometry-polyskel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=0bf093e7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=45cd8fae" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          ladybug-geometry-polyskel</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel">ladybug-geometry-polyskel</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel-perimeter-core-subfaces">perimeter-core-subfaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html">ladybug_geometry_polyskel.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#module-ladybug_geometry_polyskel.cli">Module contents</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#ladybug_geometry_polyskel.cli.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html">ladybug_geometry_polyskel.offset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_perimeter_polygons"><code class="docutils literal notranslate"><span class="pre">offset_perimeter_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_polygon"><code class="docutils literal notranslate"><span class="pre">offset_polygon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_skeleton"><code class="docutils literal notranslate"><span class="pre">offset_skeleton()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html">ladybug_geometry_polyskel.polygraph module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph"><code class="docutils literal notranslate"><span class="pre">PolygonDirectedGraph</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_adj"><code class="docutils literal notranslate"><span class="pre">add_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_node"><code class="docutils literal notranslate"><span class="pre">add_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix"><code class="docutils literal notranslate"><span class="pre">adj_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix_labels"><code class="docutils literal notranslate"><span class="pre">adj_matrix_labels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycle"><code class="docutils literal notranslate"><span class="pre">exterior_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycles"><code class="docutils literal notranslate"><span class="pre">exterior_cycles()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_point_array"><code class="docutils literal notranslate"><span class="pre">from_point_array()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_polygon"><code class="docutils literal notranslate"><span class="pre">from_polygon()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.insert_node"><code class="docutils literal notranslate"><span class="pre">insert_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.intersect_graph_with_segment"><code class="docutils literal notranslate"><span class="pre">intersect_graph_with_segment()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.is_edge_bidirect"><code class="docutils literal notranslate"><span class="pre">is_edge_bidirect()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.min_cycle"><code class="docutils literal notranslate"><span class="pre">min_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node"><code class="docutils literal notranslate"><span class="pre">next_exterior_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node_no_backtrack"><code class="docutils literal notranslate"><span class="pre">next_exterior_node_no_backtrack()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node"><code class="docutils literal notranslate"><span class="pre">node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_exists"><code class="docutils literal notranslate"><span class="pre">node_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.polygon_exists"><code class="docutils literal notranslate"><span class="pre">polygon_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.pt_exists"><code class="docutils literal notranslate"><span class="pre">pt_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.remove_adj"><code class="docutils literal notranslate"><span class="pre">remove_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.connection_segments"><code class="docutils literal notranslate"><span class="pre">connection_segments</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.hole_root_nodes"><code class="docutils literal notranslate"><span class="pre">hole_root_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_count"><code class="docutils literal notranslate"><span class="pre">node_count</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.nodes"><code class="docutils literal notranslate"><span class="pre">nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.ordered_nodes"><code class="docutils literal notranslate"><span class="pre">ordered_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.outer_root_node"><code class="docutils literal notranslate"><span class="pre">outer_root_node</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_cycle_polygons"><code class="docutils literal notranslate"><span class="pre">skeleton_as_cycle_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_directed_graph"><code class="docutils literal notranslate"><span class="pre">skeleton_as_directed_graph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html">ladybug_geometry_polyskel.polyskel module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree"><code class="docutils literal notranslate"><span class="pre">Subtree</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.count"><code class="docutils literal notranslate"><span class="pre">count()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.height"><code class="docutils literal notranslate"><span class="pre">height</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.sinks"><code class="docutils literal notranslate"><span class="pre">sinks</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.source"><code class="docutils literal notranslate"><span class="pre">source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_edge_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_edge_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_subtree_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_subtree_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html">ladybug_geometry_polyskel.polysplit module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces_and_skeleton()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons_and_skeleton()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#module-ladybug_geometry_polyskel">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for ladybug_geometry_polyskel.polyskel</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;Implementation of the straight skeleton algorithm by Felkel and Obdrzalek[1].</span>
+
+<span class="sd">The functions and classes here here are derived directly from the polyskel python</span>
+<span class="sd">library by Armin Scipiades (@Bottfy), which is available at:</span>
+<span class="sd">https://github.com/Botffy/polyskel</span>
+
+<span class="sd">[1] Felkel, Petr and Stepan Obdrzalek. 1998. &quot;Straight Skeleton Implementation.&quot; In</span>
+<span class="sd">Proceedings of Spring Conference on Computer Graphics, Budmerice, Slovakia. 210 - 218.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">heapq</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">tee</span><span class="p">,</span> <span class="n">islice</span><span class="p">,</span> <span class="n">cycle</span><span class="p">,</span> <span class="n">chain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">operator</span>
+
+<span class="c1"># Geometry classes</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point2D</span><span class="p">,</span> <span class="n">Ray2D</span><span class="p">,</span> <span class="n">LineSegment2D</span><span class="p">,</span> <span class="n">Polygon2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.intersection2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">intersect_line_segment2d</span><span class="p">,</span> \
+    <span class="n">intersect_line2d</span>
+
+<span class="c1"># Polygon sorting classes</span>
+<span class="n">_OriginalEdge</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;_OriginalEdge&#39;</span><span class="p">,</span> <span class="s1">&#39;edge bisector_left, bisector_right&#39;</span><span class="p">)</span>
+<span class="n">Subtree</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s1">&#39;Subtree&#39;</span><span class="p">,</span> <span class="s1">&#39;source, height, sinks&#39;</span><span class="p">)</span>
+<span class="n">_SplitEventSubClass</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s1">&#39;_SplitEvent&#39;</span><span class="p">,</span> <span class="s1">&#39;distance, intersection_point, vertex, opposite_edge&#39;</span><span class="p">)</span>
+<span class="n">_EdgeEventSubClass</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+    <span class="s1">&#39;_EdgeEvent&#39;</span><span class="p">,</span> <span class="s1">&#39;distance intersection_point vertex_a vertex_b&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_window</span><span class="p">(</span><span class="n">lst</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Window operator for lists.</span>
+
+<span class="sd">    Consumes a list of items, and returns a zipped list of the previous,</span>
+<span class="sd">    current and next items in the list, accessible by the same index.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        lst: list</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Zipped list of previous, current and next items in list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prevs</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">nexts</span> <span class="o">=</span> <span class="n">tee</span><span class="p">(</span><span class="n">lst</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">prevs</span> <span class="o">=</span> <span class="n">islice</span><span class="p">(</span><span class="n">cycle</span><span class="p">(</span><span class="n">prevs</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">lst</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">nexts</span> <span class="o">=</span> <span class="n">islice</span><span class="p">(</span><span class="n">cycle</span><span class="p">(</span><span class="n">nexts</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">zip</span><span class="p">(</span><span class="n">prevs</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">nexts</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cross</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the determinant between two Vector2Ds and/or Point2Ds.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">b</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">b</span><span class="o">.</span><span class="n">x</span> <span class="o">*</span> <span class="n">a</span><span class="o">.</span><span class="n">y</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_approximately_equals</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine whether two Point2Ds or Vector2Ds are equal within a relative tolerance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">==</span> <span class="n">b</span> <span class="ow">or</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">))</span> <span class="o">*</span> <span class="mf">0.001</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_contour</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Consumes list of x,y coordinate tuples and returns list of Point2Ds.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        contour: list of x,y tuples from contour.</span>
+<span class="sd">        tol: Number for point equivalence tolerance.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">         list of Point2Ds of contour.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contour</span> <span class="o">=</span> <span class="p">[</span><span class="n">Point2D</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="nb">float</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="ow">in</span> <span class="n">contour</span><span class="p">]</span>
+    <span class="n">normed_contour</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">prev</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="nb">next</span> <span class="ow">in</span> <span class="n">_window</span><span class="p">(</span><span class="n">contour</span><span class="p">):</span>
+        <span class="n">normed_prev</span> <span class="o">=</span> <span class="p">(</span><span class="n">point</span> <span class="o">-</span> <span class="n">prev</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+        <span class="n">normed_next</span> <span class="o">=</span> <span class="p">(</span><span class="nb">next</span> <span class="o">-</span> <span class="n">point</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">point</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="nb">next</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span> <span class="ow">or</span> \
+                <span class="n">normed_prev</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">normed_next</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+            <span class="n">normed_contour</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">point</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">normed_contour</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SplitEvent</span><span class="p">(</span><span class="n">_SplitEventSubClass</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A SplitEvent is a reflex vertex that splits an Edge Event.</span>
+
+<span class="sd">    They therefore split the entire polygon and create new adjacencies between</span>
+<span class="sd">    the split edge and each of the two edges incident to the reflex</span>
+<span class="sd">    vertex (Felkel and Obdrzalek 1998, 1).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">distance</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> Split event @ </span><span class="si">{}</span><span class="s2"> from </span><span class="si">{}</span><span class="s2"> to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertex</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">opposite_edge</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_EdgeEvent</span><span class="p">(</span><span class="n">_EdgeEventSubClass</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An EdgeEvent is an edge extended from a perimeter edge, that shrinks to zero.</span>
+
+<span class="sd">    This will make its neighboring edges adjacent (Felkel and Obdrzalek 1998, 2).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="n">other</span><span class="o">.</span><span class="n">distance</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> Edge event @ </span><span class="si">{}</span><span class="s2"> between </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertex_a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vertex_b</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_LAVertex</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="n">edge_left</span><span class="p">,</span> <span class="n">edge_right</span><span class="p">,</span> <span class="n">direction_vectors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A vertex in a double connected circular list of active vertices.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">point</span> <span class="o">=</span> <span class="n">point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_left</span> <span class="o">=</span> <span class="n">edge_left</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">edge_right</span> <span class="o">=</span> <span class="n">edge_right</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lav</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="c1"># TODO this might be handled better. Maybe membership in lav implies validity?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="n">creator_vectors</span> <span class="o">=</span> <span class="p">(</span><span class="n">edge_left</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">edge_right</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">direction_vectors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">direction_vectors</span> <span class="o">=</span> <span class="n">creator_vectors</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_is_reflex</span> <span class="o">=</span> <span class="p">(</span><span class="n">_cross</span><span class="p">(</span><span class="o">*</span><span class="n">direction_vectors</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_bisector</span> <span class="o">=</span> <span class="n">Ray2D</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">point</span><span class="p">,</span> <span class="n">operator</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="o">*</span><span class="n">creator_vectors</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reflex</span> <span class="k">else</span> <span class="mi">1</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bisector</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_bisector</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_reflex</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_reflex</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">original_edges</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lav</span><span class="o">.</span><span class="n">_slav</span><span class="o">.</span><span class="n">_original_edges</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reflex</span><span class="p">:</span>
+            <span class="c1"># A reflex vertex may generate a split event.</span>
+            <span class="c1"># Split events happen when a vertex hits an opposite edge,</span>
+            <span class="c1"># thereby splitting the polygon in two.</span>
+            <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_edges</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_left</span> <span class="ow">or</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_right</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="c1"># A potential b is at the intersection between our own bisector and</span>
+                <span class="c1"># the bisector of the angle between the tested edge and any one of our</span>
+                <span class="c1"># own edges.</span>
+                <span class="c1"># We choose &#39;less parallel&#39; edge (to exclude a potentially parallel edge)</span>
+
+                <span class="c1"># Make normalized copies of vectors</span>
+                <span class="n">norm_edge_left_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_left</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                <span class="n">norm_edge_right_v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_right</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                <span class="n">norm_edge_v</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+
+                <span class="c1"># Compute dot</span>
+                <span class="n">leftdot</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">norm_edge_left_v</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">norm_edge_v</span><span class="p">))</span>
+                <span class="n">rightdot</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">norm_edge_right_v</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">norm_edge_v</span><span class="p">))</span>
+                <span class="n">selfedge</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_left</span> <span class="k">if</span> <span class="n">leftdot</span> <span class="o">&lt;</span> <span class="n">rightdot</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_right</span>
+
+                <span class="c1"># Make copies of edges and compute intersection</span>
+                <span class="n">self_copy</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="p">(</span><span class="n">selfedge</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">selfedge</span><span class="o">.</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">edge_copy</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">intersect_line_segment2d</span><span class="p">(</span><span class="n">edge_copy</span><span class="p">,</span> <span class="n">self_copy</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">i</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_approximately_equals</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">point</span><span class="p">):</span>
+                    <span class="c1"># locate candidate b</span>
+                    <span class="n">linvec</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="n">edvec</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">linvec</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">edvec</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="n">edvec</span> <span class="o">=</span> <span class="o">-</span><span class="n">edvec</span>
+
+                    <span class="n">bisecvec</span> <span class="o">=</span> <span class="n">edvec</span> <span class="o">+</span> <span class="n">linvec</span>
+                    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">bisecvec</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                        <span class="k">continue</span>
+                    <span class="n">bisector</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">bisecvec</span><span class="p">)</span>
+                    <span class="n">b</span> <span class="o">=</span> <span class="n">intersect_line2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bisector</span><span class="p">,</span> <span class="n">bisector</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="n">b</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">continue</span>
+
+                    <span class="c1"># Check eligibility of b.</span>
+                    <span class="c1"># A valid b should lie within the area limited by the edge</span>
+                    <span class="c1"># and the bisectors of its two vertices.</span>
+                    <span class="n">_left_bisector_norm</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">bisector_left</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="n">_left_b_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">edge</span><span class="o">.</span><span class="n">bisector_left</span><span class="o">.</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="n">xleft</span> <span class="o">=</span> <span class="n">_left_bisector_norm</span><span class="o">.</span><span class="n">determinant</span><span class="p">(</span><span class="n">_left_b_norm</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+
+                    <span class="n">_right_bisector_norm</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">bisector_right</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="n">_right_b_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">edge</span><span class="o">.</span><span class="n">bisector_right</span><span class="o">.</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="n">xright</span> <span class="o">=</span> <span class="n">_right_bisector_norm</span><span class="o">.</span><span class="n">determinant</span><span class="p">(</span><span class="n">_right_b_norm</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+
+                    <span class="n">_edge_edge_norm</span> <span class="o">=</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="n">_b_to_edge_norm</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">-</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+                    <span class="n">xedge</span> <span class="o">=</span> <span class="n">_edge_edge_norm</span><span class="o">.</span><span class="n">determinant</span><span class="p">(</span><span class="n">_b_to_edge_norm</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">xleft</span> <span class="ow">and</span> <span class="n">xright</span> <span class="ow">and</span> <span class="n">xedge</span><span class="p">):</span>
+                        <span class="k">continue</span>  <span class="c1"># discarded candidate</span>
+                    <span class="c1"># found valid candidate</span>
+                    <span class="n">_d2b</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="p">(</span><span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="o">.</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                    <span class="n">_new_split_event</span> <span class="o">=</span> <span class="n">_SplitEvent</span><span class="p">(</span><span class="n">_d2b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">edge</span><span class="o">.</span><span class="n">edge</span><span class="p">)</span>
+                    <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_new_split_event</span><span class="p">)</span>
+
+        <span class="n">i_prev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bisector</span><span class="o">.</span><span class="n">intersect_line_ray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prev</span><span class="o">.</span><span class="n">bisector</span><span class="p">)</span>
+        <span class="n">i_next</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bisector</span><span class="o">.</span><span class="n">intersect_line_ray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="o">.</span><span class="n">bisector</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">i_prev</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">left_seg</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_left</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_left</span><span class="o">.</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">dist_to_i_prev</span> <span class="o">=</span> <span class="n">left_seg</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">i_prev</span><span class="p">)</span>
+            <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_EdgeEvent</span><span class="p">(</span><span class="n">dist_to_i_prev</span><span class="p">,</span> <span class="n">i_prev</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">prev</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">i_next</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">right_seg</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">edge_right</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_right</span><span class="o">.</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">dist_to_i_next</span> <span class="o">=</span> <span class="n">right_seg</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">i_next</span><span class="p">)</span>
+            <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_EdgeEvent</span><span class="p">(</span><span class="n">dist_to_i_next</span><span class="p">,</span> <span class="n">i_next</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">events</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">ev</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">event</span><span class="p">:</span>
+                 <span class="bp">self</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ev</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">lav</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">lav</span><span class="o">.</span><span class="n">invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_valid</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;Vertex (</span><span class="si">{:.2f}</span><span class="s2">;</span><span class="si">{:.2f}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Vertex (</span><span class="si">{}</span><span class="s1">) (</span><span class="si">{:.2f}</span><span class="s1">;</span><span class="si">{:.2f}</span><span class="s1">), bisector </span><span class="si">{}</span><span class="s1">, edges </span><span class="si">{}</span><span class="s1"> </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s1">&#39;reflex&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_reflex</span> <span class="k">else</span> <span class="s1">&#39;convex&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">point</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bisector</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_left</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">edge_right</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SLAV</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; A set of circular lists of active vertices.</span>
+
+<span class="sd">        It stores a loop of vertices for the polygon created during the straight</span>
+<span class="sd">        skeleton computation (Felkel and Obdrzalek 1998).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="n">contours</span> <span class="o">=</span> <span class="p">[</span><span class="n">_normalize_contour</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">tol</span><span class="p">)]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_LAV</span><span class="o">.</span><span class="n">from_polygon</span><span class="p">(</span><span class="n">contour</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">contour</span> <span class="ow">in</span> <span class="n">contours</span><span class="p">]</span>
+
+        <span class="c1"># store original polygon edges for calculating split events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_original_edges</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">_OriginalEdge</span><span class="p">(</span>
+                <span class="n">LineSegment2D</span><span class="p">(</span><span class="n">vertex</span><span class="o">.</span><span class="n">prev</span><span class="o">.</span><span class="n">point</span><span class="p">,</span> <span class="n">vertex</span><span class="o">.</span><span class="n">point</span><span class="p">),</span>
+                <span class="n">vertex</span><span class="o">.</span><span class="n">prev</span><span class="o">.</span><span class="n">bisector</span><span class="p">,</span> <span class="n">vertex</span><span class="o">.</span><span class="n">bisector</span>
+            <span class="p">)</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="p">)</span>
+        <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">lav</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">lav</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_edge_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resolves adjacency of new edge event.</span>
+
+<span class="sd">        This function resolves the edge event with previous edges, LAV, and then stores</span>
+<span class="sd">        edge information in a Subtree.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event: EdgeEvent</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Subtree namedTuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sinks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">lav</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">lav</span>
+        <span class="c1"># triangle; one sink point</span>
+        <span class="k">if</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">prev</span> <span class="o">==</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex_b</span><span class="o">.</span><span class="n">next</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lav</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">lav</span><span class="p">):</span>
+                <span class="n">sinks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">vertex</span><span class="o">.</span><span class="n">point</span><span class="p">)</span>
+                <span class="n">vertex</span><span class="o">.</span><span class="n">invalidate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_vertex</span> <span class="o">=</span> <span class="n">lav</span><span class="o">.</span><span class="n">unify</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">vertex_a</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex_b</span><span class="p">,</span>
+                                   <span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">lav</span><span class="o">.</span><span class="n">head</span> <span class="ow">in</span> <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">vertex_a</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex_b</span><span class="p">):</span>
+                <span class="n">lav</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">new_vertex</span>
+            <span class="n">sinks</span><span class="o">.</span><span class="n">extend</span><span class="p">((</span><span class="n">event</span><span class="o">.</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">point</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex_b</span><span class="o">.</span><span class="n">point</span><span class="p">))</span>
+            <span class="n">next_event</span> <span class="o">=</span> <span class="n">new_vertex</span><span class="o">.</span><span class="n">next_event</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">next_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_event</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">Subtree</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span> <span class="n">sinks</span><span class="p">),</span> <span class="n">events</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_split_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Consumes a split event.</span>
+
+<span class="sd">        This function resolves the adjacency of new split event with previous edges, LAV,</span>
+<span class="sd">        and then stores edge information in a Subtree.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            event: EdgeEvent</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Subtree namedTuple</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lav</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">lav</span>
+        <span class="n">sinks</span> <span class="o">=</span> <span class="p">[</span><span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">point</span><span class="p">]</span>
+        <span class="n">vertices</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># right vertex</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># left vertex</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">opposite_edge</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">chain</span><span class="o">.</span><span class="n">from_iterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">norm</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">edge_left</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span> <span class="ow">and</span> \
+                    <span class="n">event</span><span class="o">.</span><span class="n">opposite_edge</span><span class="o">.</span><span class="n">p</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">edge_left</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">prev</span>
+            <span class="k">elif</span> <span class="n">norm</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">edge_right</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span> <span class="ow">and</span> \
+                    <span class="n">event</span><span class="o">.</span><span class="n">opposite_edge</span><span class="o">.</span><span class="n">p</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">edge_right</span><span class="o">.</span><span class="n">p</span><span class="p">:</span>
+                <span class="n">y</span> <span class="o">=</span> <span class="n">v</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">next</span>
+
+            <span class="k">if</span> <span class="n">x</span><span class="p">:</span>
+                <span class="n">xleft</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">bisector</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span><span class="o">.</span><span class="n">determinant</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span> <span class="o">-</span> <span class="n">y</span><span class="o">.</span><span class="n">point</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+
+                <span class="n">xright</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">bisector</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span><span class="o">.</span><span class="n">determinant</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span> <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">point</span><span class="p">)</span><span class="o">.</span><span class="n">normalize</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tol</span>
+
+                <span class="k">if</span> <span class="n">xleft</span> <span class="ow">and</span> <span class="n">xright</span><span class="p">:</span>
+                    <span class="k">break</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">y</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="p">[])</span>
+
+        <span class="n">v1</span> <span class="o">=</span> <span class="n">_LAVertex</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">edge_left</span><span class="p">,</span>
+                       <span class="n">event</span><span class="o">.</span><span class="n">opposite_edge</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
+        <span class="n">v2</span> <span class="o">=</span> <span class="n">_LAVertex</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">opposite_edge</span><span class="p">,</span>
+                       <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">edge_right</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tol</span><span class="p">)</span>
+
+        <span class="n">v1</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">prev</span>
+        <span class="n">v1</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">prev</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">v1</span>
+        <span class="n">x</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">v1</span>
+
+        <span class="n">v2</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">y</span>
+        <span class="n">v2</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">next</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">next</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">v2</span>
+        <span class="n">y</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">v2</span>
+
+        <span class="n">new_lavs</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">lav</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lav</span> <span class="o">!=</span> <span class="n">x</span><span class="o">.</span><span class="n">lav</span><span class="p">:</span>
+            <span class="c1"># the split event actually merges two lavs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">lav</span><span class="p">)</span>
+            <span class="n">new_lavs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_LAV</span><span class="o">.</span><span class="n">from_chain</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new_lavs</span> <span class="o">=</span> <span class="p">[</span><span class="n">_LAV</span><span class="o">.</span><span class="n">from_chain</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="bp">self</span><span class="p">),</span> <span class="n">_LAV</span><span class="o">.</span><span class="n">from_chain</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span> <span class="bp">self</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">lv</span> <span class="ow">in</span> <span class="n">new_lavs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lv</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_lavs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lv</span><span class="p">)</span>
+                <span class="n">vertices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lv</span><span class="o">.</span><span class="n">head</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sinks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lv</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">next</span><span class="o">.</span><span class="n">point</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">lv</span><span class="p">):</span>
+                    <span class="n">v</span><span class="o">.</span><span class="n">invalidate</span><span class="p">()</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">vertices</span><span class="p">:</span>
+            <span class="n">next_event</span> <span class="o">=</span> <span class="n">vertex</span><span class="o">.</span><span class="n">next_event</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">next_event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">events</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_event</span><span class="p">)</span>
+
+        <span class="n">event</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">invalidate</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">Subtree</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">intersection_point</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">distance</span><span class="p">,</span> <span class="n">sinks</span><span class="p">),</span> <span class="n">events</span><span class="p">)</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_LAV</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slav</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A single circular list of active vertices.</span>
+
+<span class="sd">        Stored in a SLAV (Felkel and Obdrzalek 1998, 2).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_slav</span> <span class="o">=</span> <span class="n">slav</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tol</span> <span class="o">=</span> <span class="n">slav</span><span class="o">.</span><span class="n">tol</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polygon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">slav</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a LAV from a list of point coordinates representing a polygon.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            polygon: list of points (tuple of x,y coordinates).</span>
+<span class="sd">            slav: SLAV (a set of circular lists of active vertices).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            LAV (single circular list of active vertices).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lav</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">slav</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">prev</span><span class="p">,</span> <span class="n">point</span><span class="p">,</span> <span class="nb">next</span> <span class="ow">in</span> <span class="n">_window</span><span class="p">(</span><span class="n">polygon</span><span class="p">):</span>
+            <span class="n">lav</span><span class="o">.</span><span class="n">_len</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">vertex</span> <span class="o">=</span> <span class="n">_LAVertex</span><span class="p">(</span>
+                <span class="n">point</span><span class="p">,</span>
+                <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">prev</span><span class="p">,</span> <span class="n">point</span><span class="p">),</span>
+                <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">point</span><span class="p">,</span> <span class="nb">next</span><span class="p">),</span>
+                <span class="n">tol</span><span class="o">=</span><span class="n">slav</span><span class="o">.</span><span class="n">tol</span>
+            <span class="p">)</span>
+            <span class="n">vertex</span><span class="o">.</span><span class="n">lav</span> <span class="o">=</span> <span class="n">lav</span>
+            <span class="k">if</span> <span class="n">lav</span><span class="o">.</span><span class="n">head</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">lav</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">vertex</span>
+                <span class="n">vertex</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">vertex</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">vertex</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">vertex</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">lav</span><span class="o">.</span><span class="n">head</span>
+                <span class="n">vertex</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">lav</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">prev</span>
+                <span class="n">vertex</span><span class="o">.</span><span class="n">prev</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">vertex</span>
+                <span class="n">lav</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">vertex</span>
+        <span class="k">return</span> <span class="n">lav</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_chain</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">slav</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Creates new LAV from consumed _LAVertex, and reference _SLAV.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            head: Head _LAVertex that creates new _LAV loop.</span>
+<span class="sd">            slav: Reference SLAV (a set of circular lists of active vertices).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            LAV (a single circular list of active vertices).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lav</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">slav</span><span class="p">)</span>
+        <span class="n">lav</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">head</span>
+        <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">lav</span><span class="p">:</span>
+            <span class="n">lav</span><span class="o">.</span><span class="n">_len</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">vertex</span><span class="o">.</span><span class="n">lav</span> <span class="o">=</span> <span class="n">lav</span>
+        <span class="k">return</span> <span class="n">lav</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">invalidate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets vertex validity to False, and handles head relationship.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vertex: _LAVertex to be invalidated.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">vertex</span><span class="o">.</span><span class="n">lav</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;Tried to invalidate a vertex that is not mine&#39;</span>
+        <span class="n">vertex</span><span class="o">.</span><span class="n">_valid</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">vertex</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="o">.</span><span class="n">next</span>
+        <span class="n">vertex</span><span class="o">.</span><span class="n">lav</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">unify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">,</span> <span class="n">point</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate new _LAVertex from input Point2D and resolve adjacency to old edges.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            vertex_a: _LAVertex</span>
+<span class="sd">            vertex_b: _LAVertex</span>
+<span class="sd">            point: Intersection point from angle bisectors from vertex_a and</span>
+<span class="sd">                vertex_b as a Point2D.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            _LAVertex of intersection point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">replacement</span> <span class="o">=</span> <span class="n">_LAVertex</span><span class="p">(</span>
+            <span class="n">point</span><span class="p">,</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">edge_left</span><span class="p">,</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">edge_right</span><span class="p">,</span>
+            <span class="p">(</span><span class="n">vertex_b</span><span class="o">.</span><span class="n">bisector</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">(),</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">bisector</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()),</span>
+            <span class="n">tol</span><span class="o">=</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">tol</span>
+        <span class="p">)</span>
+        <span class="n">replacement</span><span class="o">.</span><span class="n">lav</span> <span class="o">=</span> <span class="bp">self</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="ow">in</span> <span class="p">[</span><span class="n">vertex_a</span><span class="p">,</span> <span class="n">vertex_b</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">replacement</span>
+
+        <span class="n">vertex_a</span><span class="o">.</span><span class="n">prev</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">replacement</span>
+        <span class="n">vertex_b</span><span class="o">.</span><span class="n">next</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">replacement</span>
+        <span class="n">replacement</span><span class="o">.</span><span class="n">prev</span> <span class="o">=</span> <span class="n">vertex_a</span><span class="o">.</span><span class="n">prev</span>
+        <span class="n">replacement</span><span class="o">.</span><span class="n">next</span> <span class="o">=</span> <span class="n">vertex_b</span><span class="o">.</span><span class="n">next</span>
+
+        <span class="n">vertex_a</span><span class="o">.</span><span class="n">invalidate</span><span class="p">()</span>
+        <span class="n">vertex_b</span><span class="o">.</span><span class="n">invalidate</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_len</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">replacement</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;LAV </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2"> = </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="p">[</span><span class="n">vertex</span> <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">])</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_len</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">cur</span>
+            <span class="n">cur</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">next</span>
+            <span class="k">if</span> <span class="n">cur</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">:</span>
+                <span class="k">return</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">cur</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">cur</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">())</span>
+            <span class="n">cur</span> <span class="o">=</span> <span class="n">cur</span><span class="o">.</span><span class="n">next</span>
+            <span class="k">if</span> <span class="n">cur</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">head</span><span class="p">:</span>
+                <span class="k">break</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_EventQueue</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;A priority queue that stores vertices of the polygon.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__data</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">put</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">put_all</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iterable</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">iterable</span><span class="p">:</span>
+            <span class="n">heapq</span><span class="o">.</span><span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">,</span> <span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">heapq</span><span class="o">.</span><span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">empty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__data</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_merge_sources</span><span class="p">(</span><span class="n">skeleton</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Merge the sources of a straight skeleton.</span>
+
+<span class="sd">    In highly symmetrical shapes with reflex vertices, multiple sources may share</span>
+<span class="sd">    the same  location. This function merges those sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sources</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">to_remove</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">skeleton</span><span class="p">):</span>
+        <span class="n">source</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+            <span class="n">source_index</span> <span class="o">=</span> <span class="n">sources</span><span class="p">[</span><span class="n">source</span><span class="p">]</span>
+            <span class="c1"># source exists, merge sinks</span>
+            <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">p</span><span class="o">.</span><span class="n">sinks</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">sink</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="p">[</span><span class="n">source_index</span><span class="p">]</span><span class="o">.</span><span class="n">sinks</span><span class="p">:</span>
+                    <span class="n">skeleton</span><span class="p">[</span><span class="n">source_index</span><span class="p">]</span><span class="o">.</span><span class="n">sinks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sink</span><span class="p">)</span>
+            <span class="n">to_remove</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sources</span><span class="p">[</span><span class="n">source</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">to_remove</span><span class="p">):</span>
+        <span class="n">skeleton</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_clean_sinks</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove cases where the source and sink point are the same.</span>
+
+<span class="sd">    This can occur as an unintended effect of merging sources.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">clean_subtrees</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">s_tree</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="p">:</span>
+        <span class="n">source</span><span class="p">,</span> <span class="n">clean_sinks</span><span class="p">,</span> <span class="n">is_invalid</span> <span class="o">=</span> <span class="n">s_tree</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="p">[],</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">sink</span> <span class="ow">in</span> <span class="n">s_tree</span><span class="o">.</span><span class="n">sinks</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">source</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">sink</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+                <span class="n">is_invalid</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">clean_sinks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sink</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_invalid</span><span class="p">:</span>  <span class="c1"># create a new Subtree</span>
+            <span class="n">clean_subtrees</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Subtree</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">s_tree</span><span class="o">.</span><span class="n">height</span><span class="p">,</span> <span class="n">clean_sinks</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clean_subtrees</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">s_tree</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">clean_subtrees</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_skeletonize</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the straight skeleton of a Polygon.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        polygon: A list of 2D vertices in clockwise order (when viewed from</span>
+<span class="sd">            above the XY plane). For example, a square can be represented with</span>
+<span class="sd">            the following: [[0,1], [1,1], [0,0], [1,0]]</span>
+<span class="sd">        tol: Tolerance for point equivalence. (Default: 1e-5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The straight skeleton as a list of &quot;subtrees&quot;, which are in the form of</span>
+<span class="sd">        (source, height, sinks). Source is the highest points, height is its</span>
+<span class="sd">        height, and sinks are the point connected to the source.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">slav</span> <span class="o">=</span> <span class="n">_SLAV</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">prioque</span> <span class="o">=</span> <span class="n">_EventQueue</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">lav</span> <span class="ow">in</span> <span class="n">slav</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">vertex</span> <span class="ow">in</span> <span class="n">lav</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">vertex</span><span class="o">.</span><span class="n">next_event</span><span class="p">()</span>
+            <span class="n">prioque</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+
+    <span class="c1"># While the priority queue or SLAV is not empty, compute the intersection of</span>
+    <span class="c1"># bisectors at edge. The &#39;handle_edge_event&#39; method computes the next event</span>
+    <span class="c1"># from the new intersection via the next_event method. Thus, this while loop</span>
+    <span class="c1"># iteratively adds new events without recursion.</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">prioque</span><span class="o">.</span><span class="n">empty</span><span class="p">()</span> <span class="ow">or</span> <span class="n">slav</span><span class="o">.</span><span class="n">empty</span><span class="p">()):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">prioque</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>  <span class="c1"># vertex a, b is self or next vertex</span>
+        <span class="c1"># Handle edge or split events.</span>
+        <span class="c1"># arc: subtree(event.intersection_point, event.distance, sinks)</span>
+        <span class="c1"># events: updated events with new vertex</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">_EdgeEvent</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">vertex_a</span><span class="o">.</span><span class="n">is_valid</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">vertex_b</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="p">(</span><span class="n">arc</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span> <span class="o">=</span> <span class="n">slav</span><span class="o">.</span><span class="n">handle_edge_event</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">_SplitEvent</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="o">.</span><span class="n">vertex</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="p">(</span><span class="n">arc</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span> <span class="o">=</span> <span class="n">slav</span><span class="o">.</span><span class="n">handle_split_event</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">prioque</span><span class="o">.</span><span class="n">put_all</span><span class="p">(</span><span class="n">events</span><span class="p">)</span>
+
+        <span class="c1"># As we traverse priorque, output list of &quot;subtrees&quot;, which are in the form</span>
+        <span class="c1"># of (source, height, sinks) where source is the highest points, height is</span>
+        <span class="c1"># its distance to an edge, and sinks are the point connected to the source.</span>
+        <span class="k">if</span> <span class="n">arc</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arc</span><span class="p">)</span>
+    <span class="c1"># merge the sources and clean the result</span>
+    <span class="n">_merge_sources</span><span class="p">(</span><span class="n">output</span><span class="p">)</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">_clean_sinks</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_intersect_skeleton_segments</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Intersect all of the LineSegment2D of the skeleton and split them.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        skeleton: A list of ladybug-geometry LineSegment2D for the segments</span>
+<span class="sd">            of the straight skeleton.</span>
+<span class="sd">        tolerance: The tolerance at which the intersection will be computed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two items.</span>
+
+<span class="sd">        * split_skeleton -- A list of LineSegment2D objects for the skeleton</span>
+<span class="sd">            split through self-intersection.</span>
+
+<span class="sd">        * is_intersect_topology -- A boolean value for whether the topology of the</span>
+<span class="sd">            input skeleton is self-intersecting. This value is True whenever</span>
+<span class="sd">            there are segments that were split as part of this operation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># extend skeleton segments a little to ensure intersections happen</span>
+    <span class="n">under_tol</span> <span class="o">=</span> <span class="n">tolerance</span> <span class="o">*</span> <span class="mf">0.99</span>
+    <span class="n">ext_skeleton</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="p">:</span>
+        <span class="n">m_v</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span> <span class="o">*</span> <span class="n">under_tol</span>
+        <span class="n">ext_seg</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="o">-</span><span class="n">m_v</span><span class="p">),</span> <span class="n">seg</span><span class="o">.</span><span class="n">p2</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">m_v</span><span class="p">))</span>
+        <span class="n">ext_skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ext_seg</span><span class="p">)</span>
+
+    <span class="c1"># compute all of the intersection points across the skeleton</span>
+    <span class="n">intersect_pts</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">skeleton</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">other_seg</span> <span class="ow">in</span> <span class="n">ext_skeleton</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">ext_skeleton</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">int_pt</span> <span class="o">=</span> <span class="n">intersect_line_segment2d</span><span class="p">(</span><span class="n">seg</span><span class="p">,</span> <span class="n">other_seg</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">int_pt</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">int_pt</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span> <span class="ow">or</span> \
+                        <span class="n">int_pt</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">p2</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                    <span class="k">continue</span>
+                <span class="c1"># we have found an intersection point where segments should be split</span>
+                <span class="n">intersect_pts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">int_pt</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">pass</span>  <span class="c1"># we have reached the end of the list</span>
+
+    <span class="c1"># loop through the segments and split them at the intersection points</span>
+    <span class="n">split_skeleton</span><span class="p">,</span> <span class="n">is_intersect_topology</span> <span class="o">=</span> <span class="p">[],</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">seg</span><span class="p">,</span> <span class="n">split_pts</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">intersect_pts</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_pts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">split_skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seg</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_pts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># split the segment in two</span>
+            <span class="n">is_intersect_topology</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">int_pt</span> <span class="o">=</span> <span class="n">split_pts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">split_skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="n">int_pt</span><span class="p">))</span>
+            <span class="n">split_skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">int_pt</span><span class="p">,</span> <span class="n">seg</span><span class="o">.</span><span class="n">p2</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># sort the points along the segment to split it</span>
+            <span class="n">is_intersect_topology</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">pt_dists</span> <span class="o">=</span> <span class="p">[</span><span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">ipt</span><span class="p">)</span> <span class="k">for</span> <span class="n">ipt</span> <span class="ow">in</span> <span class="n">split_pts</span><span class="p">]</span>
+            <span class="n">sort_obj</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">pt_dists</span><span class="p">,</span> <span class="n">split_pts</span><span class="p">),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">sort_pts</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">sort_obj</span><span class="p">]</span>
+            <span class="n">sort_pts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">p2</span><span class="p">)</span>
+            <span class="n">pr_pt</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">p1</span>
+            <span class="k">for</span> <span class="n">s_pt</span> <span class="ow">in</span> <span class="n">sort_pts</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">pr_pt</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">s_pt</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                    <span class="n">split_skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">pr_pt</span><span class="p">,</span> <span class="n">s_pt</span><span class="p">))</span>
+                <span class="n">pr_pt</span> <span class="o">=</span> <span class="n">s_pt</span>
+
+    <span class="k">return</span> <span class="n">split_skeleton</span><span class="p">,</span> <span class="n">is_intersect_topology</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_remove_segments_outside_boundary</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Remove LineSegment2D that are outside the boundary of the parent shape.</span>
+
+<span class="sd">    This can be used to clean up the result after intersection of segments</span>
+<span class="sd">    since the skeleton routines can sometimes fail to produce a result that</span>
+<span class="sd">    is completely within the parent shape.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        skeleton: A list of ladybug-geometry LineSegment2D for the segments</span>
+<span class="sd">            of the straight skeleton.</span>
+<span class="sd">        boundary: A Polygon2D for the boundary of the shape. Segments that lie</span>
+<span class="sd">            outside of this boundary beyond the tolerance will be removed from</span>
+<span class="sd">            the result.</span>
+<span class="sd">        tolerance: The tolerance for distinguishing whether skeleton points lie</span>
+<span class="sd">            outside the boundary.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two items.</span>
+
+<span class="sd">        * clean_skeleton -- A list of LineSegment2D objects with segments removed</span>
+<span class="sd">            that outside of the boundary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">clean_skeleton</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="p">:</span>
+        <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="n">seg</span><span class="o">.</span><span class="n">p2</span>
+        <span class="k">if</span> <span class="n">boundary</span><span class="o">.</span><span class="n">point_relationship</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> \
+                <span class="n">boundary</span><span class="o">.</span><span class="n">point_relationship</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">clean_skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seg</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">clean_skeleton</span>
+
+
+<div class="viewcode-block" id="skeleton_as_subtree_list">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_subtree_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">skeleton_as_subtree_list</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a straight skeleton as a list of Subtree source and sink points.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        boundary: A ladybug-geometry Polygon2D for the boundary around the shape</span>
+<span class="sd">            for which the straight skeleton will be computed.</span>
+<span class="sd">        holes: An optional list of ladybug-geometry Polygon2D for the holes within</span>
+<span class="sd">            the shape for which a straight skeleton will be computed. If None,</span>
+<span class="sd">            it will be assumed that no holes exist in the shape. (Default: None).</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of Subtree objects that represent the straight skeleton.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># merge the holes into the boundary if they are specified</span>
+    <span class="k">if</span> <span class="n">holes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">holes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">bound_pts</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">boundary</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+        <span class="n">hole_pts</span> <span class="o">=</span> <span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span> <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">holes</span><span class="p">]</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="n">Polygon2D</span><span class="o">.</span><span class="n">from_shape_with_holes</span><span class="p">(</span><span class="n">bound_pts</span><span class="p">,</span> <span class="n">hole_pts</span><span class="p">)</span>
+
+    <span class="c1"># pre-process the boundary to be sure it is in the right order</span>
+    <span class="n">boundary</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">remove_duplicate_vertices</span><span class="p">(</span><span class="n">tolerance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">boundary</span><span class="o">.</span><span class="n">is_clockwise</span><span class="p">:</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+
+    <span class="c1"># skeletonize the objects</span>
+    <span class="n">skel_tol</span> <span class="o">=</span> <span class="n">tolerance</span> <span class="o">/</span> <span class="mi">100</span>  <span class="c1"># use a finer tolerance for actual skeleton</span>
+    <span class="n">subtree_list</span> <span class="o">=</span> <span class="n">_skeletonize</span><span class="p">(</span><span class="n">boundary</span><span class="o">.</span><span class="n">to_array</span><span class="p">(),</span> <span class="n">skel_tol</span><span class="p">)</span>
+
+    <span class="c1"># if holes were merged into the boundary, try to clean up the merge seams</span>
+    <span class="k">if</span> <span class="n">holes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">holes</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># gather the seams along which holes were merged</span>
+        <span class="n">all_segs</span><span class="p">,</span> <span class="n">seam_segs</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">segments</span><span class="p">,</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">all_segs</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">o_seg</span> <span class="ow">in</span> <span class="n">all_segs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]:</span>
+                    <span class="k">if</span> <span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">o_seg</span><span class="o">.</span><span class="n">p2</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span> <span class="ow">and</span> \
+                            <span class="n">seg</span><span class="o">.</span><span class="n">p2</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">o_seg</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">):</span>
+                        <span class="n">seam_segs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seg</span><span class="p">)</span>
+                        <span class="k">break</span>
+            <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+                <span class="k">pass</span>  <span class="c1"># we have reached the end of the list</span>
+        <span class="c1"># replace the subtrees along the seam with the seam itself</span>
+        <span class="k">for</span> <span class="n">seam</span> <span class="ow">in</span> <span class="n">seam_segs</span><span class="p">:</span>
+            <span class="n">s_p1</span><span class="p">,</span> <span class="n">s_p2</span> <span class="o">=</span> <span class="n">seam</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="n">seam</span><span class="o">.</span><span class="n">p2</span>
+            <span class="n">new_subtrees</span><span class="p">,</span> <span class="n">connecting_pts</span><span class="p">,</span> <span class="n">new_height</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">sub_tree</span> <span class="ow">in</span> <span class="n">subtree_list</span><span class="p">:</span>
+                <span class="n">sink_pts</span> <span class="o">=</span> <span class="n">sub_tree</span><span class="o">.</span><span class="n">sinks</span>
+                <span class="n">replace_sub</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">sink_pts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">s_p1</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">sink_pts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tolerance</span><span class="p">)</span> <span class="ow">or</span> \
+                            <span class="n">s_p1</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">sink_pts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tolerance</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">s_p2</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">sink_pts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">tolerance</span><span class="p">)</span> <span class="ow">or</span> \
+                                <span class="n">s_p2</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">sink_pts</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">tolerance</span><span class="p">):</span>
+                            <span class="n">new_height</span> <span class="o">=</span> <span class="n">sub_tree</span><span class="o">.</span><span class="n">height</span>
+                            <span class="n">replace_sub</span> <span class="o">=</span> <span class="kc">True</span>
+                            <span class="n">connecting_pts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_tree</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">replace_sub</span><span class="p">:</span>
+                    <span class="n">new_subtrees</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub_tree</span><span class="p">)</span>
+            <span class="n">subtree_list</span> <span class="o">=</span> <span class="n">new_subtrees</span>
+            <span class="n">seam_sub</span> <span class="o">=</span> <span class="n">Subtree</span><span class="p">(</span><span class="n">seam</span><span class="o">.</span><span class="n">midpoint</span><span class="p">,</span> <span class="n">new_height</span><span class="p">,</span> <span class="n">connecting_pts</span> <span class="o">+</span> <span class="p">[</span><span class="n">s_p1</span><span class="p">,</span> <span class="n">s_p2</span><span class="p">])</span>
+            <span class="n">subtree_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">seam_sub</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">subtree_list</span></div>
+
+
+
+<div class="viewcode-block" id="skeleton_as_edge_list">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_edge_list">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">skeleton_as_edge_list</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">intersect</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get a straight skeleton as list of LineSegment2D.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        boundary: A ladybug-geometry Polygon2D for the boundary around the shape</span>
+<span class="sd">            for which the straight skeleton will be computed.</span>
+<span class="sd">        holes: An optional list of ladybug-geometry Polygon2D for the holes within</span>
+<span class="sd">            the shape for which a straight skeleton will be computed. If None,</span>
+<span class="sd">            it will be assumed that no holes exist in the shape. (Default: None).</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+<span class="sd">        intersect: A boolean to note whether the segments of the skeleton should</span>
+<span class="sd">            be intersected with one another before being returned. This can</span>
+<span class="sd">            help make the skeleton more usable in the event that its topology</span>
+<span class="sd">            is not correct. (Default: False).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of LineSegment2D that represent the straight skeleton.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the Subtree representation of the straight skeleton</span>
+    <span class="n">subtree_list</span> <span class="o">=</span> <span class="n">skeleton_as_subtree_list</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+
+    <span class="c1"># extract the LineSegment2D from the Subtree representation</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">subtree</span> <span class="ow">in</span> <span class="n">subtree_list</span><span class="p">:</span>
+        <span class="n">source_pt</span> <span class="o">=</span> <span class="n">subtree</span><span class="o">.</span><span class="n">source</span>
+        <span class="k">for</span> <span class="n">sink_pt</span> <span class="ow">in</span> <span class="n">subtree</span><span class="o">.</span><span class="n">sinks</span><span class="p">:</span>
+            <span class="n">edge_seg</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span>
+                <span class="n">Point2D</span><span class="p">(</span><span class="n">source_pt</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">source_pt</span><span class="o">.</span><span class="n">y</span><span class="p">),</span> <span class="n">Point2D</span><span class="p">(</span><span class="n">sink_pt</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">sink_pt</span><span class="o">.</span><span class="n">y</span><span class="p">))</span>
+            <span class="n">skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edge_seg</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">intersect</span><span class="p">:</span>  <span class="c1"># intersect skeleton segments to split them</span>
+        <span class="n">skeleton</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_intersect_skeleton_segments</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+        <span class="n">skeleton</span> <span class="o">=</span> <span class="n">_remove_segments_outside_boundary</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">skeleton</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2026, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

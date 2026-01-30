@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ladybug_geometry_polyskel.polygraph &#8212; ladybug-geometry-polyskel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=0bf093e7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=45cd8fae" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          ladybug-geometry-polyskel</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel">ladybug-geometry-polyskel</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel-perimeter-core-subfaces">perimeter-core-subfaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html">ladybug_geometry_polyskel.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#module-ladybug_geometry_polyskel.cli">Module contents</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#ladybug_geometry_polyskel.cli.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html">ladybug_geometry_polyskel.offset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_perimeter_polygons"><code class="docutils literal notranslate"><span class="pre">offset_perimeter_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_polygon"><code class="docutils literal notranslate"><span class="pre">offset_polygon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_skeleton"><code class="docutils literal notranslate"><span class="pre">offset_skeleton()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html">ladybug_geometry_polyskel.polygraph module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph"><code class="docutils literal notranslate"><span class="pre">PolygonDirectedGraph</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_adj"><code class="docutils literal notranslate"><span class="pre">add_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_node"><code class="docutils literal notranslate"><span class="pre">add_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix"><code class="docutils literal notranslate"><span class="pre">adj_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix_labels"><code class="docutils literal notranslate"><span class="pre">adj_matrix_labels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycle"><code class="docutils literal notranslate"><span class="pre">exterior_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycles"><code class="docutils literal notranslate"><span class="pre">exterior_cycles()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_point_array"><code class="docutils literal notranslate"><span class="pre">from_point_array()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_polygon"><code class="docutils literal notranslate"><span class="pre">from_polygon()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.insert_node"><code class="docutils literal notranslate"><span class="pre">insert_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.intersect_graph_with_segment"><code class="docutils literal notranslate"><span class="pre">intersect_graph_with_segment()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.is_edge_bidirect"><code class="docutils literal notranslate"><span class="pre">is_edge_bidirect()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.min_cycle"><code class="docutils literal notranslate"><span class="pre">min_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node"><code class="docutils literal notranslate"><span class="pre">next_exterior_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node_no_backtrack"><code class="docutils literal notranslate"><span class="pre">next_exterior_node_no_backtrack()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node"><code class="docutils literal notranslate"><span class="pre">node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_exists"><code class="docutils literal notranslate"><span class="pre">node_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.polygon_exists"><code class="docutils literal notranslate"><span class="pre">polygon_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.pt_exists"><code class="docutils literal notranslate"><span class="pre">pt_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.remove_adj"><code class="docutils literal notranslate"><span class="pre">remove_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.connection_segments"><code class="docutils literal notranslate"><span class="pre">connection_segments</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.hole_root_nodes"><code class="docutils literal notranslate"><span class="pre">hole_root_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_count"><code class="docutils literal notranslate"><span class="pre">node_count</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.nodes"><code class="docutils literal notranslate"><span class="pre">nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.ordered_nodes"><code class="docutils literal notranslate"><span class="pre">ordered_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.outer_root_node"><code class="docutils literal notranslate"><span class="pre">outer_root_node</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_cycle_polygons"><code class="docutils literal notranslate"><span class="pre">skeleton_as_cycle_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_directed_graph"><code class="docutils literal notranslate"><span class="pre">skeleton_as_directed_graph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html">ladybug_geometry_polyskel.polyskel module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree"><code class="docutils literal notranslate"><span class="pre">Subtree</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.count"><code class="docutils literal notranslate"><span class="pre">count()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.height"><code class="docutils literal notranslate"><span class="pre">height</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.sinks"><code class="docutils literal notranslate"><span class="pre">sinks</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.source"><code class="docutils literal notranslate"><span class="pre">source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_edge_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_edge_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_subtree_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_subtree_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html">ladybug_geometry_polyskel.polysplit module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces_and_skeleton()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons_and_skeleton()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#module-ladybug_geometry_polyskel">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for ladybug_geometry_polyskel.polygraph</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;Implementation of a Directed Graph data structure.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineSegment2D</span><span class="p">,</span> <span class="n">Polygon2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.intersection2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">intersect_line2d_infinite</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.polyskel</span><span class="w"> </span><span class="kn">import</span> <span class="n">skeleton_as_edge_list</span><span class="p">,</span> <span class="n">_intersect_skeleton_segments</span><span class="p">,</span> \
+    <span class="n">_remove_segments_outside_boundary</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_vector2hash</span><span class="p">(</span><span class="n">vector</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hashes spatial coordinates for use in dictionary.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        vector: A Vector2D object.</span>
+<span class="sd">        tol: floating point precision tolerance.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        Hash of vector as a string of rounded coordinates.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the relative tolerance using a log function</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">rtol</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">tol</span><span class="p">))</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+        <span class="n">rtol</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># the tol is equal to 1 (out of range for log)</span>
+    <span class="c1"># account for the fact that the tolerance may not be base 10</span>
+    <span class="n">base</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tol</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">rtol</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">10</span> <span class="ow">or</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># tolerance is base 10 (eg. 0.001)</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># tolerance is not base 10 (eg. 0.003)</span>
+        <span class="n">rtol</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="c1"># avoid cases of signed zeros messing with the hash</span>
+    <span class="n">z_tol</span> <span class="o">=</span> <span class="n">tol</span> <span class="o">/</span> <span class="mi">2</span>
+    <span class="n">x_val</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">z_tol</span> <span class="k">else</span> <span class="n">vector</span><span class="o">.</span><span class="n">x</span>
+    <span class="n">y_val</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">vector</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">z_tol</span> <span class="k">else</span> <span class="n">vector</span><span class="o">.</span><span class="n">y</span>
+    <span class="c1"># convert the coordinate values to a hash</span>
+    <span class="k">return</span> <span class="nb">str</span><span class="p">((</span>
+        <span class="n">base</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">x_val</span> <span class="o">/</span> <span class="n">base</span><span class="p">,</span> <span class="n">rtol</span><span class="p">),</span>
+        <span class="n">base</span> <span class="o">*</span> <span class="nb">round</span><span class="p">(</span><span class="n">y_val</span> <span class="o">/</span> <span class="n">base</span><span class="p">,</span> <span class="n">rtol</span><span class="p">)</span>
+    <span class="p">))</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_Node</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Private class to handle nodes in PolygonDirectedGraph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        val: A Point2D object.</span>
+<span class="sd">        key: Hash of Point2D object.</span>
+<span class="sd">        order: integer counting order of the Node (based on dg propagation)</span>
+<span class="sd">        adj_lst: list of keys adjacent to this node.</span>
+<span class="sd">        exterior: Node boundary condition. None if not set by user, else True</span>
+<span class="sd">            or False according to user.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * pt</span>
+<span class="sd">        * key</span>
+<span class="sd">        * adj_lst</span>
+<span class="sd">        * exterior</span>
+<span class="sd">        * adj_count</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;key&#39;</span><span class="p">,</span> <span class="s1">&#39;pt&#39;</span><span class="p">,</span> <span class="s1">&#39;_order&#39;</span><span class="p">,</span> <span class="s1">&#39;adj_lst&#39;</span><span class="p">,</span> <span class="s1">&#39;exterior&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">adj_lst</span><span class="p">,</span> <span class="n">exterior</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize _Node&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pt</span> <span class="o">=</span> <span class="n">val</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">adj_lst</span> <span class="o">=</span> <span class="n">adj_lst</span>
+        <span class="c1"># Potentially change exterior to data (similar to networkX)</span>
+        <span class="c1"># and pass conditional function to get_exterior</span>
+        <span class="c1"># this resolves redundancy between unidirect and exterior</span>
+        <span class="c1"># node/edge properties.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exterior</span> <span class="o">=</span> <span class="n">exterior</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adj_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Number of adjacent nodes&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_Node</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">key</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">return</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__eq__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PolygonDirectedGraph</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A directed graph data structure for point relationships.</span>
+
+<span class="sd">    The PolygonDirectedGraph effectively represents the network of a straight</span>
+<span class="sd">    skeleton and assists with finding the shortest pathways through it. It also</span>
+<span class="sd">    helps differentiate interior from exterior parts of the graph. Typically,</span>
+<span class="sd">    interior pathways are bi-directional in the graph while exterior pathways</span>
+<span class="sd">    are uni-directional.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5). This is used</span>
+<span class="sd">            for hashing points within the network.</span>
+
+<span class="sd">    Properties:</span>
+<span class="sd">        * node_count: Integer for the number of nodes in graph.</span>
+<span class="sd">        * nodes: An iterable of nodes in graph.</span>
+<span class="sd">        * ordered_nodes: An iterable of nodes in graph in order they were added.</span>
+<span class="sd">        * connection_segments: List of LineSegment2D for the node connections</span>
+<span class="sd">        * outer_root_node: A node for the outer root key</span>
+<span class="sd">        * hole_root_nodes: A list of nodes for the hole root keys</span>
+<span class="sd">        * is_intersect_topology: A boolean for whether the graph self-intersects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a PolygonDirectedGraph.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span> <span class="o">=</span> <span class="n">tol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">outer_root_key</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># will be set during skeleton creation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">hole_root_keys</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># will be set during skeleton creation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_intersect_topology</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># will be set during skeleton creation</span>
+
+<div class="viewcode-block" id="PolygonDirectedGraph.from_polygon">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_polygon">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_polygon</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">polygon</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a directed graph from a polygon.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            polygon: A Polygon2D object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_point_array</span><span class="p">(</span><span class="n">polygon</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.from_point_array">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_point_array">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_point_array</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">point_array</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate a directed graph from a 1-dimensional array of points.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            point_array: Array of Point2D objects.</span>
+<span class="sd">            loop: Optional parameter to connect 1d array</span>
+<span class="sd">            tol: Tolerance for point equivalence.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dg</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">point_array</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">dg</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">point_array</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">[</span><span class="n">point_array</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">loop</span><span class="p">:</span>
+            <span class="n">dg</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">point_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">point_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dg</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">node_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an iterable of pt nodes&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ordered_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get an iterable of pt nodes in order of addition&quot;&quot;&quot;</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+        <span class="n">nodes</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">v</span><span class="p">:</span> <span class="n">v</span><span class="o">.</span><span class="n">_order</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nodes</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">outer_root_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the node of the outer boundary root.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">outer_root_key</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hole_root_nodes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of nodes for the roots of the holes.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">hole_key</span><span class="p">)</span> <span class="k">for</span> <span class="n">hole_key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">hole_root_keys</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">connection_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of LineSegment2D for the node connections in the graph.&quot;&quot;&quot;</span>
+        <span class="n">traversed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">connections</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">conn_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">conn_node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">traversed</span><span class="p">:</span>
+                    <span class="n">conn_seg</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="n">conn_node</span><span class="o">.</span><span class="n">pt</span><span class="p">)</span>
+                    <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conn_seg</span><span class="p">)</span>
+                    <span class="n">traversed</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">,</span> <span class="n">conn_node</span><span class="o">.</span><span class="n">key</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">connections</span>
+
+<div class="viewcode-block" id="PolygonDirectedGraph.node">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Retrieves the node based on passed value.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: The key for a node in the directed graph.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The node for the passed key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># broken connection</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.add_adj">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_adj">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">adj_val_lst</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Adds nodes to node.adj_lst.</span>
+
+<span class="sd">        This method will ensure no repetitions will occur in adj_lst.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node: _Node to add adjacencies to.</span>
+<span class="sd">            adj_val_lst: List of Point2D objects to add as adjacent nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">adj_keys</span> <span class="o">=</span> <span class="p">{</span><span class="n">n</span><span class="o">.</span><span class="n">key</span><span class="p">:</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">}</span>
+        <span class="n">adj_keys</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">adj_val</span> <span class="ow">in</span> <span class="n">adj_val_lst</span><span class="p">:</span>
+            <span class="n">adj_key</span> <span class="o">=</span> <span class="n">_vector2hash</span><span class="p">(</span><span class="n">adj_val</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">adj_key</span> <span class="ow">in</span> <span class="n">adj_keys</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_add_node</span><span class="p">(</span><span class="n">adj_key</span><span class="p">,</span> <span class="n">adj_val</span><span class="p">,</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+            <span class="n">adj_keys</span><span class="p">[</span><span class="n">adj_key</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">adj_key</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.remove_adj">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.remove_adj">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remove_adj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">,</span> <span class="n">adj_key_lst</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Removes nodes in node.adj_lst.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node: _Node to remove adjacencies to.</span>
+<span class="sd">            adj_val_lst: List of adjacency keys to remove as adjacent nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span> <span class="k">if</span> <span class="n">n</span><span class="o">.</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">adj_key_lst</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.add_node">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_node">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">adj_lst</span><span class="p">,</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a node into the PolygonDirectedGraph.</span>
+
+<span class="sd">        This method consumes a Point2D, computes its key value, and adds it in the</span>
+<span class="sd">        graph if it doesn&#39;t exist. If it does exist it appends adj_lst to existing pt.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            val: A Point2D object.</span>
+<span class="sd">            adj_lst: A list of Point2D objects adjacent to the node.</span>
+<span class="sd">            exterior: Optional boolean for exterior attribute.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The hashed key from the existing or new node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="n">_vector2hash</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span><span class="p">)</span>  <span class="c1"># get key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_add_node</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">exterior</span><span class="p">)</span>  <span class="c1"># get node if it exists</span>
+        <span class="n">node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_adj</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">adj_lst</span><span class="p">)</span>  <span class="c1"># add the adj_lst to dg</span>
+        <span class="c1"># if the exterior boolean was passed, change the node attribute</span>
+        <span class="k">if</span> <span class="n">exterior</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">node</span><span class="o">.</span><span class="n">exterior</span> <span class="o">=</span> <span class="n">exterior</span>
+        <span class="k">return</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Helper function for add_node. If key doesn&#39;t exist, add to dg.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">_Node</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_count</span><span class="p">,</span> <span class="p">[],</span> <span class="n">exterior</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+<div class="viewcode-block" id="PolygonDirectedGraph.insert_node">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.insert_node">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">insert_node</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_node</span><span class="p">,</span> <span class="n">new_val</span><span class="p">,</span> <span class="n">next_node</span><span class="p">,</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Insert node in the middle of an edge defined by node and next_node.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            base_node: _Node object to the left.</span>
+<span class="sd">            new_val:  A Point2D object for the new node in the middle.</span>
+<span class="sd">            next_node: _Node object to the right.</span>
+<span class="sd">            exterior: Optional boolean for exterior attribute.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            key of new_val node.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># add new_val as a node, with next_node as an adjacency</span>
+        <span class="n">new_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">new_val</span><span class="p">,</span> <span class="p">[</span><span class="n">next_node</span><span class="o">.</span><span class="n">pt</span><span class="p">],</span> <span class="n">exterior</span><span class="o">=</span><span class="n">exterior</span><span class="p">)</span>
+        <span class="c1"># update parent by adding new adjacency, and removing old adjacency</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_adj</span><span class="p">(</span><span class="n">base_node</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">new_key</span><span class="p">)</span><span class="o">.</span><span class="n">pt</span><span class="p">])</span>
+
+        <span class="c1"># catch the edge case where the new point is coincident to parent or next_point.</span>
+        <span class="c1"># this occurs when intersection passes through a corner.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">new_key</span> <span class="o">==</span> <span class="n">next_node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">new_key</span> <span class="o">==</span> <span class="n">base_node</span><span class="o">.</span><span class="n">key</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">new_key</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_adj</span><span class="p">(</span><span class="n">base_node</span><span class="p">,</span> <span class="p">[</span><span class="n">next_node</span><span class="o">.</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">new_key</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.node_exists">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">node_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if a node is in the graph. True if node in directed graph else False.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_directed_graph</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.pt_exists">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.pt_exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pt_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pt</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;True if a point (as Point2D) in directed graph exists as node else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_exists</span><span class="p">(</span><span class="n">_vector2hash</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.polygon_exists">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.polygon_exists">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">polygon_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polygon</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if polygon is in the directed graph.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            polygons: A Polygon2D object.</span>
+<span class="sd">            dg: A PolygonDirectedGraph.</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            True if exists, else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">vertices_loop</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">polygon</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+        <span class="n">vertices_loop</span> <span class="o">=</span> <span class="n">vertices_loop</span> <span class="o">+</span> <span class="p">[</span><span class="n">vertices_loop</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vertices_loop</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">pt1</span> <span class="o">=</span> <span class="n">vertices_loop</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">pt2</span> <span class="o">=</span> <span class="n">vertices_loop</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pt_exists</span><span class="p">(</span><span class="n">pt1</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+            <span class="n">node1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">_vector2hash</span><span class="p">(</span><span class="n">pt1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span><span class="p">))</span>
+            <span class="n">node2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">_vector2hash</span><span class="p">(</span><span class="n">pt2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tol</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">node2</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node1</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.adj_matrix">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adj_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Gets an adjacency matrix of the directed graph where:</span>
+
+<span class="sd">        * 1 = adjacency from row node to col node.</span>
+<span class="sd">        * 0 = no adjacency.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            N x N square matrix where N is number of nodes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordered_nodes</span>
+        <span class="c1"># initialize a mtx with no adjacencies</span>
+        <span class="n">amtx</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_count</span><span class="p">)]</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_count</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_count</span><span class="p">):</span>
+            <span class="n">adj_indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">adj</span><span class="o">.</span><span class="n">_order</span> <span class="k">for</span> <span class="n">adj</span> <span class="ow">in</span> <span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">adj_idx</span> <span class="ow">in</span> <span class="n">adj_indices</span><span class="p">:</span>
+                <span class="n">amtx</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">adj_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">amtx</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.adj_matrix_labels">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix_labels">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">adj_matrix_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns a dictionary where label key corresponds to index in adj_matrix</span>
+<span class="sd">        and value is node key&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ordered_nodes</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.intersect_graph_with_segment">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.intersect_graph_with_segment">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">intersect_graph_with_segment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">segment</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update graph with intersection of partial segment crossing through polygon.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            segment: LineSegment2D to intersect with the graph. The LineSegment2D</span>
+<span class="sd">                does not need to be contained within polygon and will be intersected</span>
+<span class="sd">                infinitely.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># loop through all nodes in the graph and find intersection points</span>
+        <span class="n">int_key_lst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordered_nodes</span><span class="p">:</span>
+            <span class="c1"># convert graph edge to trimming segment</span>
+            <span class="n">next_node</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">trim_seg</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="n">next_node</span><span class="o">.</span><span class="n">pt</span><span class="p">)</span>
+            <span class="n">int_pt</span> <span class="o">=</span> <span class="n">intersect_line2d_infinite</span><span class="p">(</span><span class="n">trim_seg</span><span class="p">,</span> <span class="n">segment</span><span class="p">)</span>
+
+            <span class="c1"># add intersection point as new node in graph</span>
+            <span class="k">if</span> <span class="n">int_pt</span><span class="p">:</span>
+                <span class="n">int_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">insert_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">int_pt</span><span class="p">,</span> <span class="n">next_node</span><span class="p">,</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">int_key_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">int_key</span><span class="p">)</span>
+
+        <span class="c1"># add intersection edges between the newly-found nodes</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># typical case with convex cases</span>
+            <span class="c1"># make edge between intersection nodes</span>
+            <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n1</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="p">[</span><span class="n">n2</span><span class="o">.</span><span class="n">pt</span><span class="p">],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n2</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="p">[</span><span class="n">n1</span><span class="o">.</span><span class="n">pt</span><span class="p">],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># edge case with concave geometry creates multiple intersections</span>
+            <span class="c1"># sort distance and add adjacency</span>
+            <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]</span>
+
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+                <span class="n">distance</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">pt</span><span class="p">)</span><span class="o">.</span><span class="n">length</span>
+                <span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">distance</span><span class="p">))</span>
+
+            <span class="n">distances</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">distances</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">k1</span><span class="p">,</span> <span class="n">k2</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">distances</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">[</span><span class="n">k1</span><span class="p">]),</span> <span class="bp">self</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">int_key_lst</span><span class="p">[</span><span class="n">k2</span><span class="p">])</span>
+                <span class="c1"># add bi-direction so the min cycle works</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n1</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="p">[</span><span class="n">n2</span><span class="o">.</span><span class="n">pt</span><span class="p">],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">n2</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="p">[</span><span class="n">n1</span><span class="o">.</span><span class="n">pt</span><span class="p">],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.min_cycle">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.min_cycle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">min_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_node</span><span class="p">,</span> <span class="n">goal_node</span><span class="p">,</span> <span class="n">ccw_only</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Identify the shortest interior cycle between two exterior nodes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            base_node: The first exterior node of the edge.</span>
+<span class="sd">            goal_node: The end exterior node of the cycle that, together with</span>
+<span class="sd">                the base_node, constitutes an exterior edge.</span>
+<span class="sd">            ccw_only: A boolean to note whether the search should be limited</span>
+<span class="sd">                to the counter-clockwise direction only. (Default: False).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of nodes that form a polygon if the cycle exists, else None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># set up a queue for exploring the graph</span>
+        <span class="n">explored</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">queue</span> <span class="o">=</span> <span class="p">[[</span><span class="n">base_node</span><span class="p">]]</span>
+        <span class="n">orig_dir</span> <span class="o">=</span> <span class="n">base_node</span><span class="o">.</span><span class="n">pt</span> <span class="o">-</span> <span class="n">goal_node</span><span class="o">.</span><span class="n">pt</span>  <span class="c1"># yields a vector</span>
+        <span class="c1"># loop to traverse the graph  with the help of the queue</span>
+        <span class="k">while</span> <span class="n">queue</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">queue</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">node</span> <span class="o">=</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1"># make sure that the current node has not been visited</span>
+            <span class="k">if</span> <span class="n">node</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">explored</span><span class="p">:</span>
+                <span class="n">prev_dir</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">pt</span> <span class="o">-</span> <span class="n">path</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">pt</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">orig_dir</span>
+                <span class="c1"># iterate over the neighbors to determine relevant nodes</span>
+                <span class="n">rel_neighbors</span><span class="p">,</span> <span class="n">rel_angles</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">neighbor</span> <span class="o">==</span> <span class="n">goal_node</span><span class="p">:</span>  <span class="c1"># the shortest path was found!</span>
+                        <span class="n">path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">goal_node</span><span class="p">)</span>
+                        <span class="k">return</span> <span class="n">path</span>
+                    <span class="k">elif</span> <span class="n">neighbor</span><span class="o">.</span><span class="n">exterior</span><span class="p">:</span>
+                        <span class="k">continue</span>  <span class="c1"># don&#39;t traverse the graph exterior</span>
+                    <span class="n">edge_dir</span> <span class="o">=</span> <span class="n">neighbor</span><span class="o">.</span><span class="n">pt</span> <span class="o">-</span> <span class="n">node</span><span class="o">.</span><span class="n">pt</span>
+                    <span class="n">cw_angle</span> <span class="o">=</span> <span class="n">prev_dir</span><span class="o">.</span><span class="n">angle_clockwise</span><span class="p">(</span><span class="n">edge_dir</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">1e-5</span> <span class="o">&lt;</span> <span class="n">cw_angle</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1e-5</span><span class="p">):</span>
+                        <span class="k">continue</span>  <span class="c1"># prevent back-tracking along the search</span>
+                    <span class="n">rel_neighbors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+                    <span class="n">rel_angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cw_angle</span><span class="p">)</span>
+                <span class="c1"># sort the neighbors by clockwise angle</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rel_neighbors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="n">rel_neighbors</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">rel_angles</span><span class="p">,</span> <span class="n">rel_neighbors</span><span class="p">),</span>
+                                                          <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+                <span class="c1"># add the relevant neighbors to the path and the queue</span>
+                <span class="k">if</span> <span class="n">ccw_only</span><span class="p">:</span>
+                    <span class="n">new_path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                    <span class="n">new_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rel_neighbors</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                    <span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># add all neighbors to the search</span>
+                    <span class="k">for</span> <span class="n">neighbor</span> <span class="ow">in</span> <span class="n">rel_neighbors</span><span class="p">:</span>
+                        <span class="n">new_path</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                        <span class="n">new_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">neighbor</span><span class="p">)</span>
+                        <span class="n">queue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_path</span><span class="p">)</span>
+                <span class="n">explored</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+        <span class="c1"># if we reached the end of the queue, then no path was found</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.exterior_cycle">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycle">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exterior_cycle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cycle_root</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Computes exterior boundary from a given node.</span>
+
+<span class="sd">        This method assumes that exterior edges are naked (unidirectional) and</span>
+<span class="sd">        interior edges are bidirectional.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cycle_root: Starting _Node in exterior cycle.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of nodes on exterior if a cycle exists, else None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Get the first exterior edge</span>
+        <span class="n">curr_node</span> <span class="o">=</span> <span class="n">cycle_root</span>
+        <span class="n">next_node</span> <span class="o">=</span> <span class="n">PolygonDirectedGraph</span><span class="o">.</span><span class="n">next_exterior_node</span><span class="p">(</span><span class="n">curr_node</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">next_node</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="c1"># loop through the cycle until we get it all or run out of points</span>
+        <span class="n">max_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_count</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># maximum length a cycle can be</span>
+        <span class="n">ext_cycle</span> <span class="o">=</span> <span class="p">[</span><span class="n">curr_node</span><span class="p">]</span>
+        <span class="n">iter_count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">next_node</span><span class="o">.</span><span class="n">key</span> <span class="o">!=</span> <span class="n">cycle_root</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
+            <span class="n">ext_cycle</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_node</span><span class="p">)</span>
+            <span class="n">next_node</span> <span class="o">=</span> <span class="n">PolygonDirectedGraph</span><span class="o">.</span><span class="n">next_exterior_node</span><span class="p">(</span><span class="n">next_node</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">next_node</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># we have hit a dead end in the cycle</span>
+            <span class="n">iter_count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">iter_count</span> <span class="o">&gt;</span> <span class="n">max_iter</span><span class="p">:</span>
+                <span class="k">break</span>  <span class="c1"># we have gotten stuck in a loop</span>
+
+        <span class="k">return</span> <span class="n">ext_cycle</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.exterior_cycles">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycles">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">exterior_cycles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of lists where each sub-list is an exterior cycle of Nodes.&quot;&quot;&quot;</span>
+        <span class="n">exterior_poly_lst</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># list to store cycles</span>
+        <span class="n">explored_nodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>  <span class="c1"># set to note explored exterior nodes</span>
+        <span class="n">max_iter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_count</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># maximum length a cycle can be</span>
+
+        <span class="c1"># loop through all of the nodes of the graph and find cycles</span>
+        <span class="k">for</span> <span class="n">root_node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordered_nodes</span><span class="p">:</span>
+            <span class="c1"># make a note that the current node has been explored</span>
+            <span class="n">explored_nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">root_node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># mark the node as explored</span>
+            <span class="c1"># get next exterior adjacent node and check that it&#39;s valid</span>
+            <span class="n">next_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_exterior_node</span><span class="p">(</span><span class="n">root_node</span><span class="p">)</span>  <span class="c1"># mark the node as explored</span>
+            <span class="n">is_valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">next_node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">next_node</span><span class="o">.</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">explored_nodes</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="c1"># make a note that the next node has been explored</span>
+            <span class="n">explored_nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">next_node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>
+
+            <span class="c1"># traverse the loop of points until we get back to start or hit a dead end</span>
+            <span class="n">exterior_poly</span> <span class="o">=</span> <span class="p">[</span><span class="n">root_node</span><span class="p">]</span>
+            <span class="n">prev_node</span> <span class="o">=</span> <span class="n">root_node</span>
+            <span class="n">iter_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">while</span> <span class="n">next_node</span><span class="o">.</span><span class="n">key</span> <span class="o">!=</span> <span class="n">root_node</span><span class="o">.</span><span class="n">key</span><span class="p">:</span>
+                <span class="n">exterior_poly</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_node</span><span class="p">)</span>
+                <span class="n">explored_nodes</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">next_node</span><span class="o">.</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># mark the node as explored</span>
+                <span class="n">follow_node</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next_exterior_node_no_backtrack</span><span class="p">(</span>
+                    <span class="n">next_node</span><span class="p">,</span> <span class="n">prev_node</span><span class="p">,</span> <span class="n">explored_nodes</span><span class="p">)</span>
+                <span class="n">prev_node</span> <span class="o">=</span> <span class="n">next_node</span>  <span class="c1"># set as the previous node for the next step</span>
+                <span class="n">next_node</span> <span class="o">=</span> <span class="n">follow_node</span>
+                <span class="k">if</span> <span class="n">next_node</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">break</span>  <span class="c1"># we have hit a dead end in the cycle</span>
+                <span class="n">iter_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">iter_count</span> <span class="o">&gt;</span> <span class="n">max_iter</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Extraction of core polygons hit an endless loop.&#39;</span><span class="p">)</span>
+                    <span class="k">break</span>  <span class="c1"># we have gotten stuck in a loop</span>
+            <span class="n">exterior_poly_lst</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">exterior_poly</span><span class="p">)</span>
+
+        <span class="c1"># return all of the exterior loops that were found</span>
+        <span class="k">return</span> <span class="n">exterior_poly_lst</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.next_exterior_node_no_backtrack">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node_no_backtrack">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_exterior_node_no_backtrack</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">previous_node</span><span class="p">,</span> <span class="n">explored_nodes</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the next exterior node adjacent to the input node.</span>
+
+<span class="sd">        This method is similar to the next_exterior_node method but it includes</span>
+<span class="sd">        extra checks to handle intersections with 3 or more segments in the</span>
+<span class="sd">        graph exterior cycles. In these cases a set of previously explored_nodes</span>
+<span class="sd">        is used to ensure that no back-tracking happens over the search of the</span>
+<span class="sd">        network, which can lead to infinite looping through the graph. Furthermore,</span>
+<span class="sd">        the previous_node is used to select the pathway with the smallest angle</span>
+<span class="sd">        difference with the previous direction. This leads the result towards</span>
+<span class="sd">        minimal polygons with fewer self-intersecting loops.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node: A _Node object for which the next node will be returned.</span>
+<span class="sd">            previous_node: A _Node object for the node that came before</span>
+<span class="sd">                the current one in the loop. This will be used in the event that</span>
+<span class="sd">                multiple exterior nodes are found connecting to the input node.</span>
+<span class="sd">                In this case, the exterior node with the smallest angle difference</span>
+<span class="sd">                with the previous direction will be returned. This leads the</span>
+<span class="sd">                result towards minimal polygons and away from self-intersecting</span>
+<span class="sd">                exterior loops like a bowtie.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Next node that defines exterior edge, or None if all adjacencies are</span>
+<span class="sd">            bidirectional.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># loop through the all adjacent nodes and determine if they are exterior</span>
+        <span class="n">next_nodes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_next_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_next_node</span><span class="o">.</span><span class="n">exterior</span><span class="p">:</span>  <span class="c1"># user has labeled it as exterior; we&#39;re done!</span>
+                <span class="k">return</span> <span class="n">_next_node</span>
+            <span class="k">elif</span> <span class="n">_next_node</span><span class="o">.</span><span class="n">exterior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># don&#39;t know if it&#39;s interior or exterior</span>
+                <span class="c1"># if user-assigned attribute isn&#39;t defined, check bi-directionality</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">PolygonDirectedGraph</span><span class="o">.</span><span class="n">is_edge_bidirect</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">_next_node</span><span class="p">):</span>
+                    <span class="n">next_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_next_node</span><span class="p">)</span>
+
+        <span class="c1"># evaluate whether there is one obvious choice for the next node</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_nodes</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">next_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">next_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">nn</span> <span class="k">for</span> <span class="n">nn</span> <span class="ow">in</span> <span class="n">next_nodes</span> <span class="k">if</span> <span class="n">nn</span><span class="o">.</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">explored_nodes</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_nodes</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">next_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="c1"># if we have multiple exterior nodes, use the previous node to find the best one</span>
+        <span class="n">prev_dir</span> <span class="o">=</span> <span class="n">previous_node</span><span class="o">.</span><span class="n">pt</span> <span class="o">-</span> <span class="n">node</span><span class="o">.</span><span class="n">pt</span>  <span class="c1"># yields a vector</span>
+        <span class="n">next_angles</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">next_node</span> <span class="ow">in</span> <span class="n">next_nodes</span><span class="p">:</span>
+            <span class="n">edge_dir</span> <span class="o">=</span> <span class="n">next_node</span><span class="o">.</span><span class="n">pt</span> <span class="o">-</span> <span class="n">node</span><span class="o">.</span><span class="n">pt</span>  <span class="c1"># yields a vector</span>
+            <span class="n">next_angles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prev_dir</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">edge_dir</span> <span class="o">*</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">sorted_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">next_angles</span><span class="p">,</span> <span class="n">next_nodes</span><span class="p">),</span>
+                                             <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+        <span class="k">return</span> <span class="n">sorted_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># return the node making the smallest angle</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.next_exterior_node">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_exterior_node</span><span class="p">(</span><span class="n">node</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the next exterior node adjacent to consumed node.</span>
+
+<span class="sd">        If there are adjacent nodes that are labeled as exterior, with True or</span>
+<span class="sd">        False defining the _Node.exterior property, the first of such nodes in</span>
+<span class="sd">        the adjacency list will be returned as the next one. Otherwise, the</span>
+<span class="sd">        bi-directionality will be used to determine whether the next node is</span>
+<span class="sd">        exterior.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node: A _Node object for which the next node will be returned.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Next node that defines exterior edge, or None if all adjacencies are</span>
+<span class="sd">            bidirectional.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># loop through the adjacency and find an exterior node</span>
+        <span class="k">for</span> <span class="n">_next_node</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">_next_node</span><span class="o">.</span><span class="n">exterior</span><span class="p">:</span>  <span class="c1"># user has labeled it as exterior; we&#39;re done!</span>
+                <span class="k">return</span> <span class="n">_next_node</span>
+            <span class="k">elif</span> <span class="n">_next_node</span><span class="o">.</span><span class="n">exterior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># don&#39;t know if it&#39;s interior or exterior</span>
+                <span class="c1"># if user-assigned attribute isn&#39;t defined, check bi-directionality</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">PolygonDirectedGraph</span><span class="o">.</span><span class="n">is_edge_bidirect</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">_next_node</span><span class="p">):</span>
+                    <span class="k">return</span> <span class="n">_next_node</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="PolygonDirectedGraph.is_edge_bidirect">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.is_edge_bidirect">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_edge_bidirect</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Are two nodes bidirectional.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            node1: _Node object</span>
+<span class="sd">            node2: _Node object</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            True if node1 and node2 are in each other&#39;s adjacency list,</span>
+<span class="sd">            else False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">node1</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node2</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">)</span> <span class="ow">and</span> \
+            <span class="n">node2</span><span class="o">.</span><span class="n">key</span> <span class="ow">in</span> <span class="p">(</span><span class="n">n</span><span class="o">.</span><span class="n">key</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">node1</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Represent PolygonDirectedGraph.&quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ordered_nodes</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="si">{}</span><span class="s1">, [</span><span class="si">{}</span><span class="s1">]</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">n</span><span class="o">.</span><span class="n">pt</span><span class="o">.</span><span class="n">to_array</span><span class="p">(),</span>
+                <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">_n</span><span class="o">.</span><span class="n">pt</span><span class="o">.</span><span class="n">to_array</span><span class="p">())</span> <span class="k">for</span> <span class="n">_n</span> <span class="ow">in</span> <span class="n">n</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">s</span></div>
+
+
+
+<div class="viewcode-block" id="skeleton_as_directed_graph">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_directed_graph">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">skeleton_as_directed_graph</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the straight skeleton of a shape as a PolygonDirectedGraph.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        boundary: A ladybug-geometry Polygon2D for the boundary around the shape</span>
+<span class="sd">            for which the straight skeleton will be computed.</span>
+<span class="sd">        holes: An optional list of ladybug-geometry Polygon2D for the holes within</span>
+<span class="sd">            the shape for which a straight skeleton will be computed. If None,</span>
+<span class="sd">            it will be assumed that no holes exist in the shape. (Default: None).</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A PolygonDirectedGraph object that represents the network and boundary</span>
+<span class="sd">        of the straight skeleton. All interior connections in the graph are</span>
+<span class="sd">        assumed to be bi-directional. The edges (including the boundary</span>
+<span class="sd">        and holes) are uni-directional with the outer boundary being counterclockwise</span>
+<span class="sd">        and the holes being clockwise. In other words, the fill of the shape is</span>
+<span class="sd">        always to the left of each exterior edge. The nodes at the boundary</span>
+<span class="sd">        and the holes have the exterior property set to True.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the segments representing the straight skeleton</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="n">skeleton_as_edge_list</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="n">skeleton</span><span class="p">,</span> <span class="n">is_intersect_topology</span> <span class="o">=</span> <span class="n">_intersect_skeleton_segments</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="n">_remove_segments_outside_boundary</span><span class="p">(</span><span class="n">skeleton</span><span class="p">,</span> <span class="n">boundary</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+
+    <span class="c1"># ensure the boundary and holes are oriented correctly for the graph</span>
+    <span class="k">if</span> <span class="n">boundary</span><span class="o">.</span><span class="n">is_clockwise</span><span class="p">:</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+    <span class="n">loops</span> <span class="o">=</span> <span class="p">[</span><span class="n">boundary</span><span class="o">.</span><span class="n">vertices</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">holes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hole</span> <span class="ow">in</span> <span class="n">holes</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">hole</span><span class="o">.</span><span class="n">is_clockwise</span><span class="p">:</span>
+                <span class="n">loops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">loops</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">hole</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+
+    <span class="c1"># make the directed graph and add the nodes for the boundary + holes</span>
+    <span class="n">dg_tol</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">tolerance</span>  <span class="c1"># use 2 times the tolerance to ensure hashing works</span>
+    <span class="n">dg</span> <span class="o">=</span> <span class="n">PolygonDirectedGraph</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="n">dg_tol</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">loop_count</span><span class="p">,</span> <span class="n">vertices</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">loops</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">vertices</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">curr_v</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">next_v</span> <span class="o">=</span> <span class="n">vertices</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">curr_v</span><span class="p">,</span> <span class="p">[</span><span class="n">next_v</span><span class="p">],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">loop_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">dg</span><span class="o">.</span><span class="n">outer_root_key</span> <span class="o">=</span> <span class="n">k</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">dg</span><span class="o">.</span><span class="n">hole_root_keys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">dg</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">vertices</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">vertices</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># close loop</span>
+
+    <span class="c1"># add the straight skelton to the graph</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">skeleton</span><span class="p">:</span>
+        <span class="c1"># add a bidirectional edge to represent skeleton edges</span>
+        <span class="n">dg</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">p2</span><span class="p">,</span> <span class="p">[</span><span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="p">])</span>
+        <span class="n">dg</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">seg</span><span class="o">.</span><span class="n">p1</span><span class="p">,</span> <span class="p">[</span><span class="n">seg</span><span class="o">.</span><span class="n">p2</span><span class="p">],</span> <span class="n">exterior</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># set the property to track whether the graph is self-intersecting</span>
+    <span class="n">dg</span><span class="o">.</span><span class="n">is_intersect_topology</span> <span class="o">=</span> <span class="n">is_intersect_topology</span>
+    <span class="k">return</span> <span class="n">dg</span></div>
+
+
+
+<div class="viewcode-block" id="skeleton_as_cycle_polygons">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_cycle_polygons">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">skeleton_as_cycle_polygons</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the straight skeleton of a shape as a list of cycle polygons.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        boundary: A ladybug-geometry Polygon2D for the boundary around the shape</span>
+<span class="sd">            for which the straight skeleton will be computed.</span>
+<span class="sd">        holes: An optional list of ladybug-geometry Polygon2D for the holes within</span>
+<span class="sd">            the shape for which a straight skeleton will be computed. If None,</span>
+<span class="sd">            it will be assumed that no holes exist in the shape. (Default: None).</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of Polygon2D that represent the straight skeleton of the input shape.</span>
+<span class="sd">        There will be one Polygon2D for each edge of the shape (including both</span>
+<span class="sd">        the boundary and the holes). Together, the Polygon2Ds will fill the</span>
+<span class="sd">        entire input shape. There may be some overlap in between the output</span>
+<span class="sd">        polygons if the straight skeleton did not have the correct topology.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get the straight skeleton as a PolygonDirectedGraph</span>
+    <span class="n">dg</span> <span class="o">=</span> <span class="n">skeleton_as_directed_graph</span><span class="p">(</span><span class="n">boundary</span><span class="p">,</span> <span class="n">holes</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+
+    <span class="c1"># function to add cycles to the list of polygons to be returned</span>
+    <span class="n">cycle_polys</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_add_cycle_polygon</span><span class="p">(</span><span class="n">min_cycle</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a cycle of Nodes to the list of polygons.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">min_cycle</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">cycle_poly</span> <span class="o">=</span> <span class="n">Polygon2D</span><span class="p">([</span><span class="n">node</span><span class="o">.</span><span class="n">pt</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">min_cycle</span><span class="p">])</span>
+            <span class="n">cycle_polys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cycle_poly</span><span class="p">)</span>
+
+    <span class="c1"># convert the edge cycles to Polygon2D</span>
+    <span class="n">exter_cycle</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">exterior_cycle</span><span class="p">(</span><span class="n">dg</span><span class="o">.</span><span class="n">outer_root_node</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">base_node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">exter_cycle</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+        <span class="n">next_node</span> <span class="o">=</span> <span class="n">exter_cycle</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">_add_cycle_polygon</span><span class="p">(</span><span class="n">dg</span><span class="o">.</span><span class="n">min_cycle</span><span class="p">(</span><span class="n">next_node</span><span class="p">,</span> <span class="n">base_node</span><span class="p">))</span>
+    <span class="n">_add_cycle_polygon</span><span class="p">(</span><span class="n">dg</span><span class="o">.</span><span class="n">min_cycle</span><span class="p">(</span><span class="n">exter_cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">exter_cycle</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">if</span> <span class="n">holes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">hole_root</span> <span class="ow">in</span> <span class="n">dg</span><span class="o">.</span><span class="n">hole_root_nodes</span><span class="p">:</span>
+            <span class="n">exter_cycle</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">exterior_cycle</span><span class="p">(</span><span class="n">hole_root</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">base_node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">exter_cycle</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">next_node</span> <span class="o">=</span> <span class="n">exter_cycle</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="n">_add_cycle_polygon</span><span class="p">(</span><span class="n">dg</span><span class="o">.</span><span class="n">min_cycle</span><span class="p">(</span><span class="n">next_node</span><span class="p">,</span> <span class="n">base_node</span><span class="p">))</span>
+            <span class="n">_add_cycle_polygon</span><span class="p">(</span><span class="n">dg</span><span class="o">.</span><span class="n">min_cycle</span><span class="p">(</span><span class="n">exter_cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">exter_cycle</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">cycle_polys</span></div>
+
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2026, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

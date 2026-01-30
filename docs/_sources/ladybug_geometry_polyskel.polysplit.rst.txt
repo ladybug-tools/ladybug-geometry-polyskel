@@ -1,0 +1,7 @@
+ladybug\_geometry\_polyskel.polysplit module
+============================================
+
+.. automodule:: ladybug_geometry_polyskel.polysplit
+   :members:
+   :undoc-members:
+   :show-inheritance:
