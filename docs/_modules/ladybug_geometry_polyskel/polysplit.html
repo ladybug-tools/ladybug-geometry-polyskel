@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ladybug_geometry_polyskel.polysplit &#8212; ladybug-geometry-polyskel  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/bootstrap-sphinx.css?v=0bf093e7" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=45cd8fae" />
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script type="text/javascript" src="../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../_static/js/jquery-fix.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../_static/bootstrap-sphinx.js "></script>
+
+  </head><body>
+
+  <div id="navbar" class="navbar navbar-inverse navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../../index.html">
+          ladybug-geometry-polyskel</a>
+        <span class="navbar-text navbar-version pull-left"><b></b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../cli/index.html#commands">Commands</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../cli/main.html">main</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel">ladybug-geometry-polyskel</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../cli/main.html#ladybug-geometry-polyskel-perimeter-core-subfaces">perimeter-core-subfaces</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html">ladybug_geometry_polyskel.cli package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#module-ladybug_geometry_polyskel.cli">Module contents</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.cli.html#ladybug_geometry_polyskel.cli.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html">ladybug_geometry_polyskel.offset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_perimeter_polygons"><code class="docutils literal notranslate"><span class="pre">offset_perimeter_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_polygon"><code class="docutils literal notranslate"><span class="pre">offset_polygon()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.offset.html#ladybug_geometry_polyskel.offset.offset_skeleton"><code class="docutils literal notranslate"><span class="pre">offset_skeleton()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html">ladybug_geometry_polyskel.polygraph module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph"><code class="docutils literal notranslate"><span class="pre">PolygonDirectedGraph</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_adj"><code class="docutils literal notranslate"><span class="pre">add_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.add_node"><code class="docutils literal notranslate"><span class="pre">add_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix"><code class="docutils literal notranslate"><span class="pre">adj_matrix()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.adj_matrix_labels"><code class="docutils literal notranslate"><span class="pre">adj_matrix_labels()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycle"><code class="docutils literal notranslate"><span class="pre">exterior_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.exterior_cycles"><code class="docutils literal notranslate"><span class="pre">exterior_cycles()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_point_array"><code class="docutils literal notranslate"><span class="pre">from_point_array()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.from_polygon"><code class="docutils literal notranslate"><span class="pre">from_polygon()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.insert_node"><code class="docutils literal notranslate"><span class="pre">insert_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.intersect_graph_with_segment"><code class="docutils literal notranslate"><span class="pre">intersect_graph_with_segment()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.is_edge_bidirect"><code class="docutils literal notranslate"><span class="pre">is_edge_bidirect()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.min_cycle"><code class="docutils literal notranslate"><span class="pre">min_cycle()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node"><code class="docutils literal notranslate"><span class="pre">next_exterior_node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.next_exterior_node_no_backtrack"><code class="docutils literal notranslate"><span class="pre">next_exterior_node_no_backtrack()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node"><code class="docutils literal notranslate"><span class="pre">node()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_exists"><code class="docutils literal notranslate"><span class="pre">node_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.polygon_exists"><code class="docutils literal notranslate"><span class="pre">polygon_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.pt_exists"><code class="docutils literal notranslate"><span class="pre">pt_exists()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.remove_adj"><code class="docutils literal notranslate"><span class="pre">remove_adj()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.connection_segments"><code class="docutils literal notranslate"><span class="pre">connection_segments</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.hole_root_nodes"><code class="docutils literal notranslate"><span class="pre">hole_root_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.node_count"><code class="docutils literal notranslate"><span class="pre">node_count</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.nodes"><code class="docutils literal notranslate"><span class="pre">nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.ordered_nodes"><code class="docutils literal notranslate"><span class="pre">ordered_nodes</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.PolygonDirectedGraph.outer_root_node"><code class="docutils literal notranslate"><span class="pre">outer_root_node</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_cycle_polygons"><code class="docutils literal notranslate"><span class="pre">skeleton_as_cycle_polygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polygraph.html#ladybug_geometry_polyskel.polygraph.skeleton_as_directed_graph"><code class="docutils literal notranslate"><span class="pre">skeleton_as_directed_graph()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html">ladybug_geometry_polyskel.polyskel module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree"><code class="docutils literal notranslate"><span class="pre">Subtree</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.count"><code class="docutils literal notranslate"><span class="pre">count()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.index"><code class="docutils literal notranslate"><span class="pre">index()</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.height"><code class="docutils literal notranslate"><span class="pre">height</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.sinks"><code class="docutils literal notranslate"><span class="pre">sinks</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.Subtree.source"><code class="docutils literal notranslate"><span class="pre">source</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_edge_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_edge_list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polyskel.html#ladybug_geometry_polyskel.polyskel.skeleton_as_subtree_list"><code class="docutils literal notranslate"><span class="pre">skeleton_as_subtree_list()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html">ladybug_geometry_polyskel.polysplit module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subfaces_and_skeleton()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons_and_skeleton"><code class="docutils literal notranslate"><span class="pre">perimeter_core_subpolygons_and_skeleton()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../ladybug_geometry_polyskel.html#module-ladybug_geometry_polyskel">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+      <div class="col-md-4">
+        <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../../cli/index.html">CLI</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../ladybug_geometry_polyskel.html">ladybug_geometry_polyskel package</a></li>
+</ul>
+
+        </div>
+      </div>
+    <div class="body col-md-8 content" role="main">
+      
+  <h1>Source code for ladybug_geometry_polyskel.polysplit</h1><div class="highlight"><pre>
+<span></span><span class="c1"># coding=utf-8</span>
+<span class="sd">&quot;&quot;&quot;Functions for splitting a polygon into sub-polygons based on skeleton topology.&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">division</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry2d</span><span class="w"> </span><span class="kn">import</span> <span class="n">LineSegment2D</span><span class="p">,</span> <span class="n">Polygon2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ladybug_geometry.geometry3d</span><span class="w"> </span><span class="kn">import</span> <span class="n">Vector3D</span><span class="p">,</span> <span class="n">LineSegment3D</span><span class="p">,</span> <span class="n">Face3D</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.polygraph</span><span class="w"> </span><span class="kn">import</span> <span class="n">PolygonDirectedGraph</span><span class="p">,</span> <span class="n">skeleton_as_directed_graph</span>
+
+
+<div class="viewcode-block" id="perimeter_core_subfaces">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">perimeter_core_subfaces</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute perimeter and core Face3Ds using the straight skeleton of an input Face3D.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        face: A Face3D to split into perimeter and core sub-faces.</span>
+<span class="sd">        distance: Distance to offset perimeter sub-faces.</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two items.</span>
+
+<span class="sd">        * perimeter_sub_faces -- A list of Face3Ds for perimeter sub-faces.</span>
+
+<span class="sd">        * core_sub_faces -- A list of Face3D for core sub-faces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get core and perimeter sub-polygons</span>
+    <span class="n">perimeter</span><span class="p">,</span> <span class="n">core</span> <span class="o">=</span> <span class="n">perimeter_core_subpolygons</span><span class="p">(</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">boundary_polygon2d</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">face</span><span class="o">.</span><span class="n">hole_polygon2d</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="c1"># convert the polygons into Face3Ds</span>
+    <span class="k">return</span> <span class="n">_polygons_to_face3d</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">perimeter</span><span class="p">,</span> <span class="n">core</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="perimeter_core_subfaces_and_skeleton">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subfaces_and_skeleton">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">perimeter_core_subfaces_and_skeleton</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute perimeter and core Face3Ds using the straight skeleton of an input Face3D.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        face: A Face3D to split into perimeter and core sub-faces.</span>
+<span class="sd">        distance: Distance to offset perimeter sub-faces.</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two items.</span>
+
+<span class="sd">        * skeleton -- A list of LineSegment3D for the segments of the straight</span>
+<span class="sd">            skeleton being used to generate core/perimeter polygons.</span>
+
+<span class="sd">        * perimeter_sub_faces -- A list of Face3Ds for perimeter sub-faces.</span>
+
+<span class="sd">        * core_sub_faces -- A list of Face3D for core sub-faces.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># get core and perimeter sub-polygons</span>
+    <span class="n">skeleton_2d</span><span class="p">,</span> <span class="n">perimeter</span><span class="p">,</span> <span class="n">core</span> <span class="o">=</span> <span class="n">perimeter_core_subpolygons_and_skeleton</span><span class="p">(</span>
+        <span class="n">face</span><span class="o">.</span><span class="n">boundary_polygon2d</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">face</span><span class="o">.</span><span class="n">hole_polygon2d</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="n">perimeter_sub_faces</span><span class="p">,</span> <span class="n">core_sub_faces</span> <span class="o">=</span> <span class="n">_polygons_to_face3d</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">perimeter</span><span class="p">,</span> <span class="n">core</span><span class="p">)</span>
+    <span class="c1"># convert the skeleton segments into LineSegment3Ds</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">seg</span> <span class="ow">in</span> <span class="n">skeleton_2d</span><span class="p">:</span>
+        <span class="n">verts_3d</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span> <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">seg</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+        <span class="n">skeleton</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">LineSegment3D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="o">*</span><span class="n">verts_3d</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">perimeter_sub_faces</span><span class="p">,</span> <span class="n">core_sub_faces</span></div>
+
+
+
+<div class="viewcode-block" id="perimeter_core_subpolygons">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">perimeter_core_subpolygons</span><span class="p">(</span>
+        <span class="n">polygon</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">flat_core</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute perimeter and core sub-polygons using the polygon straight skeleton.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        polygon: A Polygon2D to split into perimeter and core sub-polygons.</span>
+<span class="sd">        distance: Distance to offset perimeter sub-polygons.</span>
+<span class="sd">        holes: A list of Polygon2D objects representing holes in the</span>
+<span class="sd">            polygon. (Default: None).</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+<span class="sd">        flat_core: A boolean to note whether the core_sub_polys should be returned</span>
+<span class="sd">            as a flat list or as a nested list of lists for boundaries and</span>
+<span class="sd">            holes within each geometry.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two items.</span>
+
+<span class="sd">        * perimeter_sub_polys -- A list of Polygon2Ds for perimeter sub-polygons.</span>
+
+<span class="sd">        * core_sub_polys -- When flat_core is True, this will be a list of Polygon2D</span>
+<span class="sd">            where each Polygon2D represents a loop in the core geometry. When</span>
+<span class="sd">            flat_core is False, this will be a list of lists where each sub-list</span>
+<span class="sd">            contains Polygon2Ds and represents one core geometry. The sub-list</span>
+<span class="sd">            will have has at least one Polygon2D in it and, in the event that</span>
+<span class="sd">            a core geometry has holes, there will be multiple Polygon2Ds in the</span>
+<span class="sd">            sub-list. The first item in the list will be the outer boundary of</span>
+<span class="sd">            the geometry and successive items represent hole polygons.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># initialize sub polygon lists</span>
+    <span class="n">perimeter_sub_polys</span><span class="p">,</span> <span class="n">core_sub_polys</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="c1"># compute the straight skeleton of the polygon as a directed graph</span>
+    <span class="n">dg</span> <span class="o">=</span> <span class="n">skeleton_as_directed_graph</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">holes</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="c1"># traverse the directed graph to get all of the perimeter polygons</span>
+    <span class="n">_perimeter_sub_dg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">root_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">dg</span><span class="o">.</span><span class="n">outer_root_key</span><span class="p">]</span> <span class="o">+</span> <span class="n">dg</span><span class="o">.</span><span class="n">hole_root_keys</span>
+    <span class="k">for</span> <span class="n">root_key</span> <span class="ow">in</span> <span class="n">root_keys</span><span class="p">:</span>
+        <span class="c1"># compute the polygons on the perimeter of the polygon</span>
+        <span class="n">_perimeter_sub_polys</span><span class="p">,</span> <span class="n">_perimeter_sub_dg</span> <span class="o">=</span> <span class="n">_split_perimeter_subpolygons</span><span class="p">(</span>
+            <span class="n">dg</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">root_key</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">_perimeter_sub_dg</span><span class="p">)</span>
+        <span class="n">perimeter_sub_polys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_perimeter_sub_polys</span><span class="p">)</span>  <span class="c1"># collect perimeter sub-polys</span>
+    <span class="c1"># compute the polygons on the core of the polygon</span>
+    <span class="n">core_sub_polys</span> <span class="o">=</span> <span class="n">_exterior_cycles_as_polygons</span><span class="p">(</span><span class="n">_perimeter_sub_dg</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">flat_core</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">core_sub_polys</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># remake cores w/ holes</span>
+        <span class="n">core_sub_polys</span> <span class="o">=</span> <span class="n">Polygon2D</span><span class="o">.</span><span class="n">group_boundaries_and_holes</span><span class="p">(</span><span class="n">core_sub_polys</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">perimeter_sub_polys</span><span class="p">,</span> <span class="n">core_sub_polys</span></div>
+
+
+
+<div class="viewcode-block" id="perimeter_core_subpolygons_and_skeleton">
+<a class="viewcode-back" href="../../ladybug_geometry_polyskel.polysplit.html#ladybug_geometry_polyskel.polysplit.perimeter_core_subpolygons_and_skeleton">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">perimeter_core_subpolygons_and_skeleton</span><span class="p">(</span>
+        <span class="n">polygon</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">holes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get perimeter and core sub-polygons with line segments for the straight skeleton.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        polygon: A Polygon2D to split into perimeter and core sub-polygons.</span>
+<span class="sd">        distance: Distance to offset perimeter sub-polygons.</span>
+<span class="sd">        holes: A list of Polygon2D objects representing holes in the</span>
+<span class="sd">            polygon. (Default: None).</span>
+<span class="sd">        tolerance: Tolerance for point equivalence. (Default: 1e-5).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with three items.</span>
+
+<span class="sd">        * skeleton -- A list of LineSegment2D for the segments of the straight</span>
+<span class="sd">            skeleton being used to generate core/perimeter polygons.</span>
+
+<span class="sd">        * perimeter_sub_polys -- A list of Polygon2Ds for perimeter sub-polygons.</span>
+
+<span class="sd">        * core_sub_polys -- A list of lists where each sub-list contains Polygon2Ds</span>
+<span class="sd">            and represents one core geometry. The sub-list will have has at</span>
+<span class="sd">            least one Polygon2D and, in the event that a core geometry has holes,</span>
+<span class="sd">            there will be multiple Polygon2Ds in the sub-list. The first item in</span>
+<span class="sd">            the list will be the outer boundary of the geometry and successive</span>
+<span class="sd">            items represent hole polygons.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># initialize sub polygon lists</span>
+    <span class="n">perimeter_sub_polys</span><span class="p">,</span> <span class="n">core_sub_polys</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+    <span class="c1"># compute the straight skeleton of the polygon as a directed graph</span>
+    <span class="n">dg</span> <span class="o">=</span> <span class="n">skeleton_as_directed_graph</span><span class="p">(</span><span class="n">polygon</span><span class="p">,</span> <span class="n">holes</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="n">skeleton</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">connection_segments</span>
+    <span class="c1"># traverse the directed graph to get all of the perimeter polygons</span>
+    <span class="n">_perimeter_sub_dg</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">root_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">dg</span><span class="o">.</span><span class="n">outer_root_key</span><span class="p">]</span> <span class="o">+</span> <span class="n">dg</span><span class="o">.</span><span class="n">hole_root_keys</span>
+    <span class="k">for</span> <span class="n">root_key</span> <span class="ow">in</span> <span class="n">root_keys</span><span class="p">:</span>
+        <span class="c1"># compute the polygons on the perimeter of the polygon</span>
+        <span class="n">_perimeter_sub_polys</span><span class="p">,</span> <span class="n">_perimeter_sub_dg</span> <span class="o">=</span> <span class="n">_split_perimeter_subpolygons</span><span class="p">(</span>
+            <span class="n">dg</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">root_key</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">,</span> <span class="n">_perimeter_sub_dg</span><span class="p">)</span>
+        <span class="n">perimeter_sub_polys</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">_perimeter_sub_polys</span><span class="p">)</span>  <span class="c1"># collect perimeter sub-polys</span>
+    <span class="c1"># compute the polygons on the core of the polygon</span>
+    <span class="n">core_sub_polys</span> <span class="o">=</span> <span class="n">_exterior_cycles_as_polygons</span><span class="p">(</span><span class="n">_perimeter_sub_dg</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">core_sub_polys</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># remake cores w/ holes</span>
+        <span class="n">core_sub_polys</span> <span class="o">=</span> <span class="n">Polygon2D</span><span class="o">.</span><span class="n">group_boundaries_and_holes</span><span class="p">(</span><span class="n">core_sub_polys</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">skeleton</span><span class="p">,</span> <span class="n">perimeter_sub_polys</span><span class="p">,</span> <span class="n">core_sub_polys</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_split_perimeter_subpolygons</span><span class="p">(</span><span class="n">dg</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">root_key</span><span class="p">,</span> <span class="n">tol</span><span class="p">,</span> <span class="n">core_graph</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split polygons in the PolygonDirectedGraph into perimeter sub-polygons.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dg: A PolygonDirectedGraph object that comes from the skeleton_as_directed_graph</span>
+<span class="sd">            function and contains separations for how a geometry will be split.</span>
+<span class="sd">        distance: The distance to offset the perimeter in model units.</span>
+<span class="sd">        root_key: A string key for a node in the input dg that identifies the</span>
+<span class="sd">            perimeter loop to be traversed. This will be used as the starting</span>
+<span class="sd">            point for graph traversal.</span>
+<span class="sd">        tol: A number representing the tolerance for point equivalence.</span>
+<span class="sd">        core_graph: An optional PolygonDirectedGraph that is being built to extract</span>
+<span class="sd">            the core of the shape after all perimeter sub-polygons are extracted.</span>
+<span class="sd">            This is used when the input dg contains holes and this method for</span>
+<span class="sd">            _split_perimeter_subpolygons must be run multiple times for the</span>
+<span class="sd">            boundary and each hole. (Default: None).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A tuple with two lists:</span>
+
+<span class="sd">        * perimeter_subpolygons: A list of perimeter sub-polygons as Polygon2D objects.</span>
+
+<span class="sd">        * core_graph: A PolygonDirectedGraph with just the perimeter sub-polygons.</span>
+<span class="sd">            The edges of this graph that are not bidirectional (exterior edges)</span>
+<span class="sd">            define the exterior of the polygon and it&#39;s core sub-polygons.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># set up a list lto collect the perimeter polygons and the core graph</span>
+    <span class="n">perimeter_subpolygons</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">core_graph</span> <span class="o">=</span> <span class="n">PolygonDirectedGraph</span><span class="p">(</span><span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span> <span class="k">if</span> <span class="n">core_graph</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">core_graph</span>
+    <span class="n">exter_cycle</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">exterior_cycle</span><span class="p">(</span><span class="n">dg</span><span class="o">.</span><span class="n">node</span><span class="p">(</span><span class="n">root_key</span><span class="p">))</span>
+
+    <span class="c1"># cycle through exterior nodes and get split polygons using the distance</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">base_node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">exter_cycle</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">next_node</span> <span class="o">=</span> <span class="n">exter_cycle</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>  <span class="c1"># the last edge of the polygon</span>
+            <span class="n">next_node</span> <span class="o">=</span> <span class="n">exter_cycle</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># find the smallest polygon defined by the exterior node</span>
+        <span class="n">min_ccw_poly_graph</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">min_cycle</span><span class="p">(</span><span class="n">next_node</span><span class="p">,</span> <span class="n">base_node</span><span class="p">)</span>
+
+        <span class="c1"># proceed to extract the polygon and build up the core graph</span>
+        <span class="k">if</span> <span class="n">min_ccw_poly_graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># everything is good, offset edge by distance and cut a perimeter polygon</span>
+            <span class="n">split_poly_graph</span> <span class="o">=</span> <span class="n">_split_polygon_graph</span><span class="p">(</span>
+                <span class="n">base_node</span><span class="p">,</span> <span class="n">next_node</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">min_ccw_poly_graph</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span>
+            <span class="c1"># store the perimeter nodes in the core_graph</span>
+            <span class="n">pts</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">pt</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">split_poly_graph</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">core_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">[</span><span class="n">pts</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
+            <span class="c1"># store perimeter points in list as polygon</span>
+            <span class="n">perimeter_subpolygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Polygon2D</span><span class="p">(</span><span class="n">pts</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># handle the case of unsuccessful minimum cycle polygon extraction</span>
+            <span class="c1"># if we are just missing a skeleton segment, there may still be hope</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">next_node</span><span class="o">.</span><span class="n">adj_lst</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># connect the node to the nearest interior</span>
+                <span class="n">rel_nodes</span><span class="p">,</span> <span class="n">node_dists</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">dg</span><span class="o">.</span><span class="n">nodes</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">node</span><span class="o">.</span><span class="n">exterior</span><span class="p">:</span>
+                        <span class="n">rel_nodes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                        <span class="n">node_dists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">next_node</span><span class="o">.</span><span class="n">pt</span><span class="o">.</span><span class="n">distance_to_point</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">pt</span><span class="p">))</span>
+                <span class="n">near_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">n</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">node_dists</span><span class="p">,</span> <span class="n">rel_nodes</span><span class="p">),</span>
+                                                   <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">pair</span><span class="p">:</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">])]</span>
+                <span class="n">dg</span><span class="o">.</span><span class="n">add_adj</span><span class="p">(</span><span class="n">next_node</span><span class="p">,</span> <span class="p">[</span><span class="n">near_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">pt</span><span class="p">])</span>
+                <span class="n">dg</span><span class="o">.</span><span class="n">add_adj</span><span class="p">(</span><span class="n">near_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="n">next_node</span><span class="o">.</span><span class="n">pt</span><span class="p">])</span>  <span class="c1"># add node di-directionally</span>
+                <span class="n">min_ccw_poly_graph</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">min_cycle</span><span class="p">(</span><span class="n">next_node</span><span class="p">,</span> <span class="n">base_node</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">min_ccw_poly_graph</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># connecting the node worked!</span>
+                <span class="n">split_poly_graph</span> <span class="o">=</span> <span class="n">_split_polygon_graph</span><span class="p">(</span>
+                    <span class="n">base_node</span><span class="p">,</span> <span class="n">next_node</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">min_ccw_poly_graph</span><span class="p">,</span> <span class="n">tol</span><span class="p">)</span>
+                <span class="n">pts</span> <span class="o">=</span> <span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">pt</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">split_poly_graph</span><span class="p">]</span>
+                <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pts</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="n">core_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">pts</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">[</span><span class="n">pts</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]])</span>
+                <span class="n">perimeter_subpolygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Polygon2D</span><span class="p">(</span><span class="n">pts</span><span class="p">))</span>
+
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># no hope of extracting a perimeter sub-polygon here</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;Failed to compute sub-polygons between &#39;</span> \
+                    <span class="s1">&#39;Node </span><span class="si">{}</span><span class="s1"> and Node </span><span class="si">{}</span><span class="s1">.&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">base_node</span><span class="p">,</span> <span class="n">next_node</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+                <span class="c1"># close the core graph with the exterior segment and move on</span>
+                <span class="n">core_graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">next_node</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="p">[</span><span class="n">base_node</span><span class="o">.</span><span class="n">pt</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">perimeter_subpolygons</span><span class="p">,</span> <span class="n">core_graph</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_split_polygon_graph</span><span class="p">(</span><span class="n">node1</span><span class="p">,</span> <span class="n">node2</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">poly_graph</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Split the PolygonDirectedGraph by an edge offset at a distance.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        node1: A node defining the edge to offset for splitting. If the graph</span>
+<span class="sd">            defines a counter-clockwise polygon, this node should represent</span>
+<span class="sd">            the left hand-most point.</span>
+<span class="sd">        node2: A node defining the edge to offset for splitting. If the graph</span>
+<span class="sd">            defines a counter-clockwise polygon, this node should represent</span>
+<span class="sd">            the right hand-most point.</span>
+<span class="sd">        distance: The distance to offset the splitting edge, in model units.</span>
+<span class="sd">        poly_graph: A list of Nodes representing a PolygonDirectedGraph for</span>
+<span class="sd">            a single polygon.</span>
+<span class="sd">        tol: Tolerance for point equivalence.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of nodes representing the split polygon adjacent to the exterior</span>
+<span class="sd">        edge defined by node1 and node2.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># use the nodes to create a line segment</span>
+    <span class="n">ext_seg</span> <span class="o">=</span> <span class="n">LineSegment2D</span><span class="o">.</span><span class="n">from_end_points</span><span class="p">(</span><span class="n">node1</span><span class="o">.</span><span class="n">pt</span><span class="p">,</span> <span class="n">node2</span><span class="o">.</span><span class="n">pt</span><span class="p">)</span>
+    <span class="c1"># compute normal facing into the polygon</span>
+    <span class="n">ext_arr</span> <span class="o">=</span> <span class="n">ext_seg</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">to_array</span><span class="p">()</span>
+    <span class="n">ext_seg_v</span> <span class="o">=</span> <span class="n">Vector3D</span><span class="p">(</span><span class="n">ext_arr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ext_arr</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">normal</span> <span class="o">=</span> <span class="n">ext_seg_v</span><span class="o">.</span><span class="n">cross</span><span class="p">(</span><span class="n">Vector3D</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">normalize</span><span class="p">()</span> <span class="o">*</span> <span class="n">distance</span>
+
+    <span class="c1"># move the segment by normal to get offset segment</span>
+    <span class="n">offset_seg</span> <span class="o">=</span> <span class="n">ext_seg</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">normal</span><span class="p">)</span>
+    <span class="n">poly_graph</span> <span class="o">=</span> <span class="n">PolygonDirectedGraph</span><span class="o">.</span><span class="n">from_point_array</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">n</span><span class="o">.</span><span class="n">pt</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">poly_graph</span><span class="p">],</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">)</span>
+    <span class="n">ordered_nodes</span> <span class="o">=</span> <span class="n">poly_graph</span><span class="o">.</span><span class="n">ordered_nodes</span>
+    <span class="n">poly_graph</span><span class="o">.</span><span class="n">outer_root_key</span> <span class="o">=</span> <span class="n">ordered_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">key</span>
+    <span class="n">root_node</span> <span class="o">=</span> <span class="n">ordered_nodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">goal_node</span> <span class="o">=</span> <span class="n">ordered_nodes</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># update graph by intersecting offset segment with other edges</span>
+    <span class="n">poly_graph</span><span class="o">.</span><span class="n">intersect_graph_with_segment</span><span class="p">(</span><span class="n">offset_seg</span><span class="p">)</span>
+
+    <span class="c1"># get the minimum cycle through the graph connecting the nodes</span>
+    <span class="c1"># since we start at the exterior edge, this will include the perimeter offset</span>
+    <span class="n">split_poly_nodes</span> <span class="o">=</span> <span class="n">poly_graph</span><span class="o">.</span><span class="n">min_cycle</span><span class="p">(</span><span class="n">root_node</span><span class="p">,</span> <span class="n">goal_node</span><span class="p">,</span> <span class="n">ccw_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">split_poly_nodes</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_exterior_cycles_as_polygons</span><span class="p">(</span><span class="n">dg</span><span class="p">,</span> <span class="n">tol</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert and sort exterior cycles in a PolygonDirectedGraph to a list of polygons.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dg: A PolygonDirectedGraph.</span>
+<span class="sd">        tol: The tolerance at which point equivalence is set.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A list of Polygon2D objects sorted by area.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ext_cycles</span> <span class="o">=</span> <span class="n">dg</span><span class="o">.</span><span class="n">exterior_cycles</span><span class="p">()</span>
+    <span class="n">ext_polygons</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">ext_cycles</span><span class="p">:</span>
+        <span class="n">ext_poly</span> <span class="o">=</span> <span class="n">Polygon2D</span><span class="p">([</span><span class="n">node</span><span class="o">.</span><span class="n">pt</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">cycle</span><span class="p">])</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ext_poly</span> <span class="o">=</span> <span class="n">ext_poly</span><span class="o">.</span><span class="n">remove_colinear_vertices</span><span class="p">(</span><span class="n">tol</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AssertionError</span><span class="p">:</span>  <span class="c1"># degenerate geometry to ignore</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">ext_poly</span><span class="o">.</span><span class="n">is_self_intersecting</span><span class="p">:</span>
+            <span class="n">ext_polygons</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">ext_poly</span><span class="o">.</span><span class="n">split_through_self_intersection</span><span class="p">(</span><span class="n">tol</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ext_polygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ext_poly</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ext_polygons</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_polygons_to_face3d</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">perimeter</span><span class="p">,</span> <span class="n">core</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert lists of perimeter and core Polygon2D into Face3D.&quot;&quot;&quot;</span>
+    <span class="c1"># convert the perimeter polygons into Face3Ds</span>
+    <span class="n">perimeter_sub_faces</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">perimeter</span><span class="p">:</span>
+        <span class="n">verts_3d</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span> <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">poly</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+        <span class="n">perimeter_sub_faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Face3D</span><span class="p">(</span><span class="n">verts_3d</span><span class="p">,</span> <span class="n">face</span><span class="o">.</span><span class="n">plane</span><span class="p">))</span>
+    <span class="c1"># convert the core polygons into Face3Ds</span>
+    <span class="n">core_sub_faces</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">poly_group</span> <span class="ow">in</span> <span class="n">core</span><span class="p">:</span>
+        <span class="n">all_verts_3d</span> <span class="o">=</span> <span class="p">[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">face</span><span class="o">.</span><span class="n">plane</span><span class="o">.</span><span class="n">xy_to_xyz</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span> <span class="k">for</span> <span class="n">pt</span> <span class="ow">in</span> <span class="n">poly</span><span class="o">.</span><span class="n">vertices</span><span class="p">)</span>
+                        <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">poly_group</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_verts_3d</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># no holes in the shape</span>
+            <span class="n">core_sub_faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Face3D</span><span class="p">(</span><span class="n">all_verts_3d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">face</span><span class="o">.</span><span class="n">plane</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">core_sub_faces</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Face3D</span><span class="p">(</span><span class="n">all_verts_3d</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">face</span><span class="o">.</span><span class="n">plane</span><span class="p">,</span> <span class="n">all_verts_3d</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="k">return</span> <span class="n">perimeter_sub_faces</span><span class="p">,</span> <span class="n">core_sub_faces</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2026, Ladybug Tools.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 8.0.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
