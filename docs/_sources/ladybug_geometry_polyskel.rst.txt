@@ -1,0 +1,29 @@
+ladybug\_geometry\_polyskel package
+===================================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ladybug_geometry_polyskel.cli
+
+Submodules
+----------
+
+.. toctree::
+   :maxdepth: 4
+
+   ladybug_geometry_polyskel.offset
+   ladybug_geometry_polyskel.polygraph
+   ladybug_geometry_polyskel.polyskel
+   ladybug_geometry_polyskel.polysplit
+
+Module contents
+---------------
+
+.. automodule:: ladybug_geometry_polyskel
+   :members:
+   :undoc-members:
+   :show-inheritance:
