@@ -1,0 +1,7 @@
+ladybug\_geometry\_polyskel.offset module
+=========================================
+
+.. automodule:: ladybug_geometry_polyskel.offset
+   :members:
+   :undoc-members:
+   :show-inheritance:
